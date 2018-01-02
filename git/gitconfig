@@ -1,0 +1,24 @@
+[user]
+	name = JohnBro
+	email = lujunboo@gmail.com
+[core]
+	editor = vim
+	preloadindex = true
+	excludesfile = /home/junbo/.gitignore
+[push]
+	default = simple
+[color]
+    ui = auto
+    diff = always
+    grep = always
+[merge]
+    too = vimdiff
+[diff]
+    tool = vimdiff
+[alias]
+    diff = difftool
+    st = status
+    co = checkout
+    ci = commit
+    br = branch
+
