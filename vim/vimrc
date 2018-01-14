@@ -356,13 +356,8 @@ if isdirectory(expand("~/.vim/bundle/syntastic"))
     nnoremap <Leader>sp :lprevious<cr>
 endif
 " }}}
-<<<<<<< HEAD
 " NERDcommenter settings {{{2
 if isdirectory(expand("~/.vim/bundle/nerdcommenter"))
-=======
-" NERDcommenter settings {{{ 1
-if isdirectory(expand("~/.vim/bundle/nerdcommenter")) && has('win32')
->>>>>>> bc86268b436d81e1de0810c4d68e638a17b20a66
     let g:NERDSpaceDelims = 1
     let g:NERDComaptSexyComs = 1
     let g:NERDAltDelims_java = 1
