@@ -109,7 +109,8 @@ autocmd BufReadPost *
             \ if line("'\"") > 0 && line("'\"") <= line("$") |
             \ exe "normal g'\"" |
             \ endif
-
+" Auto close preview window when leave inert mode.
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 " }}}
 " Basic Functions {{{1
 let g:proj_dir = ".projDir" " Used for manage current project
@@ -227,7 +228,7 @@ if isdirectory(expand("~/.vim/bundle/ctrlp.vim/"))
         let s:ctrlp_fallback='ack-grep %s --nogroup -f ""'
     elseif executable('ack')
         let s:ctrlp_fallback='ack %s --nogroup -f ""'
-    elseif WINDOWS()
+    elseif has('win32')
         let s:ctrlp_fallback='dir %s /-n /b /s /a-d'
     else
         let g:ctrlp_use_caching=1
@@ -355,7 +356,7 @@ if isdirectory(expand("~/.vim/bundle/syntastic"))
     nnoremap <Leader>sp :lprevious<cr>
 endif
 " }}}
-" NERDcommenter settings {{{ 1
+" NERDcommenter settings {{{2
 if isdirectory(expand("~/.vim/bundle/nerdcommenter"))
     let g:NERDSpaceDelims = 1
     let g:NERDComaptSexyComs = 1
@@ -367,33 +368,30 @@ endif
 " }}}
 " YouCompleteMe settings {{{2
 " !Windows : Completer by YouCompleteMe
-if has('win')
-    let g:loaded_youcompleteme=1
-else
-    if isdirectory("~/.vim/bundle/YouCompleteMe/")
-"        let g:ycm_global_ycm_extra_conf=''
-        let g:ycm_confirm_extra_conf = 0
-        let g:ycm_collect_identifiers_from_tags_files = 1
-        let g:ycm_min_num_of_chars_for_completion = 2 " complete form 2nd character
-        let g:ycm_seed_identifiers_with_syntax = 1 " Open syntax complete
-        let g:ycm_complete_in_comments = 1 " Also in comments
-        let g:ycm_complete_in_strings = 1
-        let g:ycm_cache_omnifunc = 0
-        let g:ycm_filetype_blacklist = {
-                    \ 'tagbar' : 1,
-                    \ 'nerdtree' : 1,
-                    \ }
-        " youcompleteme  默认tab  s-tab 和 ultisnips 冲突
-        let g:ycm_key_list_select_completion = ['<Down>']
-        let g:ycm_key_list_previous_completion = ['<Up>']
-        " 修改对C函数的补全快捷键，默认是CTRL + space，修改为ALT + ;
-        let g:ycm_key_invoke_completion = '<M-;>'
-        inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
-        inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
-        inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
-        inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
-        nnoremap <C-\>] :YcmCompleter GoTo<cr>
-    endif
+if isdirectory("~/.vim/bundle/YouCompleteMe/")
+    let g:ycm_global_ycm_extra_conf='./.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
+    let g:ycm_confirm_extra_conf = 0
+    let g:ycm_collect_identifiers_from_tags_files = 1
+    let g:ycm_min_num_of_chars_for_completion = 2 " complete form 2nd character
+    let g:ycm_seed_identifiers_with_syntax = 1 " Open syntax complete
+    let g:ycm_complete_in_comments = 1 " Also in comments
+    let g:ycm_complete_in_strings = 1
+    let g:ycm_cache_omnifunc = 0
+    let g:ycm_filetype_blacklist = {
+                \ 'tagbar' : 1,
+                \ 'nerdtree' : 1,
+                \ }
+    " youcompleteme  默认tab  s-tab 和 ultisnips 冲突
+    let g:ycm_key_list_select_completion = ['<Down>']
+    let g:ycm_key_list_previous_completion = ['<Up>']
+    " 修改对C函数的补全快捷键，默认是CTRL + space，修改为ALT + ;
+    let g:ycm_key_invoke_completion = '<M-;>'
+    inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>" 
+    inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
+    inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
+    inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
+    inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
+    nnoremap <C-\>] :YcmCompleter GoTo<cr>
 endif
 " }}}
 " color settings {{{2
@@ -414,7 +412,7 @@ if isdirectory(expand("~/.vim/bundle/molokai/"))
 endif
 " }}}
 " Neocomplete.vim setting {{{2
-if isdirectory(expand("~/.vim/bundle/neocomplete.vim")) && has('Windows')
+if isdirectory(expand("~/.vim/bundle/neocomplete.vim")) && has('Win32')
     "disable AutoComplPop.
     let g:acp_enableAtStartup = 0
     " Use neocomplete.
@@ -477,9 +475,9 @@ if isdirectory(expand("~/.vim/bundle/neocomplete.vim")) && has('Windows')
     if !exists('g:neocomplete#sources#omni#input_patterns')
         let g:neocomplete#sources#omni#input_patterns = {}
     endif
-    "let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-    "let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-    "let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+    let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+    let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+    let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
 
     " For perlomni.vim setting.
     " https://github.com/c9s/perlomni.vim
