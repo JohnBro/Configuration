@@ -117,14 +117,14 @@ let g:proj_dir = ".projDir" " Used for manage current project
 let g:ctags_file = ".ctags"
 let g:current_dir = getcwd()
 if isdirectory(g:current_dir."/".g:proj_dir) && filereadable(g:current_dir."/".g:ctags_file)
-    set tags+=./.ctags;
+    set tags+=.ctags;
 endif
 
 function! GenerateCtags()
     if isdirectory(g:current_dir."/".g:proj_dir)
         call system("ctags -f /".g:ctags_file." --tag-relative=no -R --c++-kinds=+p --fields=+iaS .")
 "        call system("mv ctags ./.projDir")
-        setglobal tags+=./.ctags
+        setglobal tags+=.ctags
         echo "ctags success generated!"
     else
         echo 'No directory named of ".projDir"!'
