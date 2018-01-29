@@ -261,7 +261,7 @@ endif
 " Tagbar settings {{{2
 if isdirectory(expand("~/.vim/bundle/tagbar/")) && executable('ctags')
     nnoremap <F2> :TagbarToggle<cr>
-    autocmd FileType cpp nested :TagbarOpen
+"     autocmd FileType cpp nested :TagbarOpen   "No need this func, it also unfold when open header
     let g:tagbar_left=1
     let g:tagbar_width=30
     let g:tagbar_autoclose=1
@@ -368,7 +368,7 @@ endif
 " }}}
 " YouCompleteMe settings {{{2
 " !Windows : Completer by YouCompleteMe
-if isdirectory("~/.vim/bundle/YouCompleteMe/")
+if isdirectory(expand("~/.vim/bundle/YouCompleteMe/"))
     let g:ycm_global_ycm_extra_conf='./.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
     let g:ycm_confirm_extra_conf = 0
     let g:ycm_collect_identifiers_from_tags_files = 1
