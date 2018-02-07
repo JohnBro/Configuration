@@ -1,0 +1,718 @@
+" JohnBro's vim configuration
+" Time 12/25/2017
+
+" Define OS type and GUI type in a global variable{{{1
+if(has("win32") || has("win64") || has("win95") || has("win16"))
+    let g:os_platform = "windows"
+    let g:dir_plugin = $VIM.'/vimfiles/bundle'
+elseif(has('unix'))
+    let g:os_platform = "unix"
+    let g:dir_plugin = "~/.vim/bundle"
+else
+    let g:os_platform = ""
+endif
+
+if has("gui_running")
+    let g:os_gui = 1
+else
+    let g:os_gui = 0
+endif
+" }}}
+" Windows GUI setting {{{1
+if (g:os_platform=='windows' && g:os_gui)
+    source $VIMRUNTIME/mswin.vim
+    source $VIMRUNTIME/delmenu.vim
+    behave mswin
+    winpos 50 50        " Window Position
+
+    set    lines=30        " Line number of Window
+    set    columns=100     " Column number of Window
+    set    diffexpr=MyDiff()
+    set    ambiwidth=double
+    set    winaltkeys=no
+    set    guifont=Inconsolata-dz\ for\ Powerline:h12
+
+    function! MyDiff()
+        let opt = '-a --binary '
+        if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+        if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+        let arg1 = v:fname_in
+        if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+        let arg2 = v:fname_new
+        if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+        let arg3 = v:fname_out
+        if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+        let eq = ''
+        if $VIMRUNTIME =~ ' '
+            if &sh =~ '\<cmd'
+                let cmd = '""' . $VIMRUNTIME . '\diff"'
+                let eq = '"'
+            else
+                let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+            endif
+        else
+            let cmd = $VIMRUNTIME . '\diff'
+        endif
+        silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq
+    endfunction
+endif
+" }}}
+" Unix GUI setting {{{1
+if(g:os_platform=='unix')
+    if(g:os_gui)
+        if filereadable("/etc/vim/gvimrc.local")
+            source /etc/vim/gvimrc.local
+        endif
+    else
+        set term=xterm-256color "colored airline
+        set t_Co=256
+        set t_ut=
+        if filereadable("/etc/vim/vimrc.local")
+            source /etc/vim/vimrc.local
+        endif
+    endif
+endif
+" }}}
+" Bundle configure {{{1
+" vim plugin manager
+" :PluginList       - 列出所有已配置的插件
+" :PluginInstall    - 安装插件,追加 `!` 用以更新或使用 :PluginUpdate
+" :PluginSearch foo - 搜索 foo ; 追加 `!` 清除本地缓存
+" :PluginClean      - 清除未使用插件,需要确认; 追加 `!` 自动批准移除未使用插件
+if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
+    set nocompatible
+    filetype off
+    if (g:os_platform == 'windows')
+        set runtimepath+=$VIM\vimfiles\bundle\Vundle.vim\
+    else
+        set runtimepath+=~/.vim/bundle/Vundle.vim/
+    endif
+
+    call vundle#begin(g:dir_plugin)
+
+    Plugin 'VundleVim/Vundle.vim'
+    Plugin 'kien/ctrlp.vim'
+    Plugin 'majutsushi/tagbar'
+    Plugin 'Xuyuanp/nerdtree-git-plugin'
+    Plugin 'vim-airline/vim-airline'
+    Plugin 'vim-airline/vim-airline-themes'
+    Plugin 'scrooloose/nerdtree'
+    Plugin 'scrooloose/nerdcommenter'
+    Plugin 'altercation/vim-colors-solarized' " Color theme
+    Plugin 'tomasr/molokai'                   " color theme
+    Plugin 'tacahiroy/ctrlp-funky'
+    Plugin 'godlygeek/tabular'                " Auto Align Plugin
+    Plugin 'terryma/vim-multiple-cursors'
+    Plugin 'ntpeters/vim-better-whitespace'
+
+    if (g:os_gui && g:os_platform == 'windows')
+        Plugin 'Shougo/neocomplete.vim'
+        Plugin 'plasticboy/vim-markdown'
+        Plugin 'iamcco/mathjax-support-for-mkdp'
+        Plugin 'iamcco/markdown-preview.vim'
+    else
+        Plugin 'FelikZ/ctrlp-py-matcher'
+        Plugin 'scrooloose/syntastic'
+        Plugin 'Valloric/YouCompleteMe'
+    endif
+
+    if(executable('ack'))
+        Plugin 'mileszs/ack.vim'
+    elseif(executable('ag'))
+        Plugin 'rking/ag.vim'
+    endif
+
+    call vundle#end()
+else
+    " Install choco which is package manager in Windows
+    if (g:os_platform == 'windows' && !executable('choco'))
+        " In cmd console
+        !@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+        " In powershell console
+        " !Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    endif
+    if executable('git')
+        if (g:dir_plugin == 'windows')
+            !git clone https://github.com/gmarik/Vundle.vim.git "D:\Program Files(x86)\Vim\vimfiles\bundle\Vundle.vim"
+        else
+            !git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+        endif
+    else
+        echo "Please Install git first!"
+    endif
+endif
+
+" Basic Setting {{{1
+filetype plugin on
+filetype indent on
+syntax enable
+syntax on
+color koehler
+set nocompatible
+set    expandtab
+set    shiftwidth=4
+set    tabstop=4
+set    softtabstop=4
+set    smarttab
+set    number
+set    rnu
+set    numberwidth=5
+set  nowrap
+set    autoindent
+set    autoread
+set    autowrite
+set    background=dark
+set    backspace=indent,eol,start
+set  nobackup
+set    cindent
+set    cinoptions=:0
+set    cinoptions+=g0
+set    clipboard+=unnamed
+set    cursorline
+set    completeopt=menuone,longest,preview
+set    encoding=utf-8
+set    langmenu=none
+set    termencoding=utf-8
+set    fileencoding=utf-8
+set    fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1,default
+set    fileformats=unix,dos
+set    foldenable
+set    foldmethod=marker
+set    guioptions-=Trml
+set    helplang=en
+set    hidden
+set    history=100
+set    hlsearch
+set    ruler
+set    showcmd
+set    incsearch
+set    wildmenu
+set    wildmode=list:longest,full
+set    shortmess+=mrwx
+set    smartcase
+set    ignorecase
+set    mouse=a
+set    mousehide
+set    laststatus=2
+set    lazyredraw
+set  noshowmatch
+set    matchtime=0
+set    pumheight=15
+set    scrolloff=5
+set    smartindent
+set    cmdheight=1
+set    textwidth=100
+set    whichwrap=h,l
+set    wildignore=*.bak,*.o,*.e,*.~
+set    wildignore+=*/tmp/*,*.so,*.bin,*.swp,*.mak,*.ctag
+set    sessionoptions=buffers,globals,localoptions,sesdir,tabpages,winsize,winpos,resize
+set  noswapfile
+set    ignorecase
+
+" }}}
+" Basic Functions {{{1
+let g:proj_dir = ".projDir" " Used for manage current project
+let g:ctags_file = ".ctags"
+let g:current_dir = getcwd()
+if isdirectory(g:current_dir."/".g:proj_dir) && filereadable(g:current_dir."/".g:ctags_file)
+    set tags+=.ctags;
+endif
+
+function! RunSystemCmd(Msg, Cmd)
+    echo a:Msg
+    call system(a:Cmd)
+    echon 'done'
+endfunction
+
+function! GenerateCtags()
+    if (executable('ctags') && isdirectory(g:current_dir."/".g:proj_dir))
+        call system("ctags -f /".g:ctags_file." --tag-relative=no -R --c++-kinds=+p --fields=+iaS .")
+"        call system("mv ctags ./.projDir")
+        setglobal tags+=.ctags
+        echo "ctags success generated!"
+    else
+        echo 'No directory named of ".projDir"!'
+    endif
+endfunction
+
+" Replace in VIM Normal mode.
+function! NormalReplace()
+    let l:word = input("Replace<".expand('<cword>')."> with:")
+    :exe '%s/\<'.expand('<cword>').'\>/'.l:word.'/gc'
+endfunction
+" Replace in VIM Visible mode.
+function! VisualReplace()
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+    let l:word = input("Replace " . l:pattern . " with:")
+    :exe '%s/' . l:pattern . '/' . l:word . '/gc'
+    let @" = l:saved_reg
+endfunction
+" Align by a specified symbol
+function! VisualAlign()
+    let l:align_symbol = input("What's symbol do you align to:")
+    if isdirectory(expand(g:dir_plugin.'/tabular/'))
+        :exe 'Tabularize /'.l:align_symbol
+    endif
+endfunction
+" }}}
+" Usful mapping {{{1
+let mapleader=','
+let localleader="\\"
+nnoremap <Space>            :
+vnoremap <Space>            :
+inoremap jk                 <Esc>
+vnoremap jk                 <Esc>
+nnoremap <leader>ev         :vsplit $MYVIMRC<cr>
+nnoremap <leader>sv         :source $MYVIMRC<cr>
+inoremap <C-v>              <Esc>"+gP
+vnoremap <C-c>              "+y<Esc>
+cnoremap <C-v>              <C-R>+
+nnoremap <C-h>              <C-W>h
+nnoremap <C-j>              <C-W>j
+nnoremap <C-k>              <C-W>k
+nnoremap <C-l>              <C-W>l
+inoremap <C-h>              <Esc><C-W>h
+inoremap <C-j>              <Esc><C-W>j
+inoremap <C-k>              <Esc><C-W>k
+inoremap <C-l>              <Esc><C-W>l
+nnoremap <M-j>              :resize +5<cr>
+nnoremap <M-k>              :resize -5<cr>
+nnoremap <M-h>              :vertical resize -5<cr>
+nnoremap <M-l>              :vertical resize +5<cr>
+nnoremap <silent>H          0
+nnoremap <silent>L          $
+nnoremap <silent><Left>     :bp<cr>
+nnoremap <silent><Right>    :bn<cr>
+nnoremap <silent><leader>th :tabprevious<cr>
+nnoremap <silent><leader>tl :tabnext<cr>
+nnoremap <leader>tn         :tabnew %:p<cr>
+nnoremap <leader>tc         : tabclose<cr>
+nnoremap <leader>-          ddp
+nnoremap <leader>_          ddkP
+nnoremap <leader>q          : q
+nnoremap <leader>w          : w<cr>
+nnoremap <leader>fn         : let @*=substitute(expand("%"), "/", "\\", "g")<cr>
+nnoremap <leader>fp         : let @*=substitute(expand("%:p"), "/", "\\", "g")<cr>
+nnoremap <C-u>              <Esc>ViwU<Esc>
+inoremap <C-u>              <Esc>ViwU<Esc>$a
+nnoremap <silent><leader>pa : set nu! rnu! paste!<cr>
+nnoremap <F9>               : call GenerateCtags()<cr>
+nnoremap <leader>rp         : call NormalReplace()<cr>
+vnoremap <leader>rp         : call VisualReplace()<cr>
+vnoremap <leader>al         : call VisualAlign()<cr>
+if has('cscope')
+    nnoremap <F10>          : call RunSystemCmd('Generate cscope...', 'cscope -Rbq')<cr>
+endif
+
+" New learnning.
+nnoremap <leader>" viw<Esc>i"<Esc>hbi"<Esc>lel
+vnoremap <leader>" iw<Esc>i"<Esc>h`<<Esc>i"<Esc>l`>l
+onoremap p i(
+onoremap in( :<C-u>normal! f(vi(<cr>
+onoremap il( :<C-u>normal! F)vi(<cr>
+
+" Get rid of my old mapping
+inoremap <Esc> <nop>
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
+nnoremap <up> <nop>
+nnoremap <down> <nop>
+" }}}
+" Autocmd for VIM events {{{1
+" Restore the last position when reopen
+autocmd BufReadPost *
+            \ if line("'\"") > 0 && line("'\"") <= line("$") |
+            \ exe "normal g'\"" |
+            \ endif
+" Auto close preview window when leave inert mode.
+autocmd InsertLeave             *       if pumvisible() == 0|pclose|endif
+augroup FlieAlignG
+    autocmd BufWritePre             *.html  :normal gg=G
+    autocmd BufWritePre             *.c     :normal gg=G
+    autocmd BufWritePre             *.cpp   :normal gg=G
+    autocmd BufWritePre             *.cxx   :normal gg=G
+    autocmd BufWritePre             *.h     :normal gg=G
+augroup END
+
+" Don't auto change line in blow files.
+autocmd BufNewfile,BufRead          *.c     setlocal nowrap|set tabstop=4
+autocmd BufNewfile,BufRead          *.cpp   setlocal nowrap
+autocmd BufNewfile,BufRead          *.h     setlocal nowrap
+autocmd BufNewfile,BufRead          *.html  setlocal nowrap
+autocmd BufNewfile,BufRead,BufEnter *       cd %:p:h
+autocmd FileType                    *.txt   setlocal spell,wrap,nonu
+autocmd FileType                    *.log   setlocal wrap
+" }}}
+" Abbreviations
+iabbrev @@      lujunboo@gmail.com
+iabbrev ccopy   Copyright 2018 JohnBror>JohnBro<cr>lujunboo@gmail.com
+
+" Plugin Settings{{{1
+" Ack.vim settings {{{2
+if (executable('ack') && isdirectory(expand(g:dir_plugin.'/ack.vim/')))
+    nnoremap <F5> :Ack! "<cword>" % <cr>
+    nnoremap <F6> :Ack! "<cword>" <cr>
+    if(executable('ag'))
+       let s:ack_ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
+       let s:ack_ignores .= ' --ignore "*.so" --ignore "*.o"'                   " files
+       let g:ack_arg = 'ag --vimgrep --smart-case --nocolumn --nogroup --skip-vcs-ignores '.s:ack_ignores
+    endif
+    if(executable('ack'))
+    endif
+    if(executable('grep'))
+    endif
+    let g:ack_defaultoptions = '-s -H --nogroup --nocolumn --vimgrep --smart-case --follow'
+    let g:ack_highlight=1
+    let g:ack_autoclose=1
+    let g:ack_autofold_results=1
+    let g:ack_use_cword_for_empty_search=1
+else
+    echo "Begin Install Ack..."
+    if (g:os_platform == 'windows' && executable('choco'))
+        !choco install ack
+    endif
+endif
+" }}}
+" Ag.vim settings {{{2
+if isdirectory(expand(g:dir_plugin.'/ag.vim/'))
+   nnoremap <F5> :Ag! "<cword>" % <cr>
+   nnoremap <F6> :Ag! "<cword>" <cr>
+   if executable('ag')
+       let s:ag_ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
+       let s:ag_ignores .= ' --ignore "*.so" --ignore "*.o"'                   " files
+       let g:ag_arg = 'ag --vimgrep --smart-case --nocolumn --nogroup --skip-vcs-ignores '.s:ag_ignores
+   endif
+   let g:ag_highlight=1
+   let g:ag_format="%f:%l:%m"
+   let g:ag_qhandler="botright copen 12"
+   let g:ag_autoclose=1
+   let g:ag_working_path_mode='r'
+   if (!executable('ag') && g:os_platform == 'windows' && executable('choco'))
+       echo "Begin Install Ag..."
+       !choco install ag
+   endif
+endif
+" }}}
+" Ctrlp.vim settings {{{2
+if isdirectory(expand(g:dir_plugin.'/ctrlp.vim/'))
+    nnoremap <silent><C-p> :CtrlP<cr>
+    nnoremap <silent><F4>  :CtrlPMRU<cr>
+    let g:loaded_ctrlp=0
+    let g:ctrlp_working_path_mode='ra'
+    let g:ctrlp_match_window='bottom,order:btt,min:1,max:12,results:12'
+    let g:ctrlp_default_input=0
+    let g:ctrlp_max_history=&history
+    let g:ctrlp_by_filename=1
+    let g:ctrlp_lazy_update=1
+    let g:ctrlp_custom_ignore = {
+                \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+                \ 'file': '\v(\.exe|\.so|\.dll|\.bin|\.pkg|\.bak|\.\~|\.mak|Makefile)',
+                \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
+                \ }
+    " Fast CtrlP matcher based on python, performance difference is up to x22
+    if isdirectory(expand("~/.vim/bundle/ctrlp-py-matcher/"))
+        let g:ctrlp_match_func = {'match': 'pymatcher#PyMatch'}
+    endif
+    if executable('ag')
+        let s:ctrlp_ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
+        let s:ctrlp_ignores .= ' --ignore "*.pyc" --ignore "*.pyo"'                " files
+        let s:ctrlp_fallback = 'ag %s --nogroup -l -f --skip-vcs-ignores -g "" '.s:ctrlp_ignores
+    elseif executable('ack-grep')
+        let s:ctrlp_fallback='ack-grep %s --nogroup -f ""'
+    elseif executable('ack')
+        let s:ctrlp_fallback='ack %s --nogroup -f ""'
+    elseif has('win32')
+        let s:ctrlp_fallback='dir %s /-n /b /s /a-d'
+    else
+        let g:ctrlp_use_caching=1
+        let g:ctrlp_clear_cache_on_exit=1
+        let g:ctrlp_cache_dir=$HOME.'/.cache/ctrlp'
+        let g:ctrlp_max_files=10000
+        let g:ctrlp_max_deepth=25
+        let g:ctrlp_follow_symlinks=1
+        "let g:ctrlp_fallback = 'find %s -type f'
+    endif
+    if exists("g:ctrlp_user_command")
+        unlet g:ctrlp_user_command
+    endif
+    if exists("s:ctrlp_fallback")
+        let g:ctrlp_user_command = {
+                    \ 'types': {
+                    \ 1: ['.git', 'cd %s && git ls-files . --cached --others'],
+                    \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+                    \ },
+                    \ 'fallback': s:ctrlp_fallback
+                    \ }
+    endif
+    " Ctrlp Extensions
+    if isdirectory(expand("~/.vim/bundle/ctrlp-funky/"))
+        nnoremap <leader>fu :CtrlPFunky<cr>
+        let g:ctrlp_extensions=['funky']
+    endif
+endif
+" }}}
+" Tagbar settings {{{2
+if isdirectory(expand(g:dir_plugin.'/tagbar/')) && executable('ctags')
+    nnoremap <F2> :TagbarToggle<cr>
+    autocmd FileType cpp nested :TagbarOpen
+    let g:tagbar_left=1
+    let g:tagbar_width=30
+    let g:tagbar_autoclose=1
+    let g:tagbar_autofocus=1
+    let g:tagbar_sort=0
+    let g:tagbar_compact = 1
+    let g:tagbar_indent = 1
+    let g:tagbar_autopreview = 1
+    let g:tagbar_foldlevel=2
+    let g:tagbar_previewwin_pos="rightbelow"
+endif
+" }}}
+" Nerdtree settings {{{2
+if isdirectory(expand(g:dir_plugin.'/nerdtree/'))
+    nnoremap <F3> :NERDTreeToggle<cr>
+    nnoremap <leader>nf :NERDTreeFind<CR>
+    let NERDTreeQuitOnOpen=1
+    let NERDTreeShowLineNumbers=1
+    let NERDTreeWinPos="right"
+    let NERDTreeWinSize=30
+    if isdirectory(expand("~/.vim/bundle/nerdtree-git-plugin"))
+        let g:NERDTreeIndicatorMapCustom = {
+                    \ "Modified"  : "✹",
+                    \ "Staged"    : "✚",
+                    \ "Untracked" : "✭",
+                    \ "Renamed"   : "➜",
+                    \ "Unmerged"  : "═",
+                    \ "Deleted"   : "✖",
+                    \ "Dirty"     : "✗",
+                    \ "Clean"     : "✔︎",
+                    \ 'Ignored'   : '☒',
+                    \ "Unknown"   : "?"
+                    \ }
+    endif
+endif
+" }}}
+" Airline settings {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-airline/'))
+    let g:airline_powerline_fonts = 1
+    if !exists('g:airline_symbols')
+        let g:airline_symbols = {}
+    endif
+    let g:airline_symbols_ascii = 1
+    let g:airline_left_sep=''
+    let g:airline_right_sep=''
+    let g:airline#extensions#quickfix#quickfix_text = 'Quickfix'
+    let g:airline#extensions#syntastic#enabled = 1
+    let g:airline#extensions#branch#enabled = 1
+    let g:airline#extensions#tagbar#enabled = 1
+    let g:airline#extensions#hunks#enabled = 1
+    let g:airline#extensions#tabline#enabled = 1
+    let g:airline#extensions#tabline#show_buffers = 0
+    let g:airline#extensions#tabline#tab_min_count = 2
+    let g:airline#extensions#tabline#show_tab_nr = 0
+    let g:ariline#entensions#tabline#tab_nr_type = 1
+    let g:airline#extensions#tabline#show_close_button = 0
+    if isdirectory(expand(g:dir_plugin.'/vim-airline-themes/'))
+        let g:airline_theme='onedark'
+    endif
+endif
+" }}}
+" Syntastic settings {{{2
+if isdirectory(expand(g:dir_plugin.'/syntastic/'))
+    set    statusline+=%#warningmsg#
+    set    statusline+=%{SyntasticStatuslineFlag()}
+    set    statusline+=%*
+	"let g:syntastic_always_populate_loc_list = 1
+	"let g:syntastic_auto_loc_list = 1
+	let g:syntastic_check_on_open = 1
+	let g:syntastic_check_on_wq = 1
+    let g:syntastic_error_symbol='>>'
+    let g:syntastic_warning_symbol='>'
+    let g:syntastic_enable_highlighting=1
+    let g:syntastic_auto_jump=0
+    "let g:syntastic_airline
+    let g:syntastic_javascript_checkers = ['jsl', 'jshint']
+    let g:syntastic_html_checkers=['tidy', 'jshint']
+
+    let g:syntastic_c_check_header = 0
+    let g:syntastic_c_remove_include_headers=1
+    let g:syntastic_cpp_check_errors = 1
+    let g:syntastic_cpp_remove_include_headers=0
+    function! ToggleErrors()
+        let old_last_winnr = winnr('$')
+        lclose
+        if old_last_winnr == winnr('$')
+            " Nothing was closed, open syntastic error location panel
+            Errors
+        endif
+    endfunction
+    nnoremap <Leader>s :call ToggleErrors()<cr>
+    nnoremap <Leader>sn :lnext<cr>
+    nnoremap <Leader>sp :lprevious<cr>
+endif
+" }}}
+" NERDcommenter settings {{{2
+if isdirectory(expand(g:dir_plugin.'/nerdcommenter/'))
+    let g:NERDSpaceDelims = 1
+    let g:NERDComaptSexyComs = 1
+    let g:NERDAltDelims_java = 1
+    let g:NERDCommentEmptyLines = 1
+    let g:NERDDefaultAlign = 'start'
+    let g:NERDTrimTrailingWhitespace = 1
+endif
+" }}}
+" YouCompleteMe settings {{{2
+" !Windows : Completer by YouCompleteMe
+if isdirectory(expand(g:dir_plugin.'/YouCompleteMe/'))
+    let g:ycm_global_ycm_extra_conf='./.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
+    let g:ycm_confirm_extra_conf = 0
+    let g:ycm_collect_identifiers_from_tags_files = 1
+    let g:ycm_min_num_of_chars_for_completion = 2 " complete form 2nd character
+    let g:ycm_seed_identifiers_with_syntax = 1 " Open syntax complete
+    let g:ycm_complete_in_comments = 1 " Also in comments
+    let g:ycm_complete_in_strings = 1
+    let g:ycm_cache_omnifunc = 0
+    let g:ycm_filetype_blacklist = {
+                \ 'tagbar' : 1,
+                \ 'nerdtree' : 1,
+                \ }
+    let g:ycm_key_invoke_completion = '<M-;>'
+    inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"
+    inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
+    inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
+    inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
+    inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
+    nnoremap <C-\>] :YcmCompleter GoTo<cr>
+endif
+" }}}
+" color settings {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-colors-solarized/')) && 0
+    set background=dark
+    let g:solarized_termcolors=256
+"    let g:solarized_termtrans=1
+    let g:solarized_underline=0
+    let g:solarized_contrast = "high"
+    let g:solarized_visibility = "high"
+    let g:solarized_hitrail = 1
+    colorscheme solarized
+endif
+if isdirectory(expand("~/.vim/bundle/molokai/")) && 0
+    let g:molokai_original = 1
+    let g:rehash256=1
+"     color molokai
+endif
+" }}}
+" Neocomplete.vim setting {{{2
+if isdirectory(expand(g:dir_plugin.'/neocomplete.vim/')) && has('lua')
+    "disable AutoComplPop.
+    let g:acp_enableAtStartup = 0
+    " Use neocomplete.
+    let g:neocomplete#enable_at_startup = 1
+    " Use smartcase.
+    let g:neocomplete#enable_smart_case = 1
+    " Set minimum syntax keyword length.
+    let g:neocomplete#sources#syntax#min_keyword_length = 3
+
+    " Define dictionary.
+    let g:neocomplete#sources#dictionary#dictionaries = {
+                \ 'default' : '',
+                \ 'vimshell' : $HOME.'/.vimshell_hist',
+                \ 'scheme' : $HOME.'/.gosh_completions'
+                \ }
+
+    " Define keyword.
+    if !exists('g:neocomplete#keyword_patterns')
+        let g:neocomplete#keyword_patterns = {}
+    endif
+    let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+    " Plugin key-mappings.
+    inoremap <expr><C-g>     neocomplete#undo_completion()
+    inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+    " Recommended key-mappings.
+    " <CR>: close popup and save indent.
+    inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+    function! s:my_cr_function()
+        return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+        " For no inserting <CR> key.
+        "return pumvisible() ? "\<C-y>" : "\<CR>"
+    endfunction
+    " <TAB>: completion.
+    inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+    " <C-h>, <BS>: close popup and delete backword char.
+    inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+    inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+    " Close popup by <Space>.
+    "inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
+
+    " AutoComplPop like behavior.
+    "let g:neocomplete#enable_auto_select = 1
+
+    " Shell like behavior(not recommended).
+    "set completeopt+=longest
+    "let g:neocomplete#enable_auto_select = 1
+    "let g:neocomplete#disable_auto_complete = 1
+    "inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+
+    " Enable omni completion.
+    autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+    autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+    autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+    autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+    autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+    " Enable heavy omni completion.
+    if !exists('g:neocomplete#sources#omni#input_patterns')
+        let g:neocomplete#sources#omni#input_patterns = {}
+    endif
+    let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+    let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+    let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+    " For perlomni.vim setting.
+    " https://github.com/c9s/perlomni.vim
+    let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+endif
+" }}}
+" vim Markdown setting, just in gui {{{2
+if isdirectory(expand(g:dir_plugin.'/markdown-preview.vim/'))
+    let g:mkdp_path_to_chrome = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+    let g:mkdp_auto_start = 0
+    let g:mkdp_auto_open = 0
+    let g:mkdp_auto_close = 1
+    let g:mkdp_refresh_slow = 0
+    let g:mkdp_command_for_global = 0
+    nnoremap <silent> <F11> <Plug>MarkdownPreview
+    inoremap <silent> <F11> <Plug>MarkdownPreview
+    nnoremap <leader>ms <Plug>StopMarkdownPreview
+endif
+"}}}
+" VIM Multiple Line setting {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-multiple-cursors/'))
+    let g:multi_cursor_use_default_mapping=0
+    let g:multi_cursor_next_key='<M-n>'
+    let g:multi_cursor_prev_key='<M-p>'
+    let g:multi_cursor_skip_key='<M-x>'
+    let g:multi_cursor_quit_key='<Esc>'
+endif
+"}}}
+" Better white-space setting {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
+    nnoremap <F7>              :exe 'ToggleStripWhitespaceOnSave'<cr>
+    nnoremap <leader>ws        :normal StripWhitespace<cr>
+    autocmd FileType    *    autocmd BufEnter <buffer> EnableWhitespace
+    autocmd FileType    c    autocmd BufEnter <buffer> EnableStripWhitespaceOnSave
+    autocmd FileType    h    autocmd BufEnter <buffer> EnableStripWhitespaceOnSave
+    autocmd FileType    cpp  autocmd BufEnter <buffer> EnableStripWhitespaceOnSave
+    autocmd FileType    java autocmd BufEnter <buffer> EnableStripWhitespaceOnSave
+    let g:better_whitespace_filetypes_blacklist=['txt', 'log', 'diff', 'unite', 'qf', 'help']
+    let g:better_whitespace_verbosity=1
+endif
+"}}}
+"}}}
+
