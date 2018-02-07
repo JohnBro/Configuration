@@ -20,7 +20,7 @@ endif
 " }}}
 " Windows GUI setting {{{1
 if (g:os_platform=='windows' && g:os_gui)
-    source $VIMRUNTIME/mswin.vim
+    source $VIMRUNTIME/mswin.vimj
     source $VIMRUNTIME/delmenu.vim
     behave mswin
     winpos 50 50        " Window Position
@@ -303,9 +303,6 @@ nnoremap <F9>               : call GenerateCtags()<cr>
 nnoremap <leader>rp         : call NormalReplace()<cr>
 vnoremap <leader>rp         : call VisualReplace()<cr>
 vnoremap <leader>al         : call VisualAlign()<cr>
-if has('cscope')
-    nnoremap <F10>          : call RunSystemCmd('Generate cscope...', 'cscope -Rbq')<cr>
-endif
 
 " New learnning.
 nnoremap <leader>" viw<Esc>i"<Esc>hbi"<Esc>lel
@@ -712,6 +709,37 @@ if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
     autocmd FileType    java autocmd BufEnter <buffer> EnableStripWhitespaceOnSave
     let g:better_whitespace_filetypes_blacklist=['txt', 'log', 'diff', 'unite', 'qf', 'help']
     let g:better_whitespace_verbosity=1
+endif
+"}}}
+" Cscope setting {{{2
+if has('cscope')
+    set cscopetag
+    set csto=0
+    function! EstablishCscope()
+        if (isdirectory(g:current_dir.'/'.g:proj_dir))
+            if (filereadable(g:current_dir.'/'.g:cscope_file))
+                cscope add cscope.out
+            elseif $CSCOPE_DB != ""
+                cs add $CSCOPE_DB
+            else
+                call RunSystemCmd('Generate cscope...', 'cscope -Rbq')
+            endif
+        else
+            echo "Establish cscope error! Please check your env(cscope/proj)"
+        endif
+    endfunction
+
+    " Show message when any oterhs cscope db added
+    set cscopeverbose
+    nnoremap <F10>          : call EstablishCscope()<cr>
+    nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
+    nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>	
 endif
 "}}}
 "}}}
