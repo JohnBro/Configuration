@@ -226,7 +226,7 @@ endfunction
 
 function! GenerateCtags()
     if (executable('ctags') && isdirectory(g:current_dir."/".g:proj_dir))
-        call system("ctags -f /".g:ctags_file." --tag-relative=no -R --c++-kinds=+p --fields=+iaS .")
+        call system("ctags -f ".g:ctags_file." --tag-relative=no -R --c++-kinds=+p --fields=+iaS .")
 "        call system("mv ctags ./.projDir")
         setglobal tags+=.ctags
         echo "ctags success generated!"
@@ -328,20 +328,12 @@ autocmd BufReadPost *
             \ endif
 " Auto close preview window when leave inert mode.
 autocmd InsertLeave             *       if pumvisible() == 0|pclose|endif
-augroup FlieAlignG
-    autocmd BufWritePre             *.html  :normal gg=G
-    autocmd BufWritePre             *.c     :normal gg=G
-    autocmd BufWritePre             *.cpp   :normal gg=G
-    autocmd BufWritePre             *.cxx   :normal gg=G
-    autocmd BufWritePre             *.h     :normal gg=G
-augroup END
 
 " Don't auto change line in blow files.
 autocmd BufNewfile,BufRead          *.c     setlocal nowrap|set tabstop=4
 autocmd BufNewfile,BufRead          *.cpp   setlocal nowrap
 autocmd BufNewfile,BufRead          *.h     setlocal nowrap
 autocmd BufNewfile,BufRead          *.html  setlocal nowrap
-autocmd BufNewfile,BufRead,BufEnter *       cd %:p:h
 autocmd FileType                    *.txt   setlocal spell,wrap,nonu
 autocmd FileType                    *.log   setlocal wrap
 " }}}
