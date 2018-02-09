@@ -92,18 +92,20 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
 
     Plugin 'VundleVim/Vundle.vim'
     Plugin 'kien/ctrlp.vim'
+    Plugin 'FelikZ/ctrlp-py-matcher'
     Plugin 'majutsushi/tagbar'
     Plugin 'Xuyuanp/nerdtree-git-plugin'
     Plugin 'vim-airline/vim-airline-themes'
     Plugin 'scrooloose/nerdtree'
     Plugin 'scrooloose/nerdcommenter'
     Plugin 'altercation/vim-colors-solarized' " Color theme
-    Plugin 'tacahiroy/ctrlp-funky'
     Plugin 'godlygeek/tabular'                " Auto Align Plugin
     Plugin 'terryma/vim-multiple-cursors'
     Plugin 'ntpeters/vim-better-whitespace'
     Plugin 'liuchengxu/eleline.vim'
     Plugin 'ctjhoa/spacevim'
+    Plugin 'maralla/completor.vim'
+    Plugin 'maralla/completor-neosnippet'
 
     if (g:os_gui && g:os_platform == 'windows')
         Plugin 'Shougo/neocomplete.vim'
@@ -111,9 +113,8 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
         Plugin 'iamcco/mathjax-support-for-mkdp'
         Plugin 'iamcco/markdown-preview.vim'
     else
-        Plugin 'FelikZ/ctrlp-py-matcher'
-"        Plugin 'scrooloose/syntastic'
-"        Plugin 'Valloric/YouCompleteMe'
+        Plugin 'Valloric/YouCompleteMe'
+        "        Plugin 'scrooloose/syntastic'
     endif
 
     if(executable('ack'))
@@ -141,6 +142,8 @@ else
         echo "Please Install git first!"
     endif
 endif
+" Plugin selection
+let g:completion_plugin = 'ycmd'
 
 " Basic Setting {{{1
 filetype plugin on
@@ -388,42 +391,53 @@ endif
 " }}}
 " Ctrlp.vim settings {{{2
 if isdirectory(expand(g:dir_plugin.'/ctrlp.vim/'))
-    nnoremap <silent><C-p> :CtrlP<cr>
-    nnoremap <silent><F4>  :CtrlPMRU<cr>
+    nnoremap <C-p>      :CtrlP<cr>
+    nnoremap <F4>       :CtrlPMRU<cr>
+    nnoremap <leader>fr :CtrlPMRU<cr>
     let g:loaded_ctrlp=0
     let g:ctrlp_working_path_mode='ra'
     let g:ctrlp_match_window='bottom,order:btt,min:1,max:12,results:12'
-    let g:ctrlp_default_input=0
-    let g:ctrlp_max_history=&history
     let g:ctrlp_by_filename=1
+    let g:ctrlp_switch_buffer = 'et'
+    let g:ctrlp_regexp = 1
+    let g:ctrlp_default_input=0
+    let g:ctrlp_use_caching=1
+    let g:ctrlp_clear_cache_on_exit=0
+    let g:ctrlp_mruf_max = 250
+    let g:ctrlp_max_history=&history
     let g:ctrlp_lazy_update=1
+    let g:ctrlp_map = '<c-p>'
+    let g:ctrlp_cmd = 'CtrlP'
+    let g:ctrlp_follow_symlinks = 1
+    let g:ctrlp_mruf_relative = 1
+    let g:ctrlp_mruf_execlude = '/tmp/.*\|/temp/.*'
+    let g:ctrlp_cache_dir=$HOME.'/.cache/ctrlp'
     let g:ctrlp_custom_ignore = {
                 \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-                \ 'file': '\v(\.exe|\.so|\.dll|\.bin|\.pkg|\.bak|\.\~|\.mak|Makefile)',
+                \ 'file': '\v(\.exe|\.so|\.dll|\.bin|\.pkg|\.bak|\.\~|\.mak|Makefile|\.zip|\.tar|\.gz|\.bz2)',
                 \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
                 \ }
-    " Fast CtrlP matcher based on python, performance difference is up to x22
-    if isdirectory(expand("~/.vim/bundle/ctrlp-py-matcher/"))
-        let g:ctrlp_match_func = {'match': 'pymatcher#PyMatch'}
-    endif
     if executable('ag')
-        let s:ctrlp_ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
-        let s:ctrlp_ignores .= ' --ignore "*.pyc" --ignore "*.pyo"'                " files
-        let s:ctrlp_fallback = 'ag %s --nogroup -l -f --skip-vcs-ignores -g "" '.s:ctrlp_ignores
+        " Use Ag over Grep
+        set grepprg=ag\ --nogroup\ --nocolor
+        " Use Ag in Ctrlp for listing files
+        let s:ctrlp_fallback = 'ag %s -l -g ""'
+        let g:ctrlp_use_caching = 0
     elseif executable('ack-grep')
         let s:ctrlp_fallback='ack-grep %s --nogroup -f ""'
+        let g:ctrlp_use_caching = 0
     elseif executable('ack')
         let s:ctrlp_fallback='ack %s --nogroup -f ""'
+        let g:ctrlp_use_caching = 0
     elseif has('win32')
         let s:ctrlp_fallback='dir %s /-n /b /s /a-d'
+        let g:ctrlp_use_caching = 0
     else
-        let g:ctrlp_use_caching=1
-        let g:ctrlp_clear_cache_on_exit=1
-        let g:ctrlp_cache_dir=$HOME.'/.cache/ctrlp'
-        let g:ctrlp_max_files=10000
-        let g:ctrlp_max_deepth=25
-        let g:ctrlp_follow_symlinks=1
-        "let g:ctrlp_fallback = 'find %s -type f'
+        if (g:os_platform == 'windows')
+            let s:ctrlp_fallback = 'dir %s /-n /b /s /a-d' " Windows
+        else
+            let s:ctrlp_fallback = 'find %s -type f'       " MacOSX/Linux
+        endif
     endif
     if exists("g:ctrlp_user_command")
         unlet g:ctrlp_user_command
@@ -437,10 +451,9 @@ if isdirectory(expand(g:dir_plugin.'/ctrlp.vim/'))
                     \ 'fallback': s:ctrlp_fallback
                     \ }
     endif
-    " Ctrlp Extensions
-    if isdirectory(expand("~/.vim/bundle/ctrlp-funky/"))
-        nnoremap <leader>fu :CtrlPFunky<cr>
-        let g:ctrlp_extensions=['funky']
+    " Fast CtrlP matcher based on python, performance difference is up to x22
+    if isdirectory(expand("~/.vim/bundle/ctrlp-py-matcher/"))
+        let g:ctrlp_match_func = {'match': 'pymatcher#PyMatch'}
     endif
 endif
 " }}}
@@ -528,10 +541,18 @@ if isdirectory(expand(g:dir_plugin.'/nerdcommenter/'))
     let g:NERDTrimTrailingWhitespace = 1
 endif
 " }}}
-" YouCompleteMe settings {{{2
+" Completion Plugin configuration {{{2
+" Common configuration {{{3
+inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"
+inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
+inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
+inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
+inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
+"}}}
+" YouCompleteMe settings {{{3
 " !Windows : Completer by YouCompleteMe
-if isdirectory(expand(g:dir_plugin.'/YouCompleteMe/'))
-    let g:ycm_global_ycm_extra_conf='./.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
+if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')) && g:completion_plugin == 'ycmd')
+    let g:ycm_global_ycm_extra_conf='./.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
     let g:ycm_confirm_extra_conf = 0
     let g:ycm_collect_identifiers_from_tags_files = 1
     let g:ycm_min_num_of_chars_for_completion = 2 " complete form 2nd character
@@ -544,15 +565,17 @@ if isdirectory(expand(g:dir_plugin.'/YouCompleteMe/'))
                 \ 'nerdtree' : 1,
                 \ }
     let g:ycm_key_invoke_completion = '<M-;>'
-    inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"
-    inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
-    inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
-    inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
-    inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
     nnoremap <C-\>] :YcmCompleter GoTo<cr>
 endif
 " }}}
-" Neocomplete.vim setting {{{2
+" Auto Completor Plugin setting {{{3
+if (isdirectory(expand(g:dir_plugin.'/completor.vim/')) && g:completion_plugin == 'completor')
+    inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+    inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+    inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+endif
+" }}}
+" Neocomplete.vim setting {{{3
 if isdirectory(expand(g:dir_plugin.'/neocomplete.vim/')) && has('lua')
     "disable AutoComplPop.
     let g:acp_enableAtStartup = 0
@@ -625,6 +648,7 @@ if isdirectory(expand(g:dir_plugin.'/neocomplete.vim/')) && has('lua')
     let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 endif
 " }}}
+" }}}
 " vim Markdown setting, just in gui {{{2
 if isdirectory(expand(g:dir_plugin.'/markdown-preview.vim/'))
     let g:mkdp_path_to_chrome = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
@@ -650,7 +674,7 @@ endif
 " Better white-space setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
     nnoremap    <leader>tw          :ToggleStripWhitespaceOnSave<cr>
-    autocmd     BufEnter        *   EnableWhitespace
+    autocmd     BufWritePre     *       EnableWhitespace
     let g:better_whitespace_filetypes_blacklist=['txt', 'log', 'diff', 'unite', 'qf', 'help']
     let g:better_whitespace_verbosity = 0
 endif
