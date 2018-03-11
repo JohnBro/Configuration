@@ -74,7 +74,7 @@ if(g:os_platform=='unix')
 endif
 " }}}
 " Bundle configure {{{1
-" vim plugin manager
+" vim plugin manager {{{2
 " :PluginList       - 列出所有已配置的插件
 " :PluginInstall    - 安装插件,追加 `!` 用以更新或使用 :PluginUpdate
 " :PluginSearch foo - 搜索 foo ; 追加 `!` 清除本地缓存
@@ -142,8 +142,11 @@ else
         echo "Please Install git first!"
     endif
 endif
-" Plugin selection
+" }}}
+" Plugin selection {{{2
 let g:completion_plugin = 'ycmd'
+" }}}
+"}}}
 
 " Basic Setting {{{1
 filetype plugin on
@@ -284,9 +287,9 @@ if (g:os_platform == 'windows')
     nnoremap <M-k>              :resize -5<cr>
     nnoremap <M-h>              :vertical resize -5<cr>
     nnoremap <M-l>              :vertical resize +5<cr>
-    nnoremap <leader>fn         :let @*=substitute(expand("%"), "/", "\\", "g")<cr>
-    nnoremap <leader>fp         :let @*=substitute(expand("%:p"), "/", "\\", "g")<cr>
 endif
+nnoremap <leader>fn             :let @*=substitute(expand("%"), "/", "\\", "g")<cr>
+nnoremap <leader>fp             :let @*=substitute(expand("%:p"), "/", "\\", "g")<cr>
 nnoremap <silent>H              0
 nnoremap <silent>L              $
 nnoremap <Left>                 :bp<cr>
