@@ -74,7 +74,6 @@ if(g:os_platform=='unix')
 endif
 " }}}
 " Bundle configure {{{1
-" vim plugin manager {{{2
 " :PluginList       - 列出所有已配置的插件
 " :PluginInstall    - 安装插件,追加 `!` 用以更新或使用 :PluginUpdate
 " :PluginSearch foo - 搜索 foo ; 追加 `!` 清除本地缓存
@@ -103,9 +102,8 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
     Plugin 'terryma/vim-multiple-cursors'
     Plugin 'ntpeters/vim-better-whitespace'
     Plugin 'liuchengxu/eleline.vim'
-    Plugin 'ctjhoa/spacevim'
-    Plugin 'maralla/completor.vim'
-    Plugin 'maralla/completor-neosnippet'
+    Plugin 'wsdjeg/flygrep.vim'
+    Plugin 'Valloric/YouCompleteMe'
 
     if (g:os_gui && g:os_platform == 'windows')
         Plugin 'Shougo/neocomplete.vim'
@@ -113,8 +111,7 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
         Plugin 'iamcco/mathjax-support-for-mkdp'
         Plugin 'iamcco/markdown-preview.vim'
     else
-        Plugin 'Valloric/YouCompleteMe'
-        "        Plugin 'scrooloose/syntastic'
+"        Plugin 'scrooloose/syntastic'
     endif
 
     if(executable('ack'))
@@ -143,10 +140,6 @@ else
     endif
 endif
 " }}}
-" Plugin selection {{{2
-let g:completion_plugin = 'ycmd'
-" }}}
-"}}}
 
 " Basic Setting {{{1
 filetype plugin on
@@ -317,7 +310,6 @@ onoremap in( :<C-u>normal! f(vi(<cr>
 onoremap il( :<C-u>normal! F)vi(<cr>
 
 " Get rid of my old mapping
-inoremap <Esc> <nop>
 inoremap <up> <nop>
 inoremap <down> <nop>
 inoremap <left> <nop>
@@ -554,7 +546,7 @@ inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 "}}}
 " YouCompleteMe settings {{{3
 " !Windows : Completer by YouCompleteMe
-if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')) && g:completion_plugin == 'ycmd')
+if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
     let g:ycm_global_ycm_extra_conf='./.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
     let g:ycm_confirm_extra_conf = 0
     let g:ycm_collect_identifiers_from_tags_files = 1
@@ -571,15 +563,8 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')) && g:completion_plugin =
     nnoremap <C-\>] :YcmCompleter GoTo<cr>
 endif
 " }}}
-" Auto Completor Plugin setting {{{3
-if (isdirectory(expand(g:dir_plugin.'/completor.vim/')) && g:completion_plugin == 'completor')
-    inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
-    inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-    inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-endif
-" }}}
 " Neocomplete.vim setting {{{3
-if isdirectory(expand(g:dir_plugin.'/neocomplete.vim/')) && has('lua')
+if isdirectory(expand(g:dir_plugin.'/neocomplete.vim/')) && has('lua') && 0
     "disable AutoComplPop.
     let g:acp_enableAtStartup = 0
     " Use neocomplete.
@@ -719,4 +704,9 @@ if has('cscope')
     nnoremap <C-\>d         :cs find d <C-R>=expand("<cword>")<CR><CR>
 endif
 "}}}
+" FlyGrep.vim setting {{{2
+if isdirectory(expand(g:dir_plugin.'/FlyGrep.vim/'))
+    nnoremap    <leader>g/          :FlyGrep<cr>
+endif
+" }}}
 "}}}
