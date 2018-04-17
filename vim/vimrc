@@ -455,7 +455,6 @@ endif
 " Tagbar settings {{{2
 if isdirectory(expand(g:dir_plugin.'/tagbar/')) && executable('ctags')
     nnoremap <F2> :TagbarToggle<cr>
-    autocmd FileType cpp nested :TagbarOpen
     let g:tagbar_left=1
     let g:tagbar_width=30
     let g:tagbar_autoclose=1
