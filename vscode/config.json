@@ -32,6 +32,9 @@
         "editor.insertSpaces": false
     },
 
+    "terminal.integrated.fontSize": 14,
+    "terminal.integrated.lineHeight": 1.2,
+
     "vim.leader": ",",
     "vim.cmdLineInitialColon":true,
     "vim.easymotion": true,
