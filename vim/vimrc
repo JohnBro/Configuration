@@ -102,22 +102,16 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
     Plugin 'terryma/vim-multiple-cursors'
     Plugin 'ntpeters/vim-better-whitespace'
     Plugin 'liuchengxu/eleline.vim'
-    Plugin 'wsdjeg/flygrep.vim'
     Plugin 'Valloric/YouCompleteMe'
+    Plugin 'JohnBro/DoxygenToolkit.vim'
+    Plugin 'airblade/vim-gitgutter'
+    Plugin 'rking/ag.vim'
 
     if (g:os_gui && g:os_platform == 'windows')
         Plugin 'Shougo/neocomplete.vim'
         Plugin 'plasticboy/vim-markdown'
         Plugin 'iamcco/mathjax-support-for-mkdp'
         Plugin 'iamcco/markdown-preview.vim'
-    else
-"        Plugin 'scrooloose/syntastic'
-    endif
-
-    if(executable('ack'))
-        Plugin 'mileszs/ack.vim'
-    elseif(executable('ag'))
-        Plugin 'rking/ag.vim'
     endif
 
     call vundle#end()
@@ -147,7 +141,7 @@ filetype indent on
 syntax enable
 syntax on
 color koehler
-set nocompatible
+set  nocompatible
 set    expandtab
 set    shiftwidth=4
 set    tabstop=4
@@ -201,6 +195,7 @@ set    scrolloff=5
 set    smartindent
 set    cmdheight=1
 set    textwidth=100
+set    updatetime=1000
 set    whichwrap=h,l
 set    wildignore=*.bak,*.o,*.e,*.~
 set    wildignore+=*/tmp/*,*.so,*.bin,*.swp,*.mak,*.ctag
@@ -338,14 +333,14 @@ autocmd FileType                    *.log   setlocal wrap
 iabbrev @@      lujunboo@gmail.com
 iabbrev ccopy   Copyright 2018 JohnBror>JohnBro<cr>lujunboo@gmail.com
 
-" Plugin Settings{{{1
+ " Plugin Settings{{{1
 " Ack.vim settings {{{2
-if (executable('ack') && isdirectory(expand(g:dir_plugin.'/ack.vim/')))
+if executable('ack') && isdirectory(expand(g:dir_plugin.'/ack.vim/'))
     nnoremap <F5> :Ack! "<cword>" % <cr>
     nnoremap <F6> :Ack! "<cword>" <cr>
     if(executable('ag'))
-       let s:ack_ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
-       let s:ack_ignores .= ' --ignore "*.so" --ignore "*.o"'                   " files
+       let s:ack_ignores = '--ignore ".git/-ignore ".hg/-ignore ".svn/"'  " dirs
+       let s:ack_ignores .= ' --ignore "*.so-ignore "*.o"'                   " files
        let g:ack_arg = 'ag --vimgrep --smart-case --nocolumn --nogroup --skip-vcs-ignores '.s:ack_ignores
     endif
     if(executable('ack'))
@@ -354,34 +349,37 @@ if (executable('ack') && isdirectory(expand(g:dir_plugin.'/ack.vim/')))
     endif
     let g:ack_defaultoptions = '-s -H --nogroup --nocolumn --vimgrep --smart-case --follow'
     let g:ack_highlight=1
-    let g:ack_autoclose=1
+    let g:ack_autoclose=0
     let g:ack_autofold_results=1
     let g:ack_use_cword_for_empty_search=1
-else
-    echo "Begin Install Ack..."
-    if (g:os_platform == 'windows' && executable('choco'))
-        !choco install ack
-    endif
 endif
 " }}}
 " Ag.vim settings {{{2
-if isdirectory(expand(g:dir_plugin.'/ag.vim/'))
-   nnoremap <F5> :Ag! "<cword>" % <cr>
-   nnoremap <F6> :Ag! "<cword>" <cr>
-   if executable('ag')
-       let s:ag_ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
-       let s:ag_ignores .= ' --ignore "*.so" --ignore "*.o"'                   " files
-       let g:ag_arg = 'ag --vimgrep --smart-case --nocolumn --nogroup --skip-vcs-ignores '.s:ag_ignores
-   endif
-   let g:ag_highlight=1
-   let g:ag_format="%f:%l:%m"
-   let g:ag_qhandler="botright copen 12"
-   let g:ag_autoclose=1
-   let g:ag_working_path_mode='r'
-   if (!executable('ag') && g:os_platform == 'windows' && executable('choco'))
-       echo "Begin Install Ag..."
-       !choco install ag
-   endif
+if executable('ag') && isdirectory(expand(g:dir_plugin.'/ag.vim/'))
+    function! AgProjectSymbol()
+        let s:ag_function = input("Ag symbol in project:")
+        :exe 'Ag! '.s:ag_function
+    endfunction
+
+    function! AgFileSymbol()
+        let s:ag_function = input("Ag symbol in this file:")
+        :exe 'Ag! '.s:ag_function
+    endfunction
+
+    nnoremap <leader>ag :call AgFileSymbol()<cr>
+    nnoremap <leader>aG :call AgProjectSymbol()<cr>
+    nnoremap <F5> :Ag! "<cword>" %<cr>
+    nnoremap <F6> :Ag! "<cword>" <cr>
+    if executable('ag')
+        let s:ag_ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
+        let s:ag_ignores .= ' --ignore "*.so" --ignore "*.o"'                   " files
+        let g:ag_arg = 'ag --vimgrep --smart-case --nocolumn --nogroup --skip-vcs-ignores '.s:ag_ignores
+    endif
+    let g:ag_highlight=1
+    let g:ag_format="%f:%l:%m"
+    let g:ag_qhandler="botright copen 12"
+    let g:ag_autoclose=1
+    let g:ag_working_path_mode='r'
 endif
 " }}}
 " Ctrlp.vim settings {{{2
@@ -531,7 +529,7 @@ if isdirectory(expand(g:dir_plugin.'/nerdcommenter/'))
     let g:NERDComaptSexyComs = 1
     let g:NERDAltDelims_java = 1
     let g:NERDCommentEmptyLines = 1
-    let g:NERDDefaultAlign = 'start'
+    let g:NERDDefaultAlign = 'left'
     let g:NERDTrimTrailingWhitespace = 1
 endif
 " }}}
@@ -651,11 +649,16 @@ endif
 "}}}
 " VIM Multiple Line setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-multiple-cursors/'))
-    let g:multi_cursor_use_default_mapping=1
-    let g:multi_cursor_next_key='<M-n>'
-    let g:multi_cursor_prev_key='<M-p>'
-    let g:multi_cursor_skip_key='<M-x>'
-    let g:multi_cursor_quit_key='<Esc>'
+    " Default mapping
+    let g:multi_cursor_use_default_mapping = 0
+    let g:multi_cursor_start_word_key      = '<C-n>'
+    let g:multi_cursor_select_all_word_key = '<A-n>'
+    let g:multi_cursor_start_key           = 'g<C-n>'
+    let g:multi_cursor_select_all_key      = 'g<A-n>'
+    let g:multi_cursor_next_key            = '<C-n>'
+    let g:multi_cursor_prev_key            = '<C-p>'
+    let g:multi_cursor_skip_key            = '<C-x>'
+    let g:multi_cursor_quit_key            = '<Esc>'
 endif
 "}}}
 " Better white-space setting {{{2
@@ -703,9 +706,17 @@ if has('cscope')
     nnoremap <C-\>d         :cs find d <C-R>=expand("<cword>")<CR><CR>
 endif
 "}}}
-" FlyGrep.vim setting {{{2
-if isdirectory(expand(g:dir_plugin.'/FlyGrep.vim/'))
-    nnoremap    <leader>g/          :FlyGrep<cr>
+" Vim-Gitgutter setting {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-gitgutter/'))
+    let g:gitgutter_map_keys = 0
+    let g:gitgutter_highlight_lines = 1
+    let g:gitgutter_max_signs = 5000
+    nnoremap [h <Plug>GitGutterPrevHunk
+    nnoremap ]h <Plug>GitGutterNextHunk
+    nnoremap <leader>tg :GitGutterLineHighlightsToggle<cr>
+    nnoremap <leader>hp :GitGutterPreviewHunk<cr>
+    nnoremap <leader>hs :GitGutterStageHunk<cr>
+    nnoremap <leader>hu :GitGutterUndoHunk<cr>
 endif
 " }}}
 "}}}
