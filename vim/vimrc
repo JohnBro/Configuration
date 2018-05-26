@@ -361,7 +361,7 @@ if isdirectory(expand(g:dir_plugin.'/ctrlp.vim/'))
     nnoremap <F4>       :CtrlPMRU<cr>
     nnoremap <leader>fr :CtrlPMRU<cr>
     let g:loaded_ctrlp=0
-    let g:ctrlp_working_path_mode='ra'
+    let g:ctrlp_working_path_mode='a'
     let g:ctrlp_match_window='bottom,order:btt,min:1,max:12,results:12'
     let g:ctrlp_by_filename=1
     let g:ctrlp_switch_buffer = 'et'
@@ -517,20 +517,39 @@ inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 " YouCompleteMe settings {{{3
 " !Windows : Completer by YouCompleteMe
 if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
-    let g:ycm_global_ycm_extra_conf='./.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
-    let g:ycm_confirm_extra_conf = 0
+    let g:ycm_global_ycm_extra_conf               = './.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
+    let g:ycm_confirm_extra_conf                  = 0
+    let g:ycm_show_diagnostics_ui                 = 1
+    let g:ycm_server_log_level                    = 'info'
     let g:ycm_collect_identifiers_from_tags_files = 1
-    let g:ycm_min_num_of_chars_for_completion = 2 " complete form 2nd character
-    let g:ycm_seed_identifiers_with_syntax = 1 " Open syntax complete
-    let g:ycm_complete_in_comments = 1 " Also in comments
-    let g:ycm_complete_in_strings = 1
-    let g:ycm_cache_omnifunc = 0
-    let g:ycm_filetype_blacklist = {
+    let g:ycm_min_num_of_chars_for_completion     = 2
+    let g:ycm_min_num_identifier_candidate_chars  = 2
+    let g:ycm_seed_identifiers_with_syntax        = 1 " Open syntax complete
+    let g:ycm_complete_in_comments                = 1 " Also in comments
+    let g:ycm_complete_in_strings                 = 1
+    let g:ycm_cache_omnifunc                      = 0
+    let g:ycm_add_preview_to_completeopt          = 0
+    let g:ycm_key_invoke_completion               = '<C-z>'
+    let g:ycm_semantic_triggers                   = {
+                \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+                \ 'cs,lua,javascript': ['re!\w{2}'],
+                \ }
+    let g:ycm_filetype_blacklist                  = {
                 \ 'tagbar' : 1,
                 \ 'nerdtree' : 1,
+                \ 'markdown' : 1,
+                \ 'unite' : 1,
+                \ 'text' : 1,
+                \ 'vimwiki' : 1,
+                \ 'pandoc' : 1,
+                \ 'infolog' : 1,
+                \ 'mail' : 1
                 \ }
-    let g:ycm_key_invoke_completion = '<M-;>'
     nnoremap <C-\>] :YcmCompleter GoTo<cr>
+    nnoremap <leader>ye :YcmDiags<cr>
+    nnoremap <leader>yl :YcmCompleter GoToDeclaration<CR>
+    nnoremap <leader>yf :YcmCompleter GoToDefinition<CR>
+    nnoremap <leader>yu :YcmCompleter GoToDefinitionElseDeclaration<CR>
 endif
 " }}}
 " Neocomplete.vim setting {{{3
@@ -641,7 +660,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
     let g:better_whitespace_oprator = '<leader>wt'
     nnoremap    <leader>wr          :StripWhitespace<cr>
     nnoremap    <leader>tw          :ToggleStripWhitespaceOnSave<cr>
-    autocmd     BufEnter    *       EnableWhitespace
+    autocmd     BufWritePre    *       EnableWhitespace
     autocmd     FileType    javascript,c,cpp,java,html,ruby,vimscript,shell
                 \ autocmd BufEnter <buffer>     EnableStripWhitespaceOnSave
 endif
@@ -650,12 +669,17 @@ endif
 if executable('ctags')
     let g:ctags_file = '.ctags'
     let g:ctags_path = g:current_dir
+    let g:proj_path  = g:current_dir.'/'.g:proj_dir
 
     function! GenerateCtags()
         if filereadable(g:ctags_path.'/'.g:ctags_file)
+            echo "Ctags file already exists!"
             setglobal tags+=.ctags
         else
             :call RunSystemCmd('Start to generate Ctags...', 'ctags -f .ctags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds=+p --fields=+iaS --extra=+q')
+        endif
+        if !isdirectory(g:ctags_path)
+            :call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
         endif
     endfunction
 
@@ -674,18 +698,23 @@ if has('cscope') && executable('cscope')
     " Show message when any oterhs cscope db added
     " set cscopeverbose
     let g:cscope_file = 'cscope.out'
-    let g:cscope_path = g:current_dir.'/'.g:proj_dir
+    let g:proj_path   = g:current_dir.'/'.g:proj_dir
+    let g:cscope_path = g:proj_path
     function! EstablishCscope()
         if !isdirectory(g:cscope_path)
             :call RunSystemCmd('Create project directory...', 'mkdir '.g:cscope_path)
         endif
         if filereadable(g:cscope_path.'/'.g:cscope_file)
+            echo "Cscope file already exist!"
             :exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
         elseif $CSCOPE_DB != ""
             cscope add $CSCOPE_DB
         else
             call RunSystemCmd('Generate cscope...', 'cscope -Rbq -f '.g:cscope_path.'/'.g:cscope_file)
             :exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
+        endif
+        if !isdirectory(g:ctags_path)
+            :call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
         endif
     endfunction
 
