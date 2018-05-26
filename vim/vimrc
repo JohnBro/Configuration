@@ -94,10 +94,8 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
     Plugin 'FelikZ/ctrlp-py-matcher'
     Plugin 'majutsushi/tagbar'
     Plugin 'Xuyuanp/nerdtree-git-plugin'
-    Plugin 'vim-airline/vim-airline-themes'
     Plugin 'scrooloose/nerdtree'
     Plugin 'scrooloose/nerdcommenter'
-    Plugin 'altercation/vim-colors-solarized' " Color theme
     Plugin 'godlygeek/tabular'                " Auto Align Plugin
     Plugin 'terryma/vim-multiple-cursors'
     Plugin 'ntpeters/vim-better-whitespace'
@@ -140,7 +138,6 @@ filetype plugin on
 filetype indent on
 syntax enable
 syntax on
-color koehler
 set  nocompatible
 set    expandtab
 set    shiftwidth=4
@@ -194,7 +191,7 @@ set    pumheight=15
 set    scrolloff=5
 set    smartindent
 set    cmdheight=1
-set    textwidth=100
+set    textwidth=180
 set    updatetime=1000
 set    whichwrap=h,l
 set    wildignore=*.bak,*.o,*.e,*.~
@@ -206,25 +203,12 @@ set    ignorecase
 " }}}
 " Basic Functions {{{1
 let g:proj_dir = ".projDir" " Used for manage current project
-let g:ctags_file = ".ctags"
 let g:current_dir = getcwd()
-if isdirectory(g:current_dir."/".g:proj_dir) && filereadable(g:current_dir."/".g:ctags_file)
-    set tags+=.ctags;
-endif
 
 function! RunSystemCmd(Msg, Cmd)
     echo a:Msg
     call system(a:Cmd)
     echon 'done'
-endfunction
-
-function! GenerateCtags()
-    if (executable('ctags') && isdirectory(g:current_dir."/".g:proj_dir))
-        call RunSystemCmd('Start to generate Ctags...', 'ctags -f ".g:ctags_file." --tag-relative=no -R --c++-kinds=+p --fields=+iaS .')
-        setglobal tags+=.ctags
-    else
-        echo 'Please check your env(ctags/proj)'
-    endif
 endfunction
 
 " Replace in VIM Normal mode.
@@ -292,7 +276,6 @@ nnoremap <C-u>                  <Esc>ViwU<Esc>
 inoremap <C-u>                  <Esc>ViwU<Esc>$a
 nnoremap <silent><leader>pa     : set nu! rnu! paste!<cr>
 
-nnoremap <F9>               : call GenerateCtags()<cr>
 nnoremap <leader>rp         : call NormalReplace()<cr>
 vnoremap <leader>rp         : call VisualReplace()<cr>
 vnoremap <leader>al         : call VisualAlign()<cr>
@@ -663,37 +646,70 @@ endif
 "}}}
 " Better white-space setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
-    nnoremap    <leader>tw          :ToggleStripWhitespaceOnSave<cr>
-    autocmd     BufWritePre     *       EnableWhitespace
     let g:better_whitespace_filetypes_blacklist=['txt', 'log', 'diff', 'unite', 'qf', 'help']
     let g:better_whitespace_verbosity = 0
+    let g:better_whitespace_oprator = '<leader>wt'
+    nnoremap    <leader>wr          :StripWhitespace<cr>
+    nnoremap    <leader>tw          :ToggleStripWhitespaceOnSave<cr>
+    autocmd     BufReadPre  *       EnableWhitespace
+    autocmd     FileType    javascript,c,cpp,java,html,ruby,vimscript,shell
+                \ autocmd BufEnter <buffer>     EnableStripWhitespaceOnSave
 endif
 "}}}
-" Cscope setting {{{2
-if has('cscope')
-    set cscopetag
-    set csto=0
-    let g:cscope_file = 'cscope.out'
-    let g:cscope_path = g:current_dir.'/'.g:proj_dir
-    function! EstablishCscope()
-        if (isdirectory(g:current_dir.'/'.g:proj_dir))
-            if (filereadable(g:cscope_path.'/'.g:cscope_file))
-                :exe 'cscope add '.g:cocope_path.'/'.g:cscope_file
-            elseif $CSCOPE_DB != ""
-                cscope add $CSCOPE_DB
-            else
-                call RunSystemCmd('Generate cscope...', 'cscope -Rbq -f'.g:cscope_path.'/'.g:cscope.out)
-                :exe 'cscope add '.g:cocope_path.'/'.g:cscope_file
-            endif
+" Ctags setting {{{2
+if executable('ctags')
+    let g:ctags_file = '.ctags'
+    let g:ctags_path = g:current_dir
+
+    function! GenerateCtags()
+        if filereadable(g:ctags_path.'/'.g:ctags_file)
+            setglobal tags+=.ctags
         else
-            echo "Establish cscope error! Please check your env(cscope/proj)"
+            :call RunSystemCmd('Start to generate Ctags...', 'ctags -f .ctags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds=+p --fields=+iaS --extra=+q')
         endif
     endfunction
 
+    if isdirectory(g:ctags_path.'/'.g:proj_dir) && !filereadable(g:ctags_path.'/'.g:ctags_file)
+        :call GenerateCtags()
+    endif
+    autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=.ctags;
+    nnoremap <F9>        : call GenerateCtags()<cr>
+    nnoremap <leader>gct : call GenerateCtags()<cr>
+endif
+" }}}
+" Cscope setting {{{2
+if has('cscope') && executable('cscope')
+    set cscopetag
+    set csto=0
     " Show message when any oterhs cscope db added
+    " set cscopeverbose
+    let g:cscope_file = 'cscope.out'
+    let g:cscope_path = g:current_dir.'/'.g:proj_dir
+    function! EstablishCscope()
+        if !isdirectory(g:cscope_path)
+            :call RunSystemCmd('Create project directory...', 'mkdir '.g:cscope_path)
+        endif
+        if filereadable(g:cscope_path.'/'.g:cscope_file)
+            :exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
+        elseif $CSCOPE_DB != ""
+            cscope add $CSCOPE_DB
+        else
+            call RunSystemCmd('Generate cscope...', 'cscope -Rbq -f '.g:cscope_path.'/'.g:cscope_file)
+            :exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
+        endif
+    endfunction
+
+    autocmd BufReadPost *.c,*.h,*.cpp,*.cxx
+                \ if isdirectory(g:cscope_path) |
+                \     if filereadable(g:cscope_path.'/'.g:cscope_file) |
+                \         :exe 'cscope add '.g:cscope_path.'/'.g:cscope_file |
+                \     elseif $CSCOPE_DB != "" |
+                \         cscope add $CSCOPE_DB |
+                \     endif |
+                \ endif
+
     " <F10> To establish a cscope enviroment.
-    set cscopeverbose
-    nnoremap <leader>ec     : call EstablishCscope()<cr>
+    nnoremap <leader>gcs    : call EstablishCscope()<cr>
     nnoremap <F10>          : call EstablishCscope()<cr>
     nnoremap <C-\>a         : cscope add cscope.out<cr>
     nnoremap <C-\>s         :cs find s <C-R>=expand("<cword>")<CR><CR>
