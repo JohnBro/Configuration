@@ -152,8 +152,8 @@ set    autoindent
 set    autoread
 set    autowrite
 set    background=dark
-set    backspace=indent,eol,start
 set  nobackup
+set    backspace=indent,eol,start
 set    cindent
 set    cinoptions=:0
 set    cinoptions+=g0
@@ -226,13 +226,6 @@ function! VisualReplace()
     :exe '%s/' . l:pattern . '/' . l:word . '/gc'
     let @" = l:saved_reg
 endfunction
-" Align by a specified symbol
-function! VisualAlign()
-    let l:align_symbol = input("What's symbol do you align to:")
-    if isdirectory(expand(g:dir_plugin.'/tabular/'))
-        :exe 'Tabularize /'.l:align_symbol
-    endif
-endfunction
 " }}}
 " Usful mapping {{{1
 let mapleader=','
@@ -278,7 +271,6 @@ nnoremap <silent><leader>pa     : set nu! rnu! paste!<cr>
 
 nnoremap <leader>rp         : call NormalReplace()<cr>
 vnoremap <leader>rp         : call VisualReplace()<cr>
-vnoremap <leader>al         : call VisualAlign()<cr>
 
 " New learnning.
 nnoremap <leader>w" viw<Esc>i"<Esc>hbi"<Esc>lel
@@ -305,12 +297,10 @@ autocmd BufReadPost *
 autocmd InsertLeave             *       if pumvisible() == 0|pclose|endif
 
 " Don't auto change line in blow files.
-autocmd BufNewfile,BufRead          *.c     setlocal nowrap|set tabstop=4
-autocmd BufNewfile,BufRead          *.cpp   setlocal nowrap
-autocmd BufNewfile,BufRead          *.h     setlocal nowrap
-autocmd BufNewfile,BufRead          *.html  setlocal nowrap
+autocmd BufNewfile,BufRead  *.c,*.cpp,*.cxx,*.h     setlocal nowrap|setlocal shiftwidth=4|setlocal softtabstop=4|setlocal tabstop=4|setlocal expandtab
 autocmd FileType                    *.txt   setlocal spell,wrap,nonu
 autocmd FileType                    *.log   setlocal wrap
+autocmd BufWritePre   *.c,*.h,*.cpp,*.cxx   setlocal backup|setlocal backupext=.bak|set patchmode=.orig
 " }}}
 " Abbreviations
 iabbrev @@      lujunboo@gmail.com
@@ -735,4 +725,37 @@ if isdirectory(expand(g:dir_plugin.'/vim-gitgutter/'))
     nnoremap <leader>hu :GitGutterUndoHunk<cr>
 endif
 " }}}
+" DoxygenToolkit.vim setting {{{2
+if isdirectory(expand(g:dir_plugin.'/DoxygenToolkit.vim/'))
+    let g:doxygen_enhanced_color      = 1
+    let g:DoxygenToolkit_commentType  = "C"
+    let g:DoxygenToolkit_funcName     = "yes"
+    let g:DoxygenToolkit_dataTag      = "@data    "
+    let g:DoxygenToolkit_briefTag_pre = "@fn      "
+    let g:DoxygenToolkit_briefTag_pre = "@brief   "
+    let g:DoxygenToolkit_paramTag_pre = "@param[] "
+    let g:DoxygenToolkit_returnTag    = "@retval  "
+    let g:DoxygenToolkit_versionTag   = "@version "
+    let g:DoxygenToolkit_authorName   = "JohnBro lujunboo@gmail.com"
+    let g:DoxygenToolkit_blockHeader  = "----------------------------------------------------------------------------"
+    let g:DoxygenToolkit_blockFooter  = "----------------------------------------------------------------------------"
+
+    nnoremap <leader>df :Dox<cr>
+    nnoremap <leader>db :DoxBlock<cr>
+    nnoremap <leader>da :DoxAuthor<cr>
+    nnoremap <leader>dl :DoxLic<cr>
+endif
+" }}}
+" Tabularize setting {{{2
+" Align by a specified symbol
+if isdirectory(expand(g:dir_plugin.'/tabular/'))
+    function! TabularAlign()
+        let l:align_symbol = input("What's symbol do you align to:")
+        :exe 'Tabularize /'.l:align_symbol
+    endfunction
+
+    vnoremap <leader>al : call TabularAlign()<cr>
+    nnoremap <leader>al : call TabularAlign()<cr>
+endif
+"}}}
 "}}}
