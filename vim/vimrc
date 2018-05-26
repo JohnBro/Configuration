@@ -678,7 +678,7 @@ if executable('ctags')
         else
             :call RunSystemCmd('Start to generate Ctags...', 'ctags -f .ctags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds=+p --fields=+iaS --extra=+q')
         endif
-        if !isdirectory(g:ctags_path)
+        if !isdirectory(g:proj_path)
             :call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
         endif
     endfunction
@@ -713,7 +713,7 @@ if has('cscope') && executable('cscope')
             call RunSystemCmd('Generate cscope...', 'cscope -Rbq -f '.g:cscope_path.'/'.g:cscope_file)
             :exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
         endif
-        if !isdirectory(g:ctags_path)
+        if !isdirectory(g:proj_path)
             :call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
         endif
     endfunction
