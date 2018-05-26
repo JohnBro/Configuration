@@ -676,15 +676,15 @@ if executable('ctags')
             echo "Ctags file already exists!"
             setglobal tags+=.ctags
         else
-            :call RunSystemCmd('Start to generate Ctags...', 'ctags -f .ctags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds=+p --fields=+iaS --extra=+q')
+            call RunSystemCmd('Start to generate Ctags...', 'ctags -f .ctags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds=+p --fields=+iaS --extra=+q')
         endif
         if !isdirectory(g:proj_path)
-            :call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
+            call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
         endif
     endfunction
 
     if isdirectory(g:ctags_path.'/'.g:proj_dir) && !filereadable(g:ctags_path.'/'.g:ctags_file)
-        :call GenerateCtags()
+        call GenerateCtags()
     endif
     autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=.ctags;
     nnoremap <F9>        : call GenerateCtags()<cr>
@@ -702,28 +702,28 @@ if has('cscope') && executable('cscope')
     let g:cscope_path = g:proj_path
     function! EstablishCscope()
         if !isdirectory(g:cscope_path)
-            :call RunSystemCmd('Create project directory...', 'mkdir '.g:cscope_path)
+            call RunSystemCmd('Create project directory...', 'mkdir '.g:cscope_path)
         endif
         if filereadable(g:cscope_path.'/'.g:cscope_file)
             echo "Cscope file already exist!"
-            :exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
+            exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
         elseif $CSCOPE_DB != ""
             cscope add $CSCOPE_DB
         else
             call RunSystemCmd('Generate cscope...', 'cscope -Rbq -f '.g:cscope_path.'/'.g:cscope_file)
-            :exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
+            exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
         endif
         if !isdirectory(g:proj_path)
-            :call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
+            call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
         endif
     endfunction
 
     autocmd BufReadPost *.c,*.h,*.cpp,*.cxx
                 \ if isdirectory(g:cscope_path) |
                 \     if filereadable(g:cscope_path.'/'.g:cscope_file) |
-                \         :exe 'cscope add '.g:cscope_path.'/'.g:cscope_file |
-                \     elseif $CSCOPE_DB != "" |
-                \         cscope add $CSCOPE_DB |
+                \         exe 'cscope add '.g:cscope_path.'/'.g:cscope_file |
+                \     else |
+                \         call EstablishCscope() |
                 \     endif |
                 \ endif
 
