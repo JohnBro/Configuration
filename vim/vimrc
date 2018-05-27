@@ -91,6 +91,7 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
 
     Plugin 'VundleVim/Vundle.vim'
     Plugin 'kien/ctrlp.vim'
+    Plugin 'rking/ag.vim'
     Plugin 'FelikZ/ctrlp-py-matcher'
     Plugin 'majutsushi/tagbar'
     Plugin 'Xuyuanp/nerdtree-git-plugin'
@@ -103,10 +104,11 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
     Plugin 'Valloric/YouCompleteMe'
     Plugin 'JohnBro/DoxygenToolkit.vim'
     Plugin 'airblade/vim-gitgutter'
-    Plugin 'rking/ag.vim'
     Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
     Plugin 'junegunn/fzf.vim'
-
+    Plugin 'justinmk/vim-sneak'
+    Plugin 'easymotion/vim-easymotion'
+    Plugin 'tpope/vim-fugitive'
     if (g:os_gui && g:os_platform == 'windows')
         Plugin 'Shougo/neocomplete.vim'
         Plugin 'plasticboy/vim-markdown'
@@ -204,7 +206,8 @@ set    ignorecase
 
 " }}}
 " Basic Functions {{{1
-let g:proj_dir = ".projDir" " Used for manage current project
+let g:proj_dir    = ".projDir" " Used for manage current project
+let g:ctags_cmd   = 'ctags -f tags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds = +p --fields = +iaS --extra = +q'
 let g:current_dir = getcwd()
 
 function! RunSystemCmd(Msg, Cmd)
@@ -306,55 +309,70 @@ autocmd BufWritePre   *.c,*.h,*.cpp,*.cxx   setlocal backup|setlocal backupext=.
 " }}}
 " Abbreviations
 iabbrev @@      lujunboo@gmail.com
-iabbrev ccopy   Copyright 2018 JohnBror>JohnBro<cr>lujunboo@gmail.com
+iabbrev ccopy   Copyright 2018 JohnBro<cr>lujunboo@gmail.com
 
  " Plugin Settings{{{1
-" Ack.vim settings {{{2
-if executable('ack') && isdirectory(expand(g:dir_plugin.'/ack.vim/'))
-    nnoremap <F5> :Ack! "<cword>" % <cr>
-    nnoremap <F6> :Ack! "<cword>" <cr>
-    if(executable('ag'))
-       let s:ack_ignores = '--ignore ".git/-ignore ".hg/-ignore ".svn/"'  " dirs
-       let s:ack_ignores .= ' --ignore "*.so-ignore "*.o"'                   " files
-       let g:ack_arg = 'ag --vimgrep --smart-case --nocolumn --nogroup --skip-vcs-ignores '.s:ack_ignores
-    endif
-    if(executable('ack'))
-    endif
-    if(executable('grep'))
-    endif
-    let g:ack_defaultoptions = '-s -H --nogroup --nocolumn --vimgrep --smart-case --follow'
-    let g:ack_highlight=1
-    let g:ack_autoclose=0
-    let g:ack_autofold_results=1
-    let g:ack_use_cword_for_empty_search=1
-endif
-" }}}
-" Ag.vim settings {{{2
-if executable('ag') && isdirectory(expand(g:dir_plugin.'/ag.vim/'))
-    function! AgProjectSymbol()
+ " Ag setting {{{2
+ if executable('ag') && isdirectory(expand(g:dir_plugin.'/ag.vim/'))
+     function! AgSymbolBuffer()
+         let s:ag_function = input("Ag symbol in buffers:")
+         :exe 'AgBuffer! '.s:ag_function
+     endfunction
+
+     let s:ag_ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
+     let s:ag_ignores .= ' --ignore "*.so" --ignore "*.o"'                   " files
+     let g:ag_arg = 'ag --vimgrep --smart-case --nocolumn --nogroup --skip-vcs-ignores '.s:ag_ignores
+     let g:ag_highlight=1
+     let g:ag_format="%f:%l:%m"
+     let g:ag_qhandler="botright copen 12"
+     let g:ag_autoclose=1
+     let g:ag_working_path_mode='r'
+
+    noremap <F5>        : AgBuffer <C-R><C-W><CR>
+    nnoremap <leader>ag : call AgSymbolBuffer()<cr>
+ endif
+ " }}}
+" FZF setting {{{2
+if isdirectory(expand(g:dir_plugin.'/fzf/')) && isdirectory(expand(g:dir_plugin.'/fzf.vim/'))
+    let g:fzf_tags_command = g:ctags_cmd
+    function! AgSymbolProj()
         let s:ag_function = input("Ag symbol in project:")
-        :exe 'Ag! '.s:ag_function
+        :exe 'FAg '.s:ag_function
     endfunction
 
-    function! AgFileSymbol()
-        let s:ag_function = input("Ag symbol in this file:")
-        :exe 'Ag! '.s:ag_function
-    endfunction
+    command! -bang -nargs=* FAg
+                \ call fzf#vim#ag(<q-args>,
+                \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+                \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+                \                 <bang>0)
 
-    nnoremap <leader>ag :call AgFileSymbol()<cr>
-    nnoremap <leader>aG :call AgProjectSymbol()<cr>
-    nnoremap <F5> :Ag! "<cword>" %<cr>
-    nnoremap <F6> :Ag! "<cword>" <cr>
-    if executable('ag')
-        let s:ag_ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
-        let s:ag_ignores .= ' --ignore "*.so" --ignore "*.o"'                   " files
-        let g:ag_arg = 'ag --vimgrep --smart-case --nocolumn --nogroup --skip-vcs-ignores '.s:ag_ignores
-    endif
-    let g:ag_highlight=1
-    let g:ag_format="%f:%l:%m"
-    let g:ag_qhandler="botright copen 12"
-    let g:ag_autoclose=1
-    let g:ag_working_path_mode='r'
+    command! -bang -nargs=? -complete=dir Files
+                \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+    noremap  <F6>       :FAg <C-R><C-W><CR>
+    nnoremap <leader>aG :call AgSymbolProj()<cr>
+    nnoremap <Leader>? <plug>(fzf-maps-n)
+    xnoremap <Leader>? <plug>(fzf-maps-x)
+    onoremap <Leader>? <plug>(fzf-maps-o)
+
+    nnoremap <Leader>fb : Buffers<CR>
+    nnoremap <leader>b? : Buffers<CR>
+    nnoremap <leader>ff : Files<CR>
+    nnoremap <leader>f? : Files<CR>
+    nnoremap <leader>fm : Marks<CR>
+    nnoremap <leader>ft : Filetypes<CR>
+    nnoremap <leader>fu : Commands<CR>
+    nnoremap <Leader>hf : History<CR>       " File history
+    nnoremap <Leader>hc : History:<CR>      " Command histoy
+    nnoremap <leader>hs : History/<CR>      " Search history
+    noremap <C-f>f      : Files<CR>
+    noremap <C-f>b      : Buffers<CR>
+    noremap <C-f>l      : Lines<CR>
+    noremap <C-f>t      : BTags<CR>
+    noremap <C-f>g      : Tags<CR>
+    noremap <C-f>m      : Maps<CR>
+    noremap <C-f>u      : Commands<CR>
+
 endif
 " }}}
 " Ctrlp.vim settings {{{2
@@ -363,7 +381,7 @@ if isdirectory(expand(g:dir_plugin.'/ctrlp.vim/'))
     nnoremap <F4>       :CtrlPMRU<cr>
     nnoremap <leader>fr :CtrlPMRU<cr>
     let g:loaded_ctrlp=0
-    let g:ctrlp_working_path_mode='a'
+    let g:ctrlp_working_path_mode='ra'
     let g:ctrlp_match_window='bottom,order:btt,min:1,max:12,results:12'
     let g:ctrlp_by_filename=1
     let g:ctrlp_switch_buffer = 'et'
@@ -669,16 +687,16 @@ endif
 "}}}
 " Ctags setting {{{2
 if executable('ctags')
-    let g:ctags_file = '.ctags'
+    let g:ctags_file = 'tags'
     let g:ctags_path = g:current_dir
     let g:proj_path  = g:current_dir.'/'.g:proj_dir
 
     function! GenerateCtags()
         if filereadable(g:ctags_path.'/'.g:ctags_file)
             echo "Ctags file already exists!"
-            setglobal tags+=.ctags
+            setglobal tags+=tags
         else
-            call RunSystemCmd('Start to generate Ctags...', 'ctags -f .ctags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds=+p --fields=+iaS --extra=+q')
+            call RunSystemCmd('Start to generate Ctags...', g:ctags_cmd)
         endif
         if !isdirectory(g:proj_path)
             call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
@@ -688,7 +706,7 @@ if executable('ctags')
     if isdirectory(g:ctags_path.'/'.g:proj_dir) && !filereadable(g:ctags_path.'/'.g:ctags_file)
         call GenerateCtags()
     endif
-    autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=.ctags;
+    autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=tags;
     nnoremap <F9>        : call GenerateCtags()<cr>
     nnoremap <leader>gct : call GenerateCtags()<cr>
 endif
@@ -724,9 +742,8 @@ if has('cscope') && executable('cscope')
                 \ if isdirectory(g:cscope_path) |
                 \     if filereadable(g:cscope_path.'/'.g:cscope_file) |
                 \         exe 'cscope add '.g:cscope_path.'/'.g:cscope_file |
-                \     else |
-                \         call EstablishCscope() |
-                \     endif |
+                \     elseif $CSCOPE_DB != "" |
+                \         cscope add $CSCOPE_DB |                \     endif |
                 \ endif
 
     " <F10> To establish a cscope enviroment.
@@ -751,9 +768,9 @@ if isdirectory(expand(g:dir_plugin.'/vim-gitgutter/'))
     nnoremap [h <Plug>GitGutterPrevHunk
     nnoremap ]h <Plug>GitGutterNextHunk
     nnoremap <leader>tg :GitGutterLineHighlightsToggle<cr>
-    nnoremap <leader>hp :GitGutterPreviewHunk<cr>
-    nnoremap <leader>hs :GitGutterStageHunk<cr>
-    nnoremap <leader>hu :GitGutterUndoHunk<cr>
+    nnoremap <leader>gp :GitGutterPreviewHunk<cr>
+    nnoremap <leader>gs :GitGutterStageHunk<cr>
+    nnoremap <leader>gu :GitGutterUndoHunk<cr>
 endif
 " }}}
 " DoxygenToolkit.vim setting {{{2
@@ -778,7 +795,6 @@ if isdirectory(expand(g:dir_plugin.'/DoxygenToolkit.vim/'))
 endif
 " }}}
 " Tabularize setting {{{2
-" Align by a specified symbol
 if isdirectory(expand(g:dir_plugin.'/tabular/'))
     function! TabularAlign()
         let l:align_symbol = input("What's symbol do you align to:")
@@ -789,4 +805,26 @@ if isdirectory(expand(g:dir_plugin.'/tabular/'))
     nnoremap <leader>al : call TabularAlign()<cr>
 endif
 "}}}
+" Easymotion setting {{{2
+" Default key bindings
+" <Leader><Leader>jw : word
+" <Leader><Leader>jb : back
+" <Leader><Leader>jh : back in line
+" <Leader><Leader>jj : next line
+" <Leader><Leader>jk : back line
+" <Leader><Leader>jl : next in line
+if isdirectory(expand(g:dir_plugin.'/tabular/'))
+    noremap <Leader><Leader> <Plug>(easymotion-prefix)
+    noremap <Leader><Leader>jh <Plug>(easymotion-linebackward)
+    noremap <Leader><Leader>jj <Plug>(easymotion-j)
+    noremap <Leader><Leader>jk <Plug>(easymotion-k)
+    noremap <Leader><Leader>jl <Plug>(easymotion-lineforward)
+    " 重复上一次操作, 类似repeat插件, 很强大
+    noremap <Leader><Leader>j. <Plug>(easymotion-repeat)
+endif
+" }}}
+" vim-fugitive setting {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-fugitive/'))
+endif
+" }}}
 "}}}

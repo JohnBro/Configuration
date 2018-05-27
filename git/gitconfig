@@ -12,9 +12,9 @@
     diff = always
     grep = always
 [merge]
-    too = vimdiff
+    tool = vim
 [diff]
-    tool = vimdiff
+    tool = vim
 [alias]
     diff = difftool
     st = status
@@ -23,7 +23,7 @@
     br = branch
 
 [filter "lfs"]
+	clean    = git-lfs clean -- %f
+	smudge   = git-lfs smudge -- %f
+	process  = git-lfs filter-process
 	required = true
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
