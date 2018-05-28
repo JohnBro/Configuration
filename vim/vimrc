@@ -813,7 +813,7 @@ endif
 " <Leader><Leader>jj : next line
 " <Leader><Leader>jk : back line
 " <Leader><Leader>jl : next in line
-if isdirectory(expand(g:dir_plugin.'/tabular/'))
+if isdirectory(expand(g:dir_plugin.'/vim-easymotion/'))
     noremap <Leader><Leader> <Plug>(easymotion-prefix)
     noremap <Leader><Leader>jh <Plug>(easymotion-linebackward)
     noremap <Leader><Leader>jj <Plug>(easymotion-j)
