@@ -765,8 +765,8 @@ if isdirectory(expand(g:dir_plugin.'/vim-gitgutter/'))
     let g:gitgutter_map_keys = 0
     let g:gitgutter_highlight_lines = 1
     let g:gitgutter_max_signs = 5000
-    nnoremap [h <Plug>GitGutterPrevHunk
-    nnoremap ]h <Plug>GitGutterNextHunk
+    nmap [h <Plug>GitGutterPrevHunk
+    nmap ]h <Plug>GitGutterNextHunk
     nnoremap <leader>tg :GitGutterLineHighlightsToggle<cr>
     nnoremap <leader>gp :GitGutterPreviewHunk<cr>
     nnoremap <leader>gs :GitGutterStageHunk<cr>
