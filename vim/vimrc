@@ -680,9 +680,9 @@ if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
     let g:better_whitespace_oprator = '<leader>wt'
     nnoremap    <leader>wr          :StripWhitespace<cr>
     nnoremap    <leader>tw          :ToggleStripWhitespaceOnSave<cr>
-    autocmd     BufWritePre    *       EnableWhitespace
+    autocmd     BufWritePre    *     EnableWhitespace
     autocmd     FileType    javascript,c,cpp,java,html,ruby,vimscript,shell
-                \ autocmd BufEnter <buffer>     EnableStripWhitespaceOnSave
+                \ autocmd BufEnter <buffer>     EnableWhitespace
 endif
 "}}}
 " Ctags setting {{{2
