@@ -1,0 +1,10 @@
+*.log
+*.tmp
+*.bin
+*.bak
+*.orig
+*.o
+*.e
+*~
+*.swp
+ctags

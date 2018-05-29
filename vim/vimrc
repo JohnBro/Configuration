@@ -109,6 +109,7 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
     Plugin 'justinmk/vim-sneak'
     Plugin 'easymotion/vim-easymotion'
     Plugin 'tpope/vim-fugitive'
+    Plugin 'vim-utils/vim-man'
     if (g:os_gui && g:os_platform == 'windows')
         Plugin 'Shougo/neocomplete.vim'
         Plugin 'plasticboy/vim-markdown'
@@ -198,8 +199,8 @@ set    cmdheight=1
 set    textwidth=180
 set    updatetime=1000
 set    whichwrap=h,l
-set    wildignore=*.bak,*.o,*.e,*.~
-set    wildignore+=*/tmp/*,*.so,*.bin,*.swp,*.mak,*.ctag
+set    wildignore=*.bak,*.o,*.e,*~
+set    wildignore+=*/tmp/*,*.so,*.bin,*.swp,*.ctag
 set    sessionoptions=buffers,globals,localoptions,sesdir,tabpages,winsize,winpos,resize
 set  noswapfile
 set    ignorecase
