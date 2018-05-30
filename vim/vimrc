@@ -212,7 +212,7 @@ set    ignorecase
 let g:proj_dir     = ".projDir" " Used for manage current project
 let g:session_file = "project.vim"
 let g:viminfo_file = "viminfo.vim"
-let g:ctags_cmd    = 'ctags -f tags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds = +p --fields = +iaS --extra = +q'
+let g:ctags_cmd    = 'ctags -f tags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds=+p --fields=+iaS --extra=+q'
 let g:current_path = getcwd()
 let g:proj_path    = g:current_path.'/'.g:proj_dir
 
