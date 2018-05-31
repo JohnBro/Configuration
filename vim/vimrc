@@ -358,8 +358,8 @@ augroup fileOperateGroup
                 \ exe "normal g'\"" |
                 \ endif
     autocmd BufWritePre *.c,*.h,*.cpp,*.cxx     setlocal backup|setlocal backupext=.bak|set patchmode=.orig
-    autocmd BufEnter * silent! lcd %:p:h
-    autocmd VimLeave * silent! lcd g:current_path
+    " autocmd BufEnter * silent! lcd %:p:h
+    " autocmd VimLeave * silent! lcd g:current_path
 augroup END
 
 augroup projectConfigGroup
@@ -391,7 +391,7 @@ if executable('ag') && isdirectory(expand(g:dir_plugin.'/ag.vim/'))
     let g:ag_autoclose=1
     let g:ag_working_path_mode='r'
 
-    noremap <F5>        : AgBuffer <C-R><C-W><CR>
+    noremap <F5>        : AgBuffer! <C-R><C-W><CR>
     nnoremap <leader>ag : call AgSymbolBuffer()<cr>
 endif
 " }}}
@@ -455,7 +455,7 @@ if isdirectory(expand(g:dir_plugin.'/ctrlp.vim/'))
     let g:ctrlp_mruf_max = 250
     let g:ctrlp_max_history=&history
     let g:ctrlp_lazy_update=1
-    let g:ctrlp_map = ',<c-p>'
+    let g:ctrlp_map = '<c-p>'
     let g:ctrlp_cmd = 'CtrlP'
     let g:ctrlp_follow_symlinks = 1
     let g:ctrlp_mruf_relative = 1
@@ -613,9 +613,18 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
     let g:ycm_cache_omnifunc                      = 0
     let g:ycm_add_preview_to_completeopt          = 0
     let g:ycm_key_invoke_completion               = '<C-z>'
-    let g:ycm_semantic_triggers                   = {
-                \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-                \ 'cs,lua,javascript': ['re!\w{2}'],
+    let g:ycm_semantic_triggers =  {
+                \   'c' : ['->', '.', 're!\w{3}'],
+                \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+                \             're!\[.*\]\s'],
+                \   'ocaml' : ['.', '#'],
+                \   'cpp,cuda,objcpp' : ['->', '.', '::', 're!\w{3}'],
+                \   'perl' : ['->'],
+                \   'php' : ['->', '::'],
+                \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
+                \   'ruby' : ['.', '::'],
+                \   'lua' : ['.', ':'],
+                \   'erlang' : [':'],
                 \ }
     let g:ycm_filetype_blacklist                  = {
                 \ 'tagbar' : 1,
