@@ -357,7 +357,6 @@ augroup fileOperateGroup
                 \ if line("'\"") > 0 && line("'\"") <= line("$") |
                 \ exe "normal g'\"" |
                 \ endif
-    autocmd BufWritePre *.c,*.h,*.cpp,*.cxx     setlocal backup|setlocal backupext=.bak|set patchmode=.orig
     " autocmd BufEnter * silent! lcd %:p:h
     " autocmd VimLeave * silent! lcd g:current_path
 augroup END
@@ -378,8 +377,8 @@ iabbrev ccopy   Copyright 2018 JohnBro<cr>lujunboo@gmail.com
 " Ag setting {{{2
 if executable('ag') && isdirectory(expand(g:dir_plugin.'/ag.vim/'))
     function! AgSymbolBuffer()
-        let s:ag_function = input("Ag symbol in buffers:")
-        :exe 'AgBuffer! '.s:ag_function
+        let s:ag_symbol = input("Ag symbol in buffers:")
+        :exe 'AgBuffer! '.s:ag_symbol
     endfunction
 
     let s:ag_ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
@@ -399,8 +398,8 @@ endif
 if isdirectory(expand(g:dir_plugin.'/fzf/')) && isdirectory(expand(g:dir_plugin.'/fzf.vim/'))
     let g:fzf_tags_command = g:ctags_cmd
     function! AgSymbolProj()
-        let s:ag_function = input("Ag symbol in project:")
-        :exe 'FAg '.s:ag_function
+        let s:ag_symbol = input("Ag symbol in project:")
+        :exe 'FAg '.s:ag_symbol
     endfunction
 
     command! -bang -nargs=* FAg
