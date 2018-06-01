@@ -763,11 +763,15 @@ if executable('ctags')
 
     function! GenerateCtags()
         if filereadable(g:ctags_path.'/'.g:ctags_file)
-            echo "Ctags file already exists!"
-            setglobal tags+=tags
+            let l:ctags_forcegen = echo "Ctags file already exists! Replace it ? [y/N]"
+            if (l:ctags_forcegen == 'y' || l:ctags_forcegen == 'Y')
+                echo "\n"
+                call RunSystemCmd('Start to generate Ctags...', g:ctags_cmd)
+            endif
         else
             call RunSystemCmd('Start to generate Ctags...', g:ctags_cmd)
         endif
+        setglobal tags+=tags
         if !isdirectory(g:proj_path)
             call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
         endif
@@ -874,24 +878,6 @@ if isdirectory(expand(g:dir_plugin.'/tabular/'))
     nnoremap <leader>al : call TabularAlign()<cr>
 endif
 "}}}
-" Easymotion setting {{{2
-" Default key bindings
-" <Leader><Leader>jw : word
-" <Leader><Leader>jb : back
-" <Leader><Leader>jh : back in line
-" <Leader><Leader>jj : next line
-" <Leader><Leader>jk : back line
-" <Leader><Leader>jl : next in line
-if isdirectory(expand(g:dir_plugin.'/vim-easymotion/'))
-    noremap <Leader><Leader> <Plug>(easymotion-prefix)
-    noremap <Leader><Leader>jh <Plug>(easymotion-linebackward)
-    noremap <Leader><Leader>jj <Plug>(easymotion-j)
-    noremap <Leader><Leader>jk <Plug>(easymotion-k)
-    noremap <Leader><Leader>jl <Plug>(easymotion-lineforward)
-    " 重复上一次操作, 类似repeat插件, 很强大
-    noremap <Leader><Leader>j. <Plug>(easymotion-repeat)
-endif
-" }}}
 " vim-fugitive setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-fugitive/'))
 endif
