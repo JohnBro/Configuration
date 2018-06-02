@@ -5,7 +5,7 @@
 if(has("win32") || has("win64") || has("win95") || has("win16"))
     let g:os_platform = "windows"
     let g:dir_plugin = $VIM.'/vimfiles/bundle'
-elseif(has('unix'))
+elseif(has('Unix'))
     let g:os_platform = "unix"
     let g:dir_plugin = "~/.vim/bundle"
 else
@@ -284,6 +284,10 @@ if (g:os_platform == 'windows')
     nnoremap <M-k>              :resize -5<cr>
     nnoremap <M-h>              :vertical resize -5<cr>
     nnoremap <M-l>              :vertical resize +5<cr>
+endif
+if (g:os_platform == 'Unix')
+    vnoremap <leader>yy :w !pbcopy<CR><CR>
+    nnoremap <leader>pp :r !pbpaste<CR><CR>
 endif
 nnoremap <leader>fn             :let @*=substitute(expand("%"), "/", "\\", "g")<cr>
 nnoremap <leader>fp             :let @*=substitute(expand("%:p"), "/", "\\", "g")<cr>
