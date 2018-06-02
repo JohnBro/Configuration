@@ -118,6 +118,7 @@ export LSCOLORS='ExGxFxdaCxDaDahbadacec'  # 指定颜色
 
 # Use coreutils to promote color display when type different commands
 # Also this command would let option at the end of every command.
+# Usage : gdircolors --print-database > ~/.dir_colors
 if brew list | grep coreutils > /dev/null ; then
     PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
     alias ls='ls -G --color=auto'
