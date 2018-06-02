@@ -78,10 +78,10 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # some more ls aliases
-alias ls='ls -G'
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+alias ctags=/usr/local/bin/ctags
 alias cindex='ctags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds=+p --fields=+iaS --extra=+q'
 
 # Add an "alert" alias for long running commands.  Use like so:
@@ -115,3 +115,14 @@ ulimit -c unlimited
 export LS_OPTIONS='--color=auto'  # 如果没有指定，则自动选择颜色
 export CLICOLOR='Yes'             # 是否输出颜色
 export LSCOLORS='ExGxFxdaCxDaDahbadacec'  # 指定颜色
+
+# Use coreutils to promote color display when type different commands
+# Also this command would let option at the end of every command.
+if brew list | grep coreutils > /dev/null ; then
+    PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+    alias ls='ls -G --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+    eval `gdircolors -b $HOME/.dir_colors`
+fi
