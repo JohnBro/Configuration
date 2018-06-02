@@ -113,6 +113,7 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
     Plugin 'haya14busa/incsearch.vim'
     Plugin 'altercation/solarized'
     Plugin 'tomasr/molokai'
+    Plugin 'rdnetto/YCM-Generator'
     if (g:os_gui && g:os_platform == 'windows')
         Plugin 'Shougo/neocomplete.vim'
         Plugin 'plasticboy/vim-markdown'
