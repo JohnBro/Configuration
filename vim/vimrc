@@ -103,6 +103,7 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
     Plugin 'liuchengxu/eleline.vim'
     Plugin 'Valloric/YouCompleteMe'
     Plugin 'JohnBro/DoxygenToolkit.vim'
+    Plugin 'JohnBro/Mark'
     Plugin 'airblade/vim-gitgutter'
     Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
     Plugin 'junegunn/fzf.vim'
@@ -329,15 +330,6 @@ nnoremap G                  Gzz
 nnoremap {                  {zz
 nnoremap }                  }zz
 
-inoremap ( ()<ESC>i
-inoremap ) <c-r>=ClosePair(')')<CR>
-inoremap { {<CR>}<ESC>O
-inoremap } <c-r>=ClosePair('}')<CR>
-inoremap [ []<ESC>i
-inoremap ] <c-r>=ClosePair(']')<CR>
-inoremap " ""<ESC>i
-inoremap ' ''<ESC>i
-
 vnoremap <                  <gv     " Indent  in vsual mode
 vnoremap >                  >gv     " Deindent in visual mode shiftwidth
 
@@ -400,6 +392,19 @@ augroup projectConfigGroup
     autocmd VimLeave * call LeaveHandler()
 augroup END
 
+augroup signAutoCompleteGroup
+    " Prevent load multiple times
+    autocmd!
+    autocmd FileType c,cpp,jva,javascript,python,php,json,css
+                \ inoremap ( ()<ESC>i|
+                \ inoremap ) <c-r>=ClosePair(')')<CR>|
+                \ inoremap { {<CR>}<ESC>O|
+                \ inoremap } <c-r>=ClosePair('}')<CR>|
+                \ inoremap [ []<ESC>i|
+                \ inoremap ] <c-r>=ClosePair(']')<CR>|
+                \ inoremap " ""<ESC>i|
+                \ inoremap ' ''<ESC>i
+augroup END
 
 " }}}
 " Abbreviations
@@ -651,8 +656,8 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
     let g:ycm_cache_omnifunc                      = 0
     let g:ycm_add_preview_to_completeopt          = 0
     let g:ycm_key_invoke_completion               = '<C-z>'
-    let g:ycm_python_binary_path = '/usr/local/bin/python3'
-    let g:ycm_server_python_interpreter = '/usr/local/bin/python3'
+    let g:ycm_python_binary_path = '/usr/bin/python3'
+    let g:ycm_server_python_interpreter = '/usr/bin/python3'
     let g:ycm_semantic_triggers =  {
                 \   'c' : ['->', '.', 're!\w{3}'],
                 \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
@@ -923,4 +928,4 @@ endif
 if isdirectory(expand(g:dir_plugin.'/vim-fugitive/'))
 endif
 " }}}
-"}}}
+" }}}
