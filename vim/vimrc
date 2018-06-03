@@ -438,7 +438,7 @@ if isdirectory(expand(g:dir_plugin.'/fzf/')) && isdirectory(expand(g:dir_plugin.
     command! -bang -nargs=? -complete=dir Files
                 \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 
-    noremap  <F6>       :FAg <C-R><C-W><CR>
+    noremap  <F6>       :FAg! <C-R><C-W><CR>
     nnoremap <leader>aG :call AgSymbolProj()<cr>
     nnoremap <Leader>? <plug>(fzf-maps-n)
     xnoremap <Leader>? <plug>(fzf-maps-x)
@@ -784,7 +784,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
     let g:better_whitespace_filetypes_blacklist=['txt', 'log', 'diff', 'unite', 'qf', 'help']
     let g:better_whitespace_verbosity = 0
     let g:better_whitespace_oprator = '<leader>wt'
-    nnoremap    <leader>wr          :StripWhitespace<cr>
+    nnoremap    <leader>wd          :StripWhitespace<cr>
     nnoremap    <leader>tw          :ToggleStripWhitespaceOnSave<cr>
     autocmd     BufWritePre    *     EnableWhitespace
     autocmd     FileType    javascript,c,cpp,java,html,ruby,vimscript,shell
@@ -798,8 +798,8 @@ if executable('ctags')
 
     function! GenerateCtags()
         if filereadable(g:ctags_path.'/'.g:ctags_file)
-            let l:ctags_forcegen = echo "Ctags file already exists! Replace it ? [y/N]"
-            if (l:ctags_forcegen == 'y' || l:ctags_forcegen == 'Y')
+            let l:ctags_force_gen = input("Ctags file already exist, replace it ?[y/N]")
+            if (l:ctags_force_gen == 'y' || l:ctags_force_gen == 'Y')
                 echo "\n"
                 call RunSystemCmd('Start to generate Ctags...', g:ctags_cmd)
             endif
