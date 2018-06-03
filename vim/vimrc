@@ -286,6 +286,14 @@ inoremap <C-h>                  <Esc><C-W>h
 inoremap <C-j>                  <Esc><C-W>j
 inoremap <C-k>                  <Esc><C-W>k
 inoremap <C-l>                  <Esc><C-W>l
+nnoremap <C-a>                  ggVG
+inoremap <C-a>                  <C-O>gg<C-O>V<C-O>G
+vnoremap <C-a>                  <C-C>ggVG
+noremap  <C-S>                  :update<CR>
+vnoremap <silent><C-S>                  <C-C>:update<CR>
+inoremap <silent><C-S>                  <C-O>:update<CR>
+nnoremap <C-Down>               ddp
+nnoremap <C-Up>                 ddkP
 if (g:os_platform == 'windows')
     inoremap <C-v>              <Esc>"+gP
     vnoremap <C-c>              "+y<Esc>
@@ -309,8 +317,6 @@ nnoremap <leader><Left>         :tabprevious<cr>
 nnoremap <leader><Right>        :tabnext<cr>
 nnoremap <leader><Right><Right> :tabnew %:p<cr>
 nnoremap <leader><Left><Left>   :tabclose<cr>
-nnoremap <leader>-              ddp
-nnoremap <leader>_              ddkP
 nnoremap <C-u>                  <Esc>ViwU<Esc>
 inoremap <C-u>                  <Esc>ViwU<Esc>$a
 nnoremap <silent><leader>pa     : set nu! rnu! paste!<cr>
