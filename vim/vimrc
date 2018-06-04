@@ -898,18 +898,18 @@ endif
 " }}}
 " DoxygenToolkit.vim setting {{{2
 if isdirectory(expand(g:dir_plugin.'/DoxygenToolkit.vim/'))
-    let g:doxygen_enhanced_color      = 1
-    let g:DoxygenToolkit_commentType  = "C"
-    let g:DoxygenToolkit_funcName     = "yes"
-    let g:DoxygenToolkit_dataTag      = "@data    "
-    let g:DoxygenToolkit_briefTag_pre = "@fn      "
-    let g:DoxygenToolkit_briefTag_pre = "@brief   "
-    let g:DoxygenToolkit_paramTag_pre = "@param[] "
-    let g:DoxygenToolkit_returnTag    = "@retval  "
-    let g:DoxygenToolkit_versionTag   = "@version "
-    let g:DoxygenToolkit_authorName   = "JohnBro lujunboo@gmail.com"
-    let g:DoxygenToolkit_blockHeader  = "----------------------------------------------------------------------------"
-    let g:DoxygenToolkit_blockFooter  = "----------------------------------------------------------------------------"
+    let g:doxygen_enhanced_color           = 1
+    let g:DoxygenToolkit_commentType       = "C"
+    let g:DoxygenToolkit_briefTag_funcName = "yes"
+    let g:DoxygenToolkit_dataTag           = "@data    "
+    let g:DoxygenToolkit_briefTag_pre      = "@fn      "
+    let g:DoxygenToolkit_briefTag_post     = "@brief   "
+    let g:DoxygenToolkit_paramTag_pre      = "@param[] "
+    let g:DoxygenToolkit_returnTag         = "@retval  "
+    let g:DoxygenToolkit_versionTag        = "@version "
+    let g:DoxygenToolkit_authorName        = "JohnBro lujunboo@gmail.com"
+    let g:DoxygenToolkit_blockHeader       = "--------------------------------------------------------------------------"
+    let g:DoxygenToolkit_blockFooter       = "--------------------------------------------------------------------------"
 
     nnoremap <leader>df :Dox<cr>
     nnoremap <leader>db :DoxBlock<cr>
