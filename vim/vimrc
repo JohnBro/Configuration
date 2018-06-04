@@ -104,6 +104,7 @@ if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
     Plugin 'Valloric/YouCompleteMe'
     Plugin 'JohnBro/DoxygenToolkit.vim'
     Plugin 'JohnBro/Mark'
+    Plugin 'JohnBro/dictionary.vim'
     Plugin 'airblade/vim-gitgutter'
     Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
     Plugin 'junegunn/fzf.vim'
@@ -170,6 +171,7 @@ set    cinoptions=:0
 set    cinoptions+=g0
 set    clipboard+=unnamed
 set    cursorline
+set    complete+=k
 set    completeopt=menuone,longest,preview
 set    encoding=utf-8
 set    langmenu=none
@@ -208,6 +210,7 @@ set    updatetime=1000
 set    whichwrap=h,l
 set    wildignore=*.bak,*.o,*.e,*~
 set    wildignore+=*/tmp/*,*.so,*.bin,*.swp,*.ctag
+set  nowritebackup
 set    sessionoptions=buffers,globals,localoptions,curdir,tabpages,winsize,winpos,resize
 set  noswapfile
 set    ignorecase
@@ -370,8 +373,9 @@ augroup identationGroup
     autocmd Filetype styl           setlocal nowrap tabstop=2 shiftwidth=2 softtabstop=2 expandtab
     autocmd Filetype css            setlocal nowrap tabstop=2 shiftwidth=2 softtabstop=2 expandtab
     autocmd Filetype dockerfile     setlocal nowrap tabstop=4 shiftwidth=4 softtabstop=4 expandtab
-    autocmd FileType *.txt          setlocal spell,wrap,nonu
-    autocmd FileType *.log          setlocal wrap
+    autocmd Filetype Makefile       setlocal nowrap tabstop=4 shiftwidth=4 noexpandtab
+    autocmd Filetype *.txt          setlocal spell,wrap,nonu
+    autocmd Filetype *.log          setlocal wrap
 augroup END
 
 augroup fileOperateGroup
@@ -398,7 +402,7 @@ augroup signAutoCompleteGroup
     autocmd FileType c,cpp,jva,javascript,python,php,json,css
                 \ inoremap ( ()<ESC>i|
                 \ inoremap ) <c-r>=ClosePair(')')<CR>|
-                \ inoremap { {<CR>}<ESC>O|
+                \ inoremap { {}<ESC>i|
                 \ inoremap } <c-r>=ClosePair('}')<CR>|
                 \ inoremap [ []<ESC>i|
                 \ inoremap ] <c-r>=ClosePair(']')<CR>|
@@ -926,6 +930,12 @@ endif
 "}}}
 " vim-fugitive setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-fugitive/'))
+endif
+" }}}
+" Dictionary setting {{{2
+if isdirectory(expand(g:dir_plugin.'/dictionary.vim/'))
+    set thesaurus+=~/.vim/bundle/dictionary.vim/oald_cn.dict
+    set dictionary=~/.vim/bundle/dictionary.vim/oald_cn.dict
 endif
 " }}}
 " }}}
