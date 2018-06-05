@@ -660,8 +660,8 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
     let g:ycm_cache_omnifunc                      = 0
     let g:ycm_add_preview_to_completeopt          = 0
     let g:ycm_key_invoke_completion               = '<C-z>'
-    let g:ycm_python_binary_path = '/usr/bin/python3'
-    let g:ycm_server_python_interpreter = '/usr/bin/python3'
+    let g:ycm_python_binary_path = '/usr/local/bin/python3'
+    let g:ycm_server_python_interpreter = '/usr/local/bin/python3'
     let g:ycm_semantic_triggers =  {
                 \   'c' : ['->', '.', 're!\w{3}'],
                 \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
@@ -930,6 +930,32 @@ endif
 "}}}
 " vim-fugitive setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-fugitive/'))
+endif
+" vim-signature setting {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-signature/'))
+    let g:SignatureMap = {
+                \ 'Leader'             :  "<C-m>",
+                \ 'PlaceNextMark'      :  "<C-m>,",
+                \ 'ToggleMarkAtLine'   :  "<C-m>.",
+                \ 'PurgeMarksAtLine'   :  "<C-m>-",
+                \ 'DeleteMark'         :  "<C-m><C-m>",
+                \ 'PurgeMarks'         :  "<C-m><Space>",
+                \ 'PurgeMarkers'       :  "<C-m><BS>",
+                \ 'GotoNextLineAlpha'  :  "']",
+                \ 'GotoPrevLineAlpha'  :  "'[",
+                \ 'GotoNextSpotAlpha'  :  "`]",
+                \ 'GotoPrevSpotAlpha'  :  "`[",
+                \ 'GotoNextLineByPos'  :  "]'",
+                \ 'GotoPrevLineByPos'  :  "['",
+                \ 'GotoNextSpotByPos'  :  "]`",
+                \ 'GotoPrevSpotByPos'  :  "[`",
+                \ 'GotoNextMarker'     :  "]-",
+                \ 'GotoPrevMarker'     :  "[-",
+                \ 'GotoNextMarkerAny'  :  "]=",
+                \ 'GotoPrevMarkerAny'  :  "[=",
+                \ 'ListBufferMarks'    :  "<C-m>/",
+                \ 'ListBufferMarkers'  :  "<C-m>?"
+                \ }
 endif
 " }}}
 " Dictionary setting {{{2
