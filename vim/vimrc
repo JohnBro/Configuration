@@ -934,8 +934,9 @@ endif
 " }}}
 " Dictionary setting {{{2
 if isdirectory(expand(g:dir_plugin.'/dictionary.vim/'))
-    set thesaurus+=~/.vim/bundle/dictionary.vim/oald_cn.dict
-    set dictionary=~/.vim/bundle/dictionary.vim/oald_cn.dict
+    set thesaurus+=~/.vim/bundle/dictionary.vim/oald_cn.dict        " For <C-x><C-t> to preview
+    set dictionary-=~/.vimrc
+    set dictionary+=~/.vim/bundle/dictionary.vim/oald_cn.dict       " For <C-x><C-k> to preview
 endif
 " }}}
 " }}}
