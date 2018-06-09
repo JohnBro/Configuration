@@ -934,13 +934,13 @@ endif
 " vim-signature setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-signature/'))
     let g:SignatureMap = {
-                \ 'Leader'             :  "<C-m>",
-                \ 'PlaceNextMark'      :  "<C-m>,",
-                \ 'ToggleMarkAtLine'   :  "<C-m>.",
-                \ 'PurgeMarksAtLine'   :  "<C-m>-",
-                \ 'DeleteMark'         :  "<C-m><C-m>",
-                \ 'PurgeMarks'         :  "<C-m><Space>",
-                \ 'PurgeMarkers'       :  "<C-m><BS>",
+                \ 'Leader'             :  "M",
+                \ 'PlaceNextMark'      :  "M,",
+                \ 'ToggleMarkAtLine'   :  "M.",
+                \ 'PurgeMarksAtLine'   :  "M-",
+                \ 'DeleteMark'         :  "MM",
+                \ 'PurgeMarks'         :  "M<Space>",
+                \ 'PurgeMarkers'       :  "M<BS>",
                 \ 'GotoNextLineAlpha'  :  "']",
                 \ 'GotoPrevLineAlpha'  :  "'[",
                 \ 'GotoNextSpotAlpha'  :  "`]",
@@ -953,8 +953,8 @@ if isdirectory(expand(g:dir_plugin.'/vim-signature/'))
                 \ 'GotoPrevMarker'     :  "[-",
                 \ 'GotoNextMarkerAny'  :  "]=",
                 \ 'GotoPrevMarkerAny'  :  "[=",
-                \ 'ListBufferMarks'    :  "<C-m>/",
-                \ 'ListBufferMarkers'  :  "<C-m>?"
+                \ 'ListBufferMarks'    :  "M/",
+                \ 'ListBufferMarkers'  :  "M?"
                 \ }
 endif
 " }}}
