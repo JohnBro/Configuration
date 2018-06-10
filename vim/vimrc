@@ -4,10 +4,10 @@
 " Define OS type and GUI type in a global variable{{{1
 if(has("win32") || has("win64") || has("win95") || has("win16"))
     let g:os_platform = "windows"
-    let g:dir_plugin = $VIM.'/vimfiles/bundle'
+    let g:dir_plugin = $VIM.'/vimfiles/plugins'
 elseif(has('Unix'))
     let g:os_platform = "unix"
-    let g:dir_plugin = "~/.vim/bundle"
+    let g:dir_plugin = "~/.vim/plugins"
 else
     let g:os_platform = ""
 endif
@@ -73,74 +73,55 @@ if(g:os_platform=='unix')
     endif
 endif
 " }}}
-" Bundle configure {{{1
-" :PluginList       - 列出所有已配置的插件
-" :PluginInstall    - 安装插件,追加 `!` 用以更新或使用 :PluginUpdate
-" :PluginSearch foo - 搜索 foo ; 追加 `!` 清除本地缓存
-" :PluginClean      - 清除未使用插件,需要确认; 追加 `!` 自动批准移除未使用插件
-if isdirectory(expand(g:dir_plugin.'/Vundle.vim'))
+" Vim plugin manager setting {{{1
+let $VIM_PLUGDIR = expand(g:dir_plugin.'/vim-plug')
+if empty(glob(expand($VIM_PLUGDIR."/plug.vim")))
+  silent !curl -fLo $VIM_PLUGDIR/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source ~/.vimrc
+endif
+
+if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
+
     set nocompatible
-    filetype off
-    if (g:os_platform == 'windows')
-        set runtimepath+=$VIM\vimfiles\bundle\Vundle.vim\
-    else
-        set runtimepath+=~/.vim/bundle/Vundle.vim/
-    endif
+    source $VIM_PLUGDIR/plug.vim
 
-    call vundle#begin(g:dir_plugin)
+    call plug#begin(g:dir_plugin)
 
-    Plugin 'VundleVim/Vundle.vim'
-    Plugin 'kien/ctrlp.vim'
-    Plugin 'rking/ag.vim'
-    Plugin 'FelikZ/ctrlp-py-matcher'
-    Plugin 'majutsushi/tagbar'
-    Plugin 'Xuyuanp/nerdtree-git-plugin'
-    Plugin 'scrooloose/nerdtree'
-    Plugin 'scrooloose/nerdcommenter'
-    Plugin 'godlygeek/tabular'                " Auto Align Plugin
-    Plugin 'terryma/vim-multiple-cursors'
-    Plugin 'ntpeters/vim-better-whitespace'
-    Plugin 'liuchengxu/eleline.vim'
-    Plugin 'Valloric/YouCompleteMe'
-    Plugin 'JohnBro/DoxygenToolkit.vim'
-    Plugin 'JohnBro/Mark'
-    Plugin 'JohnBro/dictionary.vim'
-    Plugin 'airblade/vim-gitgutter'
-    Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-    Plugin 'junegunn/fzf.vim'
-    Plugin 'justinmk/vim-sneak'
-    Plugin 'tpope/vim-fugitive'
-    Plugin 'vim-utils/vim-man'
-    Plugin 'kshenoy/vim-signature'
-    Plugin 'haya14busa/incsearch.vim'
-    Plugin 'altercation/solarized'
-    Plugin 'tomasr/molokai'
-    Plugin 'rdnetto/YCM-Generator'
+    Plug 'rking/ag.vim'
+    Plug 'kien/ctrlp.vim',                  {'on': ['CtrlP', 'CtrlPMRU' ] }
+    Plug 'FelikZ/ctrlp-py-matcher',         {'on': ['CtrlP', 'CtrlPMRU' ] }
+    Plug 'majutsushi/tagbar'
+    Plug 'Xuyuanp/nerdtree-git-plugin'
+    Plug 'scrooloose/nerdtree',             { 'on': 'NERDTreeToggle' }
+    Plug 'scrooloose/nerdcommenter'
+    Plug 'godlygeek/tabular',               { 'on': 'Tabularize' }
+    Plug 'junegunn/vim-easy-align',         { 'on': [ '<Plug>(EasyAlign)', 'EasyAlign' ] }
+    Plug 'terryma/vim-multiple-cursors'
+    Plug 'ntpeters/vim-better-whitespace'
+    Plug 'liuchengxu/eleline.vim'
+    Plug 'Valloric/YouCompleteMe'
+    Plug 'JohnBro/DoxygenToolkit.vim',      { 'for': [ 'c', 'cpp' ] }
+    Plug 'JohnBro/Mark'
+    Plug 'JohnBro/dictionary.vim'
+    Plug 'airblade/vim-gitgutter'
+    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+    Plug 'junegunn/fzf.vim'
+    Plug 'justinmk/vim-sneak'
+    Plug 'tpope/vim-fugitive'
+    Plug 'vim-utils/vim-man'
+    Plug 'kshenoy/vim-signature'
+    Plug 'haya14busa/incsearch.vim'
+    Plug 'tomasr/molokai'
+    Plug 'rdnetto/YCM-Generator'
     if (g:os_gui && g:os_platform == 'windows')
-        Plugin 'Shougo/neocomplete.vim'
-        Plugin 'plasticboy/vim-markdown'
-        Plugin 'iamcco/mathjax-support-for-mkdp'
-        Plugin 'iamcco/markdown-preview.vim'
+        Plug 'Shougo/neocomplete.vim'
+        Plug 'plasticboy/vim-markdown'
+        Plug 'iamcco/mathjax-support-for-mkdp'
+        Plug 'iamcco/markdown-preview.vim'
     endif
 
-    call vundle#end()
-else
-    " Install choco which is package manager in Windows
-    if (g:os_platform == 'windows' && !executable('choco'))
-        " In cmd console
-        !@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-        " In powershell console
-        " !Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    endif
-    if executable('git')
-        if (g:dir_plugin == 'windows')
-            !git clone https://github.com/gmarik/Vundle.vim.git "D:\Program Files(x86)\Vim\vimfiles\bundle\Vundle.vim"
-        else
-            !git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-        endif
-    else
-        echo "Please Install git first!"
-    endif
+    call plug#end()
 endif
 " }}}
 
@@ -647,7 +628,7 @@ inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 "   cmake --build . --target ycm_core --config Release
 "   需要指定 python 二进制和 python 的搜索目录为 python3 的目录
 if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
-    let g:ycm_global_ycm_extra_conf               = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
+    let g:ycm_global_ycm_extra_conf               = g:dir_plugin.'/YouCompleteMe/.ycm_extra_conf.py'
     let g:ycm_confirm_extra_conf                  = 0
     let g:ycm_show_diagnostics_ui                 = 1
     let g:ycm_server_log_level                    = 'info'
@@ -917,15 +898,30 @@ if isdirectory(expand(g:dir_plugin.'/DoxygenToolkit.vim/'))
     nnoremap <leader>dl :DoxLic<cr>
 endif
 " }}}
-" Tabularize setting {{{2
-if isdirectory(expand(g:dir_plugin.'/tabular/'))
-    function! TabularAlign()
-        let l:align_symbol = input("What's symbol do you align to:")
-        :exe 'Tabularize /'.l:align_symbol
-    endfunction
+" Tabularize & EasyAlign setting {{{2
+if isdirectory(expand(g:dir_plugin.'/tabular/')) && isdirectory(expand(g:dir_plugin.'/vim-easy-align/'))
+    nnoremap <Leader>a&     :Tabularize /&<CR>
+    vnoremap <Leader>a&     :Tabularize /&<CR>
+    nnoremap <Leader>a=     :Tabularize /^[^=]*\zs=<CR>
+    vnoremap <Leader>a=     :Tabularize /^[^=]*\zs=<CR>
+    nnoremap <Leader>a=>    :Tabularize /=><CR>
+    vnoremap <Leader>a=>    :Tabularize /=><CR>
+    nnoremap <Leader>a:     :Tabularize /:<CR>
+    vnoremap <Leader>a:     :Tabularize /:<CR>
+    nnoremap <Leader>a::    :Tabularize /:\zs<CR>
+    vnoremap <Leader>a::    :Tabularize /:\zs<CR>
+    nnoremap <Leader>a,     :Tabularize /,<CR>
+    vnoremap <Leader>a,     :Tabularize /,<CR>
+    nnoremap <Leader>a,,    :Tabularize /,\zs<CR>
+    vnoremap <Leader>a,,    :Tabularize /,\zs<CR>
+    nnoremap <Leader>a<Bar> :Tabularize /<Bar><CR>
+    vnoremap <Leader>a<Bar> :Tabularize /<Bar><CR>
 
-    vnoremap <leader>al : call TabularAlign()<cr>
-    nnoremap <leader>al : call TabularAlign()<cr>
+    " Start interactive EasyAlign in visual mode (e.g. vipxa)
+    xmap <Leader>ea <Plug>(EasyAlign)
+    " Start interactive EasyAlign for a motion/text object (e.g. xaip)
+    nmap <Leader>ea <Plug>(EasyAlign)
+
 endif
 "}}}
 " vim-fugitive setting {{{2
