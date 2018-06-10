@@ -88,6 +88,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
 
     call plug#begin(g:dir_plugin)
 
+    Plug 'hecal3/vim-leader-guide'
     Plug 'rking/ag.vim'
     Plug 'kien/ctrlp.vim',                  {'on': ['CtrlP', 'CtrlPMRU' ] }
     Plug 'FelikZ/ctrlp-py-matcher',         {'on': ['CtrlP', 'CtrlPMRU' ] }
@@ -98,10 +99,12 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'godlygeek/tabular',               { 'on': 'Tabularize' }
     Plug 'junegunn/vim-easy-align',         { 'on': [ '<Plug>(EasyAlign)', 'EasyAlign' ] }
     Plug 'terryma/vim-multiple-cursors'
-    Plug 'ntpeters/vim-better-whitespace'
+    Plug 'ntpeters/vim-better-whitespace',  { 'for': [ 'c', 'cpp', 'Makefile' ] }
     Plug 'liuchengxu/eleline.vim'
     Plug 'Valloric/YouCompleteMe'
-    Plug 'JohnBro/DoxygenToolkit.vim',      { 'for': [ 'c', 'cpp' ] }
+    Plug 'rdnetto/YCM-Generator',           { 'on': 'YcmGenerateConfig' }
+    Plug 'JohnBro/DoxygenToolkit.vim'
+    ",      { 'for': [ 'c', 'cpp' ] }
     Plug 'JohnBro/Mark'
     Plug 'JohnBro/dictionary.vim'
     Plug 'airblade/vim-gitgutter'
@@ -109,11 +112,10 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'junegunn/fzf.vim'
     Plug 'justinmk/vim-sneak'
     Plug 'tpope/vim-fugitive'
-    Plug 'vim-utils/vim-man'
+    Plug 'vim-utils/vim-man',               { 'for': [ 'c', 'cpp' ] }
     Plug 'kshenoy/vim-signature'
     Plug 'haya14busa/incsearch.vim'
     Plug 'tomasr/molokai'
-    Plug 'rdnetto/YCM-Generator'
     if (g:os_gui && g:os_platform == 'windows')
         Plug 'Shougo/neocomplete.vim'
         Plug 'plasticboy/vim-markdown'
@@ -782,7 +784,6 @@ if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
     let g:better_whitespace_oprator = '<leader>wt'
     nnoremap    <leader>wd          :StripWhitespace<cr>
     nnoremap    <leader>tw          :ToggleStripWhitespaceOnSave<cr>
-    autocmd     BufWritePre    *     EnableWhitespace
     autocmd     FileType    javascript,c,cpp,java,html,ruby,vimscript,shell
                 \ autocmd BufEnter <buffer>     EnableWhitespace
 endif
@@ -959,6 +960,27 @@ if isdirectory(expand(g:dir_plugin.'/dictionary.vim/'))
     set thesaurus+=~/.vim/bundle/dictionary.vim/oald_cn.dict        " For <C-x><C-t> to preview
     set dictionary-=~/.vimrc
     set dictionary+=~/.vim/bundle/dictionary.vim/oald_cn.dict       " For <C-x><C-k> to preview
+endif
+" }}}
+" vim-leader-guide setting {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
+    " Define prefix dictionary
+    let g:lmap =  {}
+    let g:lmap.a = { 'name' : 'Align & Ag Menu' }
+    let g:lmap.b = { 'name' : 'Buffer Menu' }
+    let g:lmap.c = { 'name' : 'Comment Menu' }
+    let g:lmap.g = {
+                \'name' : 'Git Menu',
+                \'s' : ['Gstatus', 'Git Status'],
+                \'p' : ['Gpull',   'Git Pull'],
+                \'u' : ['Gpush',   'Git Push'],
+                \'c' : ['Gcommit', 'Git Commit'],
+                \'w' : ['Gwrite',  'Git Write'],
+                \}
+    let g:lmap.p = { 'name' : 'Paste Menu' }
+    call leaderGuide#register_prefix_descriptions(mapleader, "g:lmap")
+    nnoremap <silent> <leader> :<c-u>LeaderGuide mapleader<CR>
+    vnoremap <silent> <leader> :<c-u>LeaderGuideVisual mapleader<CR>
 endif
 " }}}
 " }}}
