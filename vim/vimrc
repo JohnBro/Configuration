@@ -101,7 +101,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'terryma/vim-multiple-cursors'
     Plug 'ntpeters/vim-better-whitespace',  { 'for': [ 'c', 'cpp', 'Makefile' ] }
     Plug 'liuchengxu/eleline.vim'
-    Plug 'Valloric/YouCompleteMe'
+    Plug 'Valloric/YouCompleteMe',          { 'for': [ 'c', 'cpp' ] }
     Plug 'rdnetto/YCM-Generator',           { 'on': 'YcmGenerateConfig' }
     Plug 'JohnBro/DoxygenToolkit.vim'
     ",      { 'for': [ 'c', 'cpp' ] }
@@ -334,7 +334,6 @@ inoremap <right>    <nop>
 nnoremap <up>       <nop>
 nnoremap <down>     <nop>
 noremap  <C-f>      <nop>       " <C-f> is the header of FZF
-nnoremap <leader>d  <nop>
 " }}}
 " Autocmd for VIM events {{{1
 " Restore the last position when reopen
@@ -548,6 +547,16 @@ endif
 " }}}
 " Nerdtree settings {{{2
 if isdirectory(expand(g:dir_plugin.'/nerdtree/'))
+    augroup loadNerdtree
+        autocmd!
+        autocmd VimEnter * silent! autocmd! FileExplorer
+        autocmd BufEnter,BufNew *
+                    \  if isdirectory(expand('<amatch>'))
+                    \|   call plug#load('nerdtree')
+                    \|   call nerdtree#checkForBrowse(expand("<amatch>"))
+                    \| endif
+    augroup END
+
     nnoremap <F3> :NERDTreeToggle<cr>
     nnoremap <leader>nf :NERDTreeFind<CR>
     let NERDTreeQuitOnOpen=1
@@ -644,8 +653,8 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
     let g:ycm_cache_omnifunc                      = 0
     let g:ycm_add_preview_to_completeopt          = 0
     let g:ycm_key_invoke_completion               = '<C-z>'
-    let g:ycm_python_binary_path = '/usr/bin/python3'
-    let g:ycm_server_python_interpreter = '/usr/bin/python3'
+    let g:ycm_python_binary_path = '/usr/local/bin/python3'
+    let g:ycm_server_python_interpreter = '/usr/local/bin/python3'
     let g:ycm_semantic_triggers =  {
                 \   'c' : ['->', '.', 're!\w{3}'],
                 \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
@@ -874,7 +883,6 @@ if isdirectory(expand(g:dir_plugin.'/vim-gitgutter/'))
     nmap [h <Plug>GitGutterPrevHunk
     nmap ]h <Plug>GitGutterNextHunk
     nnoremap <leader>tg :GitGutterLineHighlightsToggle<cr>
-    nnoremap <leader>gp :GitGutterPreviewHunk<cr>
     nnoremap <leader>gs :GitGutterStageHunk<cr>
     nnoremap <leader>gu :GitGutterUndoHunk<cr>
 endif
@@ -893,11 +901,6 @@ if isdirectory(expand(g:dir_plugin.'/DoxygenToolkit.vim/'))
     let g:DoxygenToolkit_authorName        = "JohnBro lujunboo@gmail.com"
     let g:DoxygenToolkit_blockHeader       = "--------------------------------------------------------------------------"
     let g:DoxygenToolkit_blockFooter       = "--------------------------------------------------------------------------"
-
-    nnoremap <leader>df :Dox<cr>
-    nnoremap <leader>db :DoxBlock<cr>
-    nnoremap <leader>da :DoxAuthor<cr>
-    nnoremap <leader>dl :DoxLic<cr>
 endif
 " }}}
 " Tabularize & EasyAlign setting {{{2
@@ -920,9 +923,9 @@ if isdirectory(expand(g:dir_plugin.'/tabular/')) && isdirectory(expand(g:dir_plu
     vnoremap <Leader>a<Bar> :Tabularize /<Bar><CR>
 
     " Start interactive EasyAlign in visual mode (e.g. vipxa)
-    xmap <Leader>ea <Plug>(EasyAlign)
+    xmap <Leader>aw <Plug>(EasyAlign)
     " Start interactive EasyAlign for a motion/text object (e.g. xaip)
-    nmap <Leader>ea <Plug>(EasyAlign)
+    nmap <Leader>aw <Plug>(EasyAlign)
 
 endif
 "}}}
@@ -966,20 +969,98 @@ endif
 " vim-leader-guide setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " Define prefix dictionary
-    let g:lmap =  {}
-    let g:lmap.a = { 'name' : 'Align & Ag Menu' }
-    let g:lmap.b = { 'name' : 'Buffer Menu' }
-    let g:lmap.c = { 'name' : 'Comment Menu' }
-    let g:lmap.g = {
-                \'name' : 'Git Menu',
-                \'s' : ['Gstatus', 'Git Status'],
-                \'p' : ['Gpull',   'Git Pull'],
-                \'u' : ['Gpush',   'Git Push'],
-                \'c' : ['Gcommit', 'Git Commit'],
-                \'w' : ['Gwrite',  'Git Write'],
-                \}
-    let g:lmap.p = { 'name' : 'Paste Menu' }
-    call leaderGuide#register_prefix_descriptions(mapleader, "g:lmap")
+    let g:mapleader_map =  {}
+    for s:i in range(1, 9)
+        let g:mapleader_map[s:i] = [ s:i.'wincmd w', 'windows '.s:i ]
+    endfor
+
+    let g:mapleader_map['?'] = [ 'Maps', 'show keybindings' ]
+    let g:mapleader_map[';'] = [ 'call feedkeys("\<Plug>NERDCommenterComment")', 'Commenter' ]
+    let g:mapleader_map['a'] = {
+                \ 'name' : '+align',
+                \ }
+    let g:mapleader_map.a = { 'name' : '+align/ag' }
+    let g:mapleader_map['b'] = {
+                \ 'name' : '+buffer',
+                \ '1' : ['b1', 'buffer 1'],
+                \ '2' : ['b2', 'buffer 2'],
+                \ '3' : ['b3', 'buffer 3'],
+                \ '4' : ['b4', 'buffer 4'],
+                \ '5' : ['b5', 'buffer 5'],
+                \ '6' : ['b6', 'buffer 6'],
+                \ '7' : ['b7', 'buffer 7'],
+                \ '8' : ['b8', 'buffer 8'],
+                \ '9' : ['b9', 'buffer 9'],
+                \ 'd' : ['bd', 'delete-buffer'],
+                \ 'f' : ['bfirst', 'first-buffer'],
+                \ 'h' : ['Startify', 'home-buffer'],
+                \ 'k' : ['bw', 'kill-buffer'],
+                \ 'l' : ['blast', 'last-buffer'],
+                \ 'n' : ['bnext', 'next-buffer'],
+                \ 'p' : ['bprevious', 'previous-buffer'],
+                \ 'b' : ['Buffers', 'fzf-buffer'],
+                \ '?' : ['Buffers', 'fzf-buffer'],
+                \ }
+
+    " nnoremap <leader>df :Dox<cr>
+    " nnoremap <leader>db :DoxBlock<cr>
+    " nnoremap <leader>da :DoxAuthor<cr>
+    " nnoremap <leader>dl :DoxLic<cr>
+    let g:mapleader_map['d'] = {
+                \ 'name' : '+Doxygen',
+                \ 'a' : [ 'DoxAuthor', 'Doxygen autor announce' ],
+                \ 'b' : [ 'DoxBlock', 'Doxygen a block line' ],
+                \ 'f' : [ 'Dox', 'Doxygen a function' ],
+                \ 'l' : [ 'DoxLic', 'Doxygen a license' ],
+                \ }
+    let g:mapleader_map['e'] = {
+                \ 'name' : '+errors',
+                \ 'n' : ['call feedkeys("\<Plug>(ale_next)")', 'next-error'],
+                \ 'p' : ['call feedkeys("\<Plug>(ale_previous)")', 'previous-error'],
+                \ }
+    let g:mapleader_map['e'] = {
+                \ 'name' : '+errors',
+                \ 'n' : ['call feedkeys("\<Plug>(ale_next)")', 'next-error'],
+                \ 'p' : ['call feedkeys("\<Plug>(ale_previous)")', 'previous-error'],
+                \ }
+    let g:mapleader_map['f'] = {
+                \ 'name' : '+find/files/fold',
+                \ '0' : ['set foldlevel=0', '0-fold-level'],
+                \ '1' : ['set foldlevel=1', '1-fold-level'],
+                \ '2' : ['set foldlevel=2', '2-fold-level'],
+                \ '3' : ['set foldlevel=3', '3-fold-level'],
+                \ '4' : ['set foldlevel=4', '4-fold-level'],
+                \ '5' : ['set foldlevel=5', '5-fold-level'],
+                \ '6' : ['set foldlevel=6', '6-fold-level'],
+                \ '7' : ['set foldlevel=7', '7-fold-level'],
+                \ '8' : ['set foldlevel=8', '8-fold-level'],
+                \ '9' : ['set foldlevel=9', '9-fold-level'],
+                \ 'b' : ['BLines', 'fzf-find-current-buffer'],
+                \ 'd' : ['NERDTreeFind', 'find-current-buffer-in-NERDTree'],
+                \ 'f' : ['Files ~', 'files-in-home-direcotry'],
+                \ 's' : ['save', 'save-file'],
+                \ 't' : ['NERDTreeToggle', 'toggle-NERDTree'],
+                \ '?' : ['Files', 'files-in-current-direcotry'],
+                \ 'R' : ['source $MYVIMRC', 'reload-vimrc'],
+                \ }
+    let g:mapleader_map['g'] = {
+                \ 'name' : '+git/version-control',
+                \ 'b' : ['Gblame', 'fugitive-blame'],
+                \ 'c' : ['Gcommit', 'fugitive-commit'],
+                \ 'd' : ['Gdiff', 'fugitive-diff'],
+                \ 'e' : ['Gedit', 'fugitive-edit'],
+                \ 'l' : ['Glog', 'fugitive-log'],
+                \ 'r' : ['Gread', 'fugitive-read'],
+                \ 's' : ['Gstatus', 'fugitive-status'],
+                \ 'w' : ['Gwrite', 'fugitive-write'],
+                \ 'p' : ['Git push', 'fugitive-push'],
+                \ 'y' : ['Goyo', 'goyo-mode'],
+                \ }
+    let g:mapleader_map['h'] = {
+                \ 'name' : '+help/history/highlight',
+                \ }
+    let g:mapleader_map.p = { 'name' : 'Paste Menu' }
+    call leaderGuide#register_prefix_descriptions(mapleader, "g:mapleader_map")
     nnoremap <silent> <leader> :<c-u>LeaderGuide mapleader<CR>
     vnoremap <silent> <leader> :<c-u>LeaderGuideVisual mapleader<CR>
 endif
