@@ -108,7 +108,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'JohnBro/Mark'
     Plug 'JohnBro/dictionary.vim'
     Plug 'airblade/vim-gitgutter'
-    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+    Plug 'junegunn/fzf', { 'do': './install --all' }
     Plug 'junegunn/fzf.vim'
     Plug 'justinmk/vim-sneak'
     Plug 'tpope/vim-fugitive'
@@ -334,6 +334,7 @@ inoremap <right>    <nop>
 nnoremap <up>       <nop>
 nnoremap <down>     <nop>
 noremap  <C-f>      <nop>       " <C-f> is the header of FZF
+nnoremap <leader>d  <nop>
 " }}}
 " Autocmd for VIM events {{{1
 " Restore the last position when reopen
@@ -643,8 +644,8 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
     let g:ycm_cache_omnifunc                      = 0
     let g:ycm_add_preview_to_completeopt          = 0
     let g:ycm_key_invoke_completion               = '<C-z>'
-    let g:ycm_python_binary_path = '/usr/local/bin/python3'
-    let g:ycm_server_python_interpreter = '/usr/local/bin/python3'
+    let g:ycm_python_binary_path = '/usr/bin/python3'
+    let g:ycm_server_python_interpreter = '/usr/bin/python3'
     let g:ycm_semantic_triggers =  {
                 \   'c' : ['->', '.', 're!\w{3}'],
                 \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
