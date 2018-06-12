@@ -104,7 +104,6 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'Valloric/YouCompleteMe'
     Plug 'rdnetto/YCM-Generator',           { 'on': 'YcmGenerateConfig' }
     Plug 'JohnBro/DoxygenToolkit.vim'
-    ",      { 'for': [ 'c', 'cpp' ] }
     Plug 'JohnBro/Mark'
     Plug 'JohnBro/dictionary.vim'
     Plug 'airblade/vim-gitgutter'
@@ -167,7 +166,7 @@ set    foldmethod=marker
 set    guioptions-=Trml
 set    helplang=en
 set    hidden
-set    history=100
+set    history=200
 set    hlsearch
 set    ruler
 set    showcmd
@@ -189,6 +188,7 @@ set    scrolloff=5
 set    smartindent
 set    cmdheight=1
 set    textwidth=180
+set    timeoutlen=250
 set    updatetime=1000
 set    whichwrap=h,l
 set    wildignore=*.bak,*.o,*.e,*~
@@ -255,6 +255,14 @@ function! ClosePair(char)
         return a:char
     endif
 endfunction
+
+function! PasteToggle()
+    set nu!
+    set rnu!
+    exe 'GitGutterSignsToggle'
+    exe 'SignatureToggleSigns'
+endfunction
+
 " }}}
 " Usful mapping {{{1
 let mapleader=','
@@ -316,7 +324,6 @@ nnoremap <Left>                 :bp<cr>
 nnoremap <Right>                :bn<cr>
 nnoremap <C-u>                  <Esc>ViwU<Esc>
 inoremap <C-u>                  <Esc>ViwU<Esc>$a
-nnoremap <silent><leader>pa     : set nu! rnu! paste!<cr>
 nnoremap <Plug>Replace          :call NormalReplace()<cr>
 vnoremap <Plug>Replace          :call VisualReplace()<cr>
 nnoremap <silent><leader>=  gg=G<C-O><C-O>:w<CR>
@@ -407,7 +414,6 @@ augroup END
 " Abbreviations
 iabbrev @@      lujunboo@gmail.com
 iabbrev ccopy   Copyright 2018 JohnBro<cr>lujunboo@gmail.com
-
 " Plugin Settings{{{1
 " Ag setting {{{2
 if executable('ag') && isdirectory(expand(g:dir_plugin.'/ag.vim/'))
@@ -780,7 +786,7 @@ endif
 if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
     let g:better_whitespace_filetypes_blacklist=['txt', 'log', 'diff', 'unite', 'qf', 'help']
     let g:better_whitespace_verbosity = 0
-    let g:better_whitespace_oprator = '<leader>wt'
+    let g:better_whitespace_oprator = '<localleader>wt'
     autocmd     FileType    javascript,c,cpp,java,html,ruby,vimscript,shell
                 \ autocmd BufEnter <buffer>     EnableWhitespace
 endif
@@ -811,7 +817,6 @@ if executable('ctags')
     endif
     autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=tags;
     nnoremap <F9>        : call GenerateCtags()<cr>
-    nnoremap <leader>gct : call GenerateCtags()<cr>
 endif
 " }}}
 " Cscope setting {{{2
@@ -849,7 +854,6 @@ if has('cscope') && executable('cscope')
                 \ endif
 
     " <F10> To establish a cscope enviroment.
-    nnoremap <leader>gcs    : call EstablishCscope()<cr>
     nnoremap <F10>          : call EstablishCscope()<cr>
     nnoremap <C-\>a         : cscope add cscope.out<cr>
     nnoremap <C-\>s         :cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -869,8 +873,6 @@ if isdirectory(expand(g:dir_plugin.'/vim-gitgutter/'))
     let g:gitgutter_max_signs = 5000
     nmap [h <Plug>GitGutterPrevHunk
     nmap ]h <Plug>GitGutterNextHunk
-    nnoremap <leader>gs :GitGutterStageHunk<cr>
-    nnoremap <leader>gu :GitGutterUndoHunk<cr>
 endif
 " }}}
 " DoxygenToolkit.vim setting {{{2
@@ -951,9 +953,8 @@ if isdirectory(expand(g:dir_plugin.'/dictionary.vim/'))
     set dictionary+=~/.vim/bundle/dictionary.vim/oald_cn.dict       " For <C-x><C-k> to preview
 endif
 " }}}
-" vim-leader-guide setting {{{2
+" vim-leader-guide(<leader>) setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
-    " Define prefix dictionary
     let g:mapleader_map =  {}
     for s:i in range(1, 9)
         let g:mapleader_map[s:i] = [ s:i.'wincmd w', 'window '.s:i ]
@@ -961,6 +962,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
 
     let g:mapleader_map['?'] = [ 'Maps', 'show keybindings' ]
     let g:mapleader_map[';'] = [ 'call feedkeys("\<Plug>NERDCommenterComment")', 'commenter' ]
+    " a leader mapping {{{3
     let g:mapleader_map['a'] = {
                 \ 'name' : '+align',
                 \ '&' : [ 'call feedkeys("\<Plug>(AlignWith&)")', 'align with &' ],
@@ -975,6 +977,8 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'g' : [ 'call AgSymbolBuffer()', 'ag symbol in buffer' ],
                 \ 'G' : [ 'call AgSymbolProj()', 'ag symbol in project' ],
                 \ }
+    " }}}
+    " b leader mapping {{{3
     let g:mapleader_map['b'] = {
                 \ 'name' : '+buffer',
                 \ '1' : ['b1', 'buffer 1'],
@@ -996,9 +1000,13 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'b' : ['Buffers', 'fzf-buffer'],
                 \ '?' : ['Buffers', 'fzf-buffer'],
                 \ }
+    " }}}
+    " c leader mapping {{{3
     let g:mapleader_map['c'] = {
                 \ 'name' : '+copy',
                 \ }
+    " }}}
+    " d leader mapping {{{3
     let g:mapleader_map['d'] = {
                 \ 'name' : '+doxygen',
                 \ 'a' : [ 'DoxAuthor', 'Doxygen autor announce' ],
@@ -1006,31 +1014,16 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'f' : [ 'Dox', 'Doxygen a function' ],
                 \ 'l' : [ 'DoxLic', 'Doxygen a license' ],
                 \ }
+    " }}}
+    " e leader mapping {{{3
     let g:mapleader_map['e'] = {
                 \ 'name' : '+errors',
                 \ 'n' : ['call feedkeys("\<Plug>(ale_next)")', 'next-error'],
                 \ 'p' : ['call feedkeys("\<Plug>(ale_previous)")', 'previous-error'],
                 \ 'v' : [ 'vsplit $MYVIMRC', 'edit local vimrc'],
                 \ }
-    let g:mapleader_map['g'] = {
-                \ 'name' : '+git/version-control',
-                \ 'b' : ['Gblame', 'fugitive-blame'],
-                \ 'c' : ['Gcommit', 'fugitive-commit'],
-                \ 'd' : ['Gdiff', 'fugitive-diff'],
-                \ 'e' : ['Gedit', 'fugitive-edit'],
-                \ 'l' : ['Glog', 'fugitive-log'],
-                \ 'r' : ['Gread', 'fugitive-read'],
-                \ 's' : ['Gstatus', 'fugitive-status'],
-                \ 'w' : ['Gwrite', 'fugitive-write'],
-                \ 'p' : ['Git push', 'fugitive-push'],
-                \ 'y' : ['Goyo', 'goyo-mode'],
-                \ }
-    let g:mapleader_map['h'] = {
-                \ 'name' : '+help/history',
-                \ 'c' : [ 'History:', 'command history' ],
-                \ 'f' : [ 'History', 'file history' ],
-                \ 's' : [ 'History/', 'search history' ],
-                \ }
+    " }}}
+    " f leader mapping {{{3
     let g:mapleader_map['f'] = {
                 \ 'name' : '+find/files/fold',
                 \ '0' : [ 'set foldlevel=0', '0-fold-level' ],
@@ -1057,39 +1050,82 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ '/' : [ 'Files', 'files-in-current-direcotry' ],
                 \ 'R' : [ 'source $MYVIMRC', 'reload-vimrc' ],
                 \ }
+    " }}}
+    " g leader mapping {{{3
+    let g:mapleader_map['g'] = {
+                \ 'name' : '+git/version-control',
+                \ 'b' : ['Gblame', 'fugitive-blame'],
+                \ 'c' : ['Gcommit', 'fugitive-commit'],
+                \ 'd' : ['Gdiff', 'fugitive-diff'],
+                \ 'e' : ['Gedit', 'fugitive-edit'],
+                \ 'l' : ['Glog', 'fugitive-log'],
+                \ 'r' : ['Gread', 'fugitive-read'],
+                \ 's' : ['Gstatus', 'fugitive-status'],
+                \ 'w' : ['Gwrite', 'fugitive-write'],
+                \ 'p' : ['Git push', 'fugitive-push'],
+                \ }
+    " }}}
+    " h leader mapping {{{3
+    let g:mapleader_map['h'] = {
+                \ 'name' : '+help/history',
+                \ 'c' : [ 'History:', 'command history' ],
+                \ 'f' : [ 'History', 'file history' ],
+                \ 's' : [ 'History/', 'search history' ],
+                \ }
+    " }}}
+    " j leader mapping {{{3
     let g:mapleader_map['j'] = {
                 \ 'name' : '+jump',
                 \ }
+    " }}}
+    " m leader mapping {{{3
     let g:mapleader_map['m'] = {
                 \ 'name' : '+mark',
                 \ 'r' : [ 'call feedkeys("\<Plug>MarkRegex")', 'mark regex' ],
                 \ 's' : [ 'call feedkeys("\<Plug>MarkSet")', 'mark set' ],
                 \ 'c' : [ 'call feedkeys("\<Plug>MarkClear")', 'mark clear' ],
                 \ }
+    " }}}
+    " p leader mapping {{{3
     let g:mapleader_map['p'] = {
                 \ 'name' : '+projects',
+                \ 'c' : [ 'call EstablishCscope()', 'establish-cscope-enviroment' ],
+                \ 't' : [ 'call GenerateCtags()', 'generate-ctag-file' ],
                 \ }
+    " }}}
+    " r leader mapping {{{3
     let g:mapleader_map['r'] = {
                 \ 'name' : '+replace',
                 \ 'w' : [ 'call feedkeys("\<Plug>Replace")', 'replace-selection' ],
                 \ }
+    " }}}
+    " s leader mapping {{{3
     let g:mapleader_map['s'] = {
                 \ 'name' : '+search/source',
                 \ 'v' : [ 'source $MYVIMRC', 'reload local vimrc'],
                 \ }
+    " }}}
+    " t leader mapping {{{3
     let g:mapleader_map['t'] = {
                 \ 'name' : '+toggle/tab-ops',
-                \ 'a' : [ 'tabnew %:p', 'tab add' ],
+                \ 'a' : [ 'tabnew', 'tab add' ],
                 \ 'c' : [ 'tabclose', 'tab close' ],
-                \ 'f' : [ 'NERDTreeToggle', 'toggle nerdtree file manager' ],
-                \ 'g' : [ 'GitGutterLineHighlightsToggle', 'toggle highlight git difference' ],
+                \ 'f' : [ 'NERDTreeToggle', 'toggle nerdtree-file-manager' ],
+                \ 'g' : [ 'GitgutterSignsToggle', 'toggle git-diff-signs' ],
+                \ 'G' : [ 'GitGutterLineHighlightsToggle', 'toggle git-diff-highlight' ],
                 \ 'w' : [ 'ToggleStripWhitespaceOnSave', 'toggle remove whitespace' ],
                 \ 'p' : [ 'tabprevious', 'tab previous' ],
+                \ 'P' : [ 'call PasteToggle()', 'toggle paste' ],
+                \ 's' : [ 'SignatureToggleSigns', 'toggle left-sign-mark' ],
                 \ 'n' : [ 'tabnext', 'tab new' ],
                 \ }
+    " }}}
+    " v leader mapping {{{3
     let g:mapleader_map['v'] = {
                 \ 'name' : '+vim/visual',
                 \ }
+    " }}}
+    " w leader mapping {{{3
     let g:mapleader_map['w'] = {
                 \ 'name' : '+windows',
                 \ 'w' : ['call feedkeys("\<Plug>(window_w)")', 'other-window'],
@@ -1110,20 +1146,26 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'v' : ['call feedkeys("\<Plug>(window_v1)")', 'split-window-vertical'],
                 \ '?' : ['Windows', 'fzf-window'],
                 \ }
+    " }}}
+    " x leader mapping {{{3
     let g:mapleader_map['x'] = {
                 \ 'name' : '+text',
                 \ 'a' : ['call feedkeys("\<Plug>(AlignWith?)")', 'easy-align'],
                 \ 'd' : ['StripWhitespace', 'delete-trailing-whitespace'],
+                \ 's' : ['SignatureListBufferMarks', 'list-buffer-mark-signs' ],
                 \ }
-    nnoremap <leader>yu :YcmCompleter GoToDefinitionElseDeclaration<CR>
+    " }}}
+    " y leader mapping {{{3
     let g:mapleader_map['y'] = {
                 \ 'name' : '+ycm',
                 \ 'c' : [ 'YcmCompleter GoToDeclaration', 'go-to-deClaration' ],
                 \ 'e' : [ 'YcmDiags', 'errors-diags' ],
                 \ 'f' : [ 'YcmCompleter GoToDefinition', 'go-to-function-Definition' ],
-                \ 'u' : [ '', '' ],
+                \ 'u' : [ 'YcmCompleter GoToDefinitionElseDeclaration', 'go-to-definition-else-declaration' ],
                 \ }
+    " }}}
     call leaderGuide#register_prefix_descriptions(mapleader, "g:mapleader_map")
+
     nnoremap <silent> <leader> :<c-u>LeaderGuide mapleader<CR>
     vnoremap <silent> <leader> :<c-u>LeaderGuideVisual mapleader<CR>
 endif
