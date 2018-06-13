@@ -166,7 +166,7 @@ set    foldmethod=marker
 set    guioptions-=Trml
 set    helplang=en
 set    hidden
-set    history=200
+set    history=100
 set    hlsearch
 set    ruler
 set    showcmd
@@ -676,7 +676,7 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
                 \ 'infolog' : 1,
                 \ 'mail' : 1
                 \ }
-    let g:ycm_key_detailed_diagnostics = ""
+    let g:ycm_key_detailed_diagnostics            = ""
 
     nnoremap <C-\>] :YcmCompleter GoTo<cr>
 endif
