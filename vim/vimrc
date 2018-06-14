@@ -115,6 +115,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'kshenoy/vim-signature'
     Plug 'haya14busa/incsearch.vim'
     Plug 'tomasr/molokai'
+    Plug 'ludovicchabant/vim-gutentags',    { 'for': [ 'c', 'cpp' ] }
     if (g:os_gui && g:os_platform == 'windows')
         Plug 'Shougo/neocomplete.vim'
         Plug 'plasticboy/vim-markdown'
@@ -810,6 +811,19 @@ if executable('ctags')
     autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=tags;
     nnoremap <F9>        : call GenerateCtags()<cr>
 endif
+if isdirectory(expand(g:dir_plugin.'/vim-gutentags/')) && executable('ctags')
+    let g:gutentags_ctags_tagfile = 'tags'
+    " set default tags file name `tags` to `.tags`
+    set tags=./tags;,tags
+
+    let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+    let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+    let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+    " Specifies a directory in which to create all the tags files
+    let g:gutentags_cache_dir = g:proj_path
+
+    let g:gutentags_auto_add_gtags_cscope = 0
+endif
 " }}}
 " Cscope setting {{{2
 if has('cscope') && executable('cscope')
@@ -996,7 +1010,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " }}}
     " c leader mapping {{{3
     let g:mapleader_map['c'] = {
-                \ 'name' : '+copy',
+                \ 'name' : '+commenter/copy',
                 \ }
     " }}}
     " d leader mapping {{{3
@@ -1089,6 +1103,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'name' : '+projects',
                 \ 'c' : [ 'call EstablishCscope()', 'establish-cscope-enviroment' ],
                 \ 't' : [ 'call GenerateCtags()', 'generate-ctag-file' ],
+                \ 'g' : [ 'GutentagsToggleEnabled', 'gutentags ctags-enable' ],
                 \ }
     " }}}
     " r leader mapping {{{3
