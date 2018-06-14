@@ -106,10 +106,10 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'JohnBro/DoxygenToolkit.vim'
     Plug 'JohnBro/Mark'
     Plug 'JohnBro/dictionary.vim'
-    Plug 'airblade/vim-gitgutter'
     Plug 'junegunn/fzf', { 'do': './install --all' }
     Plug 'junegunn/fzf.vim'
     Plug 'justinmk/vim-sneak'
+    Plug 'airblade/vim-gitgutter'
     Plug 'tpope/vim-fugitive'
     Plug 'vim-utils/vim-man',               { 'for': [ 'c', 'cpp' ] }
     Plug 'kshenoy/vim-signature'
@@ -326,7 +326,6 @@ nnoremap <C-u>                  <Esc>ViwU<Esc>
 inoremap <C-u>                  <Esc>ViwU<Esc>$a
 nnoremap <Plug>Replace          :call NormalReplace()<cr>
 vnoremap <Plug>Replace          :call VisualReplace()<cr>
-nnoremap <silent><leader>=  gg=G<C-O><C-O>:w<CR>
 nnoremap n                  nzz
 nnoremap N                  Nzz
 nnoremap G                  Gzz
@@ -452,14 +451,7 @@ if isdirectory(expand(g:dir_plugin.'/fzf/')) && isdirectory(expand(g:dir_plugin.
                 \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 
     noremap  <F6>       :FAg! <C-R><C-W><CR>
-
     nnoremap <C-p>      :exec 'Files '.g:current_path<CR>              " Using this <C-p> to replace Ctrlp mapping
-    noremap <C-f>f      :Files<CR>
-    noremap <C-f>b      :Buffers<CR>
-    noremap <C-f>l      :Lines<CR>
-    noremap <C-f>t      :BTags<CR>
-    noremap <C-f>g      :Tags<CR>
-    noremap <C-f>m      :Maps<CR>
 endif
 " }}}
 " Ctrlp.vim settings {{{2
@@ -960,13 +952,14 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
         let g:mapleader_map[s:i] = [ s:i.'wincmd w', 'window '.s:i ]
     endfor
 
-    let g:mapleader_map['?'] = [ 'Maps', 'show keybindings' ]
+    let g:mapleader_map['?'] = [ 'Maps', 'show-keybindings' ]
     let g:mapleader_map[';'] = [ 'call feedkeys("\<Plug>NERDCommenterComment")', 'commenter' ]
+    let g:mapleader_map['='] = [ 'gg=G<C-O><C-O>:w', 'format-whole-file' ]
     " a leader mapping {{{3
     let g:mapleader_map['a'] = {
                 \ 'name' : '+align',
                 \ '&' : [ 'call feedkeys("\<Plug>(AlignWith&)")', 'align with &' ],
-                \ '=' : [ 'call feedkeys("\<Plug>(AlignWith&)")', 'align with =' ],
+                \ '=' : [ 'call feedkeys("\<Plug>(AlignWith=)")', 'align with =' ],
                 \ '=>' : [ 'call feedkeys("\<Plug>(AlignWith=>)")', 'align with =>' ],
                 \ ':' : [ 'call feedkeys("\<Plug>(AlignWith:)")', 'align with :' ],
                 \ '::' : [ 'call feedkeys("\<Plug>(AlignWith::)")', 'align with ::' ],
@@ -1039,11 +1032,11 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'b' : [ 'BLines', 'fzf-find-current-buffer' ],
                 \ 'c' : [ 'Commands', 'fzf-find-command' ],
                 \ 'd' : [ 'NERDTreeFind', 'find-current-buffer-in-NERDTree' ],
-                \ 'f' : [ 'Files '.g:current_path, 'files-in-home-direcotry' ],
+                \ 'f' : [ 'Files '.g:current_path, 'files-in-project-direcotry' ],
                 \ 'h' : [ 'Files ~', 'files-in-home-direcotry' ],
                 \ 'm' : [ 'Marks', 'fzf-find-marks' ], 
-                \ 'n' : [ 'let @"=substitute(expand("%"), "/", "\\", "g")', "copy file name" ],
-                \ 'p' : [ 'let @"=substitute(expand("%:p"), "/", "\\", "g")', "copy file path" ],
+                \ 'n' : [ 'let @"=substitute(expand("%"), "/", "\\", "g")', "file-name-copy" ],
+                \ 'p' : [ 'let @"=substitute(expand("%:p"), "/", "\\", "g")', "file-path-copy" ],
                 \ 'r' : [ 'CtrlPMRU', 'ctrlp-recent-files' ],
                 \ 's' : [ 'save', 'save-file' ],
                 \ 't' : [ 'Filetypes', 'fzf-find-file-type' ],
@@ -1074,8 +1067,13 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ }
     " }}}
     " j leader mapping {{{3
+    noremap <C-f>t      :BTags<CR>
+    noremap <C-f>g      :Tags<CR>
+    noremap <C-f>m      :Maps<CR>
     let g:mapleader_map['j'] = {
                 \ 'name' : '+jump',
+                \ 't' : [ 'BTags', 'jump-to-tags-in-buffer' ],
+                \ 'g' : [ 'BTags', 'jump-to-tags-in-project' ],
                 \ }
     " }}}
     " m leader mapping {{{3
