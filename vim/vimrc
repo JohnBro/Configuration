@@ -983,6 +983,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ '7' : ['b7', 'buffer 7'],
                 \ '8' : ['b8', 'buffer 8'],
                 \ '9' : ['b9', 'buffer 9'],
+                \ 'b' : ['Buffers', 'fzf-buffer-list'],
                 \ 'd' : ['bd', 'delete-buffer'],
                 \ 'f' : ['bfirst', 'first-buffer'],
                 \ 'h' : ['Startify', 'home-buffer'],
@@ -990,8 +991,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'l' : ['blast', 'last-buffer'],
                 \ 'n' : ['bnext', 'next-buffer'],
                 \ 'p' : ['bprevious', 'previous-buffer'],
-                \ 'b' : ['Buffers', 'fzf-buffer'],
-                \ '?' : ['Buffers', 'fzf-buffer'],
+                \ '?' : ['Buffers', 'fzf-buffer-list'],
                 \ }
     " }}}
     " c leader mapping {{{3
@@ -1002,10 +1002,10 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " d leader mapping {{{3
     let g:mapleader_map['d'] = {
                 \ 'name' : '+doxygen',
-                \ 'a' : [ 'DoxAuthor', 'Doxygen autor announce' ],
-                \ 'b' : [ 'DoxBlock', 'Doxygen a block line' ],
-                \ 'f' : [ 'Dox', 'Doxygen a function' ],
-                \ 'l' : [ 'DoxLic', 'Doxygen a license' ],
+                \ 'a' : [ 'DoxAuthor', 'Doxygen autor-announce' ],
+                \ 'b' : [ 'DoxBlock', 'Doxygen a-block-line' ],
+                \ 'f' : [ 'Dox', 'Doxygen a-function' ],
+                \ 'l' : [ 'DoxLic', 'Doxygen a-license' ],
                 \ }
     " }}}
     " e leader mapping {{{3
@@ -1013,7 +1013,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'name' : '+errors',
                 \ 'n' : ['call feedkeys("\<Plug>(ale_next)")', 'next-error'],
                 \ 'p' : ['call feedkeys("\<Plug>(ale_previous)")', 'previous-error'],
-                \ 'v' : [ 'vsplit $MYVIMRC', 'edit local vimrc'],
+                \ 'v' : [ 'vsplit $MYVIMRC', 'edit local-vimrc'],
                 \ }
     " }}}
     " f leader mapping {{{3
