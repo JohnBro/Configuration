@@ -1111,11 +1111,11 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'f' : [ 'NERDTreeToggle', 'toggle nerdtree-file-manager' ],
                 \ 'g' : [ 'GitgutterSignsToggle', 'toggle git-diff-signs' ],
                 \ 'G' : [ 'GitGutterLineHighlightsToggle', 'toggle git-diff-highlight' ],
-                \ 'w' : [ 'ToggleStripWhitespaceOnSave', 'toggle remove whitespace' ],
+                \ 'n' : [ 'tabnext', 'tab next' ],
                 \ 'p' : [ 'tabprevious', 'tab previous' ],
                 \ 'P' : [ 'call PasteToggle()', 'toggle paste' ],
                 \ 's' : [ 'SignatureToggleSigns', 'toggle left-sign-mark' ],
-                \ 'n' : [ 'tabnext', 'tab new' ],
+                \ 'w' : [ 'ToggleStripWhitespaceOnSave', 'toggle remove whitespace' ],
                 \ }
     " }}}
     " v leader mapping {{{3
