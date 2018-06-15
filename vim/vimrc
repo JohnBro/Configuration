@@ -90,19 +90,20 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
 
     Plug 'hecal3/vim-leader-guide'
     Plug 'rking/ag.vim'
-    Plug 'kien/ctrlp.vim',                  {'on': ['CtrlP', 'CtrlPMRU' ] }
-    Plug 'FelikZ/ctrlp-py-matcher',         {'on': ['CtrlP', 'CtrlPMRU' ] }
+    Plug 'kien/ctrlp.vim',                  {'on': [ 'CtrlP', 'CtrlPMRU' ] }
+    Plug 'FelikZ/ctrlp-py-matcher',         {'on': [ 'CtrlP', 'CtrlPMRU' ] }
     Plug 'majutsushi/tagbar'
-    Plug 'Xuyuanp/nerdtree-git-plugin'
-    Plug 'scrooloose/nerdtree',             { 'on': 'NERDTreeToggle' }
+    Plug 'scrooloose/nerdtree',             { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
+    Plug 'Xuyuanp/nerdtree-git-plugin',     { 'on': [ 'NERDTreeToogle', 'NERDTreeFind' ] }
+    Plug 'danro/rename.vim',                { 'on': 'Rename' }
     Plug 'scrooloose/nerdcommenter'
     Plug 'godlygeek/tabular',               { 'on': 'Tabularize' }
     Plug 'junegunn/vim-easy-align',         { 'on': [ '<Plug>(EasyAlign)', 'EasyAlign' ] }
     Plug 'terryma/vim-multiple-cursors'
     Plug 'ntpeters/vim-better-whitespace',  { 'for': [ 'c', 'cpp', 'Makefile' ] }
     Plug 'liuchengxu/eleline.vim'
-    Plug 'Valloric/YouCompleteMe'
-    Plug 'rdnetto/YCM-Generator',           { 'on': 'YcmGenerateConfig' }
+    Plug 'Valloric/YouCompleteMe',          { 'on': [] }
+    Plug 'rdnetto/YCM-Generator',           { 'on': ['YcmGenerateConfig', 'CCGenerateConfig'], 'branch': 'stable' }
     Plug 'JohnBro/DoxygenToolkit.vim'
     Plug 'JohnBro/Mark'
     Plug 'JohnBro/dictionary.vim'
@@ -1181,6 +1182,16 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
 
     nnoremap <silent> <leader> :<c-u>LeaderGuide mapleader<CR>
     vnoremap <silent> <leader> :<c-u>LeaderGuideVisual mapleader<CR>
+
+    let g:localleader_map = {}
+    call leaderGuide#register_prefix_descriptions(localleader, "g:localleader_map")
+    nnoremap <silent> <leader> :<c-u>LeaderGuide localleader<CR>
+    vnoremap <silent> <leader> :<c-u>LeaderGuideVisual localeader<CR>
+
+    let g:markleader_map = {}
+    call leaderGuide#register_prefix_descriptions("M", "g:markleader_map")
+    nnoremap <silent> <leader> :<c-u>LeaderGuide g:markleader<CR>
+    vnoremap <silent> <leader> :<c-u>LeaderGuideVisual g:markleader<CR>
 endif
 " }}}
 " }}}
