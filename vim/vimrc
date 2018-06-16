@@ -113,10 +113,10 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'airblade/vim-gitgutter'
     Plug 'tpope/vim-fugitive'
     Plug 'vim-utils/vim-man',               { 'for': [ 'c', 'cpp' ] }
+    Plug 'ludovicchabant/vim-gutentags',    { 'for': [ 'c', 'cpp' ] }
     Plug 'kshenoy/vim-signature'
     Plug 'haya14busa/incsearch.vim'
     Plug 'tomasr/molokai'
-    Plug 'ludovicchabant/vim-gutentags',    { 'for': [ 'c', 'cpp' ] }
     if (g:os_gui && g:os_platform == 'windows')
         Plug 'Shougo/neocomplete.vim'
         Plug 'plasticboy/vim-markdown'
@@ -644,9 +644,9 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
     let g:ycm_cache_omnifunc                      = 0
     let g:ycm_add_preview_to_completeopt          = 0
     let g:ycm_key_invoke_completion               = '<C-z>'
-    let g:ycm_python_binary_path = '/usr/local/bin/python3'
-    let g:ycm_server_python_interpreter = '/usr/local/bin/python3'
-    let g:ycm_semantic_triggers =  {
+    let g:ycm_python_binary_path                  = '/usr/bin/python3'
+    let g:ycm_server_python_interpreter           = '/usr/bin/python3'
+    let g:ycm_semantic_triggers                   = {
                 \   'c' : ['->', '.', 're!\w{3}'],
                 \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
                 \             're!\[.*\]\s'],
@@ -672,80 +672,31 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
                 \ }
     let g:ycm_key_detailed_diagnostics            = ""
 
-    nnoremap <C-\>] :YcmCompleter GoTo<cr>
-endif
-" }}}
-" Neocomplete.vim setting {{{3
-if isdirectory(expand(g:dir_plugin.'/neocomplete.vim/')) && has('lua') && 0
-    "disable AutoComplPop.
-    let g:acp_enableAtStartup = 0
-    " Use neocomplete.
-    let g:neocomplete#enable_at_startup = 1
-    " Use smartcase.
-    let g:neocomplete#enable_smart_case = 1
-    " Set minimum syntax keyword length.
-    let g:neocomplete#sources#syntax#min_keyword_length = 3
+    augroup spacevimYcm
+        autocmd!
+        " Enable omni completion.
+        autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+        autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+        autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+        autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+        autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+        autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+        autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
 
-    " Define dictionary.
-    let g:neocomplete#sources#dictionary#dictionaries = {
-                \ 'default' : '',
-                \ 'vimshell' : $HOME.'/.vimshell_hist',
-                \ 'scheme' : $HOME.'/.gosh_completions'
-                \ }
-
-    " Define keyword.
-    if !exists('g:neocomplete#keyword_patterns')
-        let g:neocomplete#keyword_patterns = {}
-    endif
-    let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-
-    " Plugin key-mappings.
-    inoremap <expr><C-g>     neocomplete#undo_completion()
-    inoremap <expr><C-l>     neocomplete#complete_common_string()
-
-    " Recommended key-mappings.
-    " <CR>: close popup and save indent.
-    inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-    function! s:my_cr_function()
-        return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
-        " For no inserting <CR> key.
-        "return pumvisible() ? "\<C-y>" : "\<CR>"
-    endfunction
-    " <TAB>: completion.
-    inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-    " <C-h>, <BS>: close popup and delete backword char.
-    inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-    inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-    " Close popup by <Space>.
-    "inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
-
-    " AutoComplPop like behavior.
-    "let g:neocomplete#enable_auto_select = 1
-
-    " Shell like behavior(not recommended).
-    "set completeopt+=longest
-    "let g:neocomplete#enable_auto_select = 1
-    "let g:neocomplete#disable_auto_complete = 1
-    "inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
-
-    " Enable omni completion.
-    autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-    autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-    autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-    autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-    autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-    " Enable heavy omni completion.
-    if !exists('g:neocomplete#sources#omni#input_patterns')
-        let g:neocomplete#sources#omni#input_patterns = {}
-    endif
-    let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-    let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-    let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-
-    " For perlomni.vim setting.
-    " https://github.com/c9s/perlomni.vim
-    let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+        " Key bindings
+        autocmd FileType c,cpp,python,go,javascript,rust
+                    \   nnoremap <LocalLeader>gd :YcmCompleter GoTo<CR>
+        autocmd FileType c,cpp,python,rust,javascript,typescript
+                    \   nnoremap <LocalLeader>gD :YcmCompleter GetDoc<CR>
+        autocmd FileType c,cpp
+                    \   nnoremap <LocalLeader>gi :YcmCompleter GoToInclude<CR>
+        autocmd FileType javascript,python,typescript
+                    \   nnoremap <LocalLeader>gr :YcmCompleter GoToReferences<CR>
+        autocmd FileType c,cpp,javascript,typescript
+                    \   nnoremap <LocalLeader>gt :YcmCompleter GetType<CR>
+        autocmd FileType c,cpp
+                    \   nnoremap <LocalLeader>gp :YcmCompleter GetParent<CR>
+    augroup END
 endif
 " }}}
 " }}}
@@ -786,7 +737,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
 endif
 "}}}
 " Ctags setting {{{2
-if executable('ctags')
+if isdirectory(expand(g:dir_plugin.'/vim-gutentags/')) && executable('ctags')
     let g:ctags_file = 'tags'
     let g:ctags_path = g:current_path
 
@@ -807,12 +758,11 @@ if executable('ctags')
     endfunction
 
     if isdirectory(g:ctags_path.'/'.g:proj_dir) && !filereadable(g:ctags_path.'/'.g:ctags_file)
-        call GenerateCtags()
+        " call GenerateCtags()
     endif
     autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=tags;
     nnoremap <F9>        : call GenerateCtags()<cr>
-endif
-if isdirectory(expand(g:dir_plugin.'/vim-gutentags/')) && executable('ctags')
+
     let g:gutentags_ctags_tagfile = 'tags'
     " set default tags file name `tags` to `.tags`
     set tags=./tags;,tags
@@ -1185,13 +1135,13 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
 
     let g:localleader_map = {}
     call leaderGuide#register_prefix_descriptions(localleader, "g:localleader_map")
-    nnoremap <silent> <leader> :<c-u>LeaderGuide localleader<CR>
-    vnoremap <silent> <leader> :<c-u>LeaderGuideVisual localeader<CR>
+    nnoremap <silent> <localleader> :<c-u>LeaderGuide localleader<CR>
+    vnoremap <silent> <localleader> :<c-u>LeaderGuideVisual localeader<CR>
 
     let g:markleader_map = {}
     call leaderGuide#register_prefix_descriptions("M", "g:markleader_map")
-    nnoremap <silent> <leader> :<c-u>LeaderGuide g:markleader<CR>
-    vnoremap <silent> <leader> :<c-u>LeaderGuideVisual g:markleader<CR>
+    nnoremap <silent> M :<c-u>LeaderGuide 'M'<CR>
+    vnoremap <silent> M :<c-u>LeaderGuideVisual 'M'<CR>
 endif
 " }}}
 " }}}
