@@ -117,6 +117,9 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'kshenoy/vim-signature'
     Plug 'haya14busa/incsearch.vim'
     Plug 'tomasr/molokai'
+    Plug 'liuchengxu/space-vim-dark'
+    Plug 'rhysd/vim-clang-format',           { 'for': [ 'c', 'cpp' ] }
+    Plug 'octol/vim-cpp-enhanced-highlight', { 'for': [ 'c', 'cpp' ] }
     if (g:os_gui && g:os_platform == 'windows')
         Plug 'Shougo/neocomplete.vim'
         Plug 'plasticboy/vim-markdown'
@@ -133,7 +136,7 @@ filetype plugin on
 filetype indent on
 syntax enable
 syntax on
-color molokai
+silent! color space-vim-dark
 set  nocompatible
 set    expandtab
 set    shiftwidth=4
@@ -729,6 +732,8 @@ endif
 "}}}
 " Better white-space setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
+    hi ExtraWhitespace guifg=#FF2626 gui=underline ctermfg=124 cterm=underline
+    match ExtraWhitespace /\s\+$/
     let g:better_whitespace_filetypes_blacklist=['txt', 'log', 'diff', 'unite', 'qf', 'help']
     let g:better_whitespace_verbosity = 0
     let g:better_whitespace_oprator = '<localleader>wt'
@@ -760,18 +765,17 @@ if isdirectory(expand(g:dir_plugin.'/vim-gutentags/')) && executable('ctags')
     if isdirectory(g:ctags_path.'/'.g:proj_dir) && !filereadable(g:ctags_path.'/'.g:ctags_file)
         " call GenerateCtags()
     endif
-    autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=tags;
+    autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=tags,tags;
     nnoremap <F9>        : call GenerateCtags()<cr>
 
-    let g:gutentags_ctags_tagfile = 'tags'
-    " set default tags file name `tags` to `.tags`
-    set tags=./tags;,tags
-
-    let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+    let g:gutentags_ctags_tagfile     = 'tags'
+    let g:gutentags_ctags_extra_args  = ['--fields=+niazS', '--extra=+q']
     let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
     let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
     " Specifies a directory in which to create all the tags files
-    let g:gutentags_cache_dir = g:proj_path
+    if isdirectory(g:ctags_path.'/'.g:proj_dir)
+        let g:gutentags_cache_dir    = g:proj_path
+    endif
 
     let g:gutentags_auto_add_gtags_cscope = 0
 endif
@@ -909,6 +913,10 @@ if isdirectory(expand(g:dir_plugin.'/dictionary.vim/'))
     set dictionary-=~/.vimrc
     set dictionary+=~/.vim/bundle/dictionary.vim/oald_cn.dict       " For <C-x><C-k> to preview
 endif
+" }}}
+" c-c++ setting {{{2
+let g:cpp_class_scope_highlight = 1
+let g:c_no_curly_error=1
 " }}}
 " vim-leader-guide(<leader>) setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
@@ -1054,7 +1062,6 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'name' : '+projects',
                 \ 'c' : [ 'call EstablishCscope()', 'establish-cscope-enviroment' ],
                 \ 't' : [ 'call GenerateCtags()', 'generate-ctag-file' ],
-                \ 'g' : [ 'GutentagsToggleEnabled', 'gutentags ctags-enable' ],
                 \ }
     " }}}
     " r leader mapping {{{3
@@ -1071,17 +1078,21 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " }}}
     " t leader mapping {{{3
     let g:mapleader_map['t'] = {
-                \ 'name' : '+toggle/tab-ops',
-                \ 'a' : [ 'tabnew', 'tab add' ],
-                \ 'c' : [ 'tabclose', 'tab close' ],
+                \ 'name' : '+toggle',
                 \ 'f' : [ 'NERDTreeToggle', 'toggle nerdtree-file-manager' ],
                 \ 'g' : [ 'GitgutterSignsToggle', 'toggle git-diff-signs' ],
                 \ 'G' : [ 'GitGutterLineHighlightsToggle', 'toggle git-diff-highlight' ],
-                \ 'n' : [ 'tabnext', 'tab next' ],
-                \ 'p' : [ 'tabprevious', 'tab previous' ],
                 \ 'P' : [ 'call PasteToggle()', 'toggle paste' ],
                 \ 's' : [ 'SignatureToggleSigns', 'toggle left-sign-mark' ],
                 \ 'w' : [ 'ToggleStripWhitespaceOnSave', 'toggle remove whitespace' ],
+                \ }
+    let g:mapleader_map['T'] = {
+                \ 'name' : '+Tab-ops',
+                \ 'a' : [ 'tabnew', 'Tab add' ],
+                \ 'c' : [ 'tabclose', 'Tab close' ],
+                \ 'l' : [ 'tabs', 'Tab list' ],
+                \ 'n' : [ 'tabnext', 'Tab next' ],
+                \ 'p' : [ 'tabprevious', 'Tab previous' ],
                 \ }
     " }}}
     " v leader mapping {{{3
