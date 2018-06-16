@@ -924,7 +924,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
         let g:mapleader_map[s:i] = [ s:i.'wincmd w', 'window '.s:i ]
     endfor
 
-    let g:mapleader_map[','] = [ '','<Esc>' ]
+    let g:mapleader_map[','] = [ 'normal <Esc>','exit' ]
     let g:mapleader_map['?'] = [ 'Maps', 'show-keybindings' ]
     let g:mapleader_map[';'] = [ 'call feedkeys("\<Plug>NERDCommenterComment")', 'commenter' ]
     let g:mapleader_map['='] = [ 'gg=G<C-O><C-O>:w', 'format-whole-file' ]
