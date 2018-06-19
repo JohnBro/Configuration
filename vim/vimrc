@@ -229,7 +229,6 @@ endfunction
 
 func! LeaveHandler()
     if isdirectory(g:proj_path)
-        exec "NERDTreeClose"
         exec "mksession! ".g:proj_path."/".g:session_file
         exec "wviminfo! ".g:proj_path."/".g:viminfo_file
     endif
@@ -762,20 +761,14 @@ if isdirectory(expand(g:dir_plugin.'/vim-gutentags/')) && executable('ctags')
         endif
     endfunction
 
-    let g:gutentags_ctags_tagfile          = 'tags'
+    let g:gutentags_ctags_tagfile          = g:ctags_file
     let g:gutentags_ctags_extra_args       = ['--fields=+niazS', '--extra=+q']
     let g:gutentags_ctags_extra_args      += ['--c++-kinds=+px']
     let g:gutentags_ctags_extra_args      += ['--c-kinds=+px']
     let g:gutentags_auto_add_gtags_cscope  = 0
-    " Specifies a directory in which to create all the tags files
-    if isdirectory(g:ctags_path.'/'.g:proj_dir)
-        let g:gutentags_cache_dir = g:ctags_path
-    endif
+    let g:gutentags_cache_dir              = ''
 
-    if isdirectory(g:ctags_path.'/'.g:proj_dir) && !filereadable(g:ctags_path.'/'.g:ctags_file)
-        " call GenerateCtags()
-    endif
-    autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=tags,tags;
+    autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=tags;,tags;
     nnoremap <F9>        : call GenerateCtags()<cr>
 endif
 " }}}
@@ -867,8 +860,8 @@ if isdirectory(expand(g:dir_plugin.'/tabular/')) && isdirectory(expand(g:dir_plu
     vnoremap <Plug>(AlignWith,)     :Tabularize /,<CR>
     nnoremap <Plug>(AlignWith,,)    :Tabularize /,\zs<CR>
     vnoremap <Plug>(AlignWith,,)    :Tabularize /,\zs<CR>
-    nnoremap <Plug>(AlignWith<Bar>)     :Tabularize /<Bar><CR>
-    vnoremap <Plug>(AlignWith<Bar>)     :Tabularize /<Bar><CR>
+    nnoremap <Plug>(AlignWith<Bar>) :Tabularize /<Bar><CR>
+    vnoremap <Plug>(AlignWith<Bar>) :Tabularize /<Bar><CR>
 
     " Start interactive EasyAlign in visual mode (e.g. vipxa)
     xmap <Plug>(AlignWith?) <Plug>(EasyAlign)
@@ -924,10 +917,11 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
         let g:mapleader_map[s:i] = [ s:i.'wincmd w', 'window '.s:i ]
     endfor
 
-    let g:mapleader_map[','] = [ 'normal <Esc>','exit' ]
+    let g:mapleader_map[','] = [ 'call feedkeys("\<Esc>")','exit' ]
     let g:mapleader_map['?'] = [ 'Maps', 'show-keybindings' ]
     let g:mapleader_map[';'] = [ 'call feedkeys("\<Plug>NERDCommenterComment")', 'commenter' ]
     let g:mapleader_map['='] = [ 'gg=G<C-O><C-O>:w', 'format-whole-file' ]
+    let g:mapleader_map[' '] = [ 'call feedkeys("\<Space>")', 'cmd-line' ]
     " a leader mapping {{{3
     let g:mapleader_map['a'] = {
                 \ 'name' : '+align',
