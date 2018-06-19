@@ -90,13 +90,13 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
 
     Plug 'hecal3/vim-leader-guide'
     Plug 'rking/ag.vim'
-    Plug 'kien/ctrlp.vim',                  {'on': [ 'CtrlP', 'CtrlPMRU' ] }
-    Plug 'FelikZ/ctrlp-py-matcher',         {'on': [ 'CtrlP', 'CtrlPMRU' ] }
+    Plug 'kien/ctrlp.vim',                  { 'on': [ 'CtrlP', 'CtrlPMRU' ] }
+    Plug 'FelikZ/ctrlp-py-matcher',         { 'on': [ 'CtrlP', 'CtrlPMRU' ] }
     Plug 'majutsushi/tagbar'
     Plug 'scrooloose/nerdtree',             { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
     Plug 'Xuyuanp/nerdtree-git-plugin',     { 'on': [ 'NERDTreeToogle', 'NERDTreeFind' ] }
     Plug 'danro/rename.vim',                { 'on': 'Rename' }
-    Plug 'scrooloose/nerdcommenter'
+    Plug 'scrooloose/nerdcommenter',        { 'on': '<Plug>NERDCommenterToggle' }
     Plug 'godlygeek/tabular',               { 'on': 'Tabularize' }
     Plug 'junegunn/vim-easy-align',         { 'on': [ '<Plug>(EasyAlign)', 'EasyAlign' ] }
     Plug 'terryma/vim-multiple-cursors'
@@ -120,6 +120,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'liuchengxu/space-vim-dark'
     Plug 'rhysd/vim-clang-format',           { 'for': [ 'c', 'cpp' ] }
     Plug 'octol/vim-cpp-enhanced-highlight', { 'for': [ 'c', 'cpp' ] }
+    Plug 'romainl/vim-qf'
     if (g:os_gui && g:os_platform == 'windows')
         Plug 'Shougo/neocomplete.vim'
         Plug 'plasticboy/vim-markdown'
@@ -608,12 +609,23 @@ endif
 " }}}
 " NERDcommenter settings {{{2
 if isdirectory(expand(g:dir_plugin.'/nerdcommenter/'))
-    let g:NERDSpaceDelims = 1
-    let g:NERDComaptSexyComs = 1
-    let g:NERDAltDelims_java = 1
-    let g:NERDCommentEmptyLines = 1
-    let g:NERDDefaultAlign = 'left'
+    let g:NERDSpaceDelims            = 1
+    let g:NERDComaptSexyComs         = 1
+    let g:NERDAltDelims_java         = 1
+    let g:NERDCommentEmptyLines      = 1
+    let g:NERDDefaultAlign           = 'left'
     let g:NERDTrimTrailingWhitespace = 1
+    let NERDCreateDefaultMappings    = 0
+
+    nmap <Leader>;; <Plug>NERDCommenterToggle
+    omap <Leader>;; <Plug>NERDCommenterToggle
+    vmap <Leader>;; <Plug>NERDCommenterToggle
+    nmap <Leader>;c <Plug>NERDCommenterComment
+    omap <Leader>;c <Plug>NERDCommenterComment
+    vmap <Leader>;c <Plug>NERDCommenterComment
+    nmap <Leader>;u <Plug>NERDCommenterUncomment
+    omap <Leader>;u <Plug>NERDCommenterUncomment
+    vmap <Leader>;u <Plug>NERDCommenterUncomment
 endif
 " }}}
 " Completion Plugin configuration {{{2
@@ -773,9 +785,12 @@ if isdirectory(expand(g:dir_plugin.'/vim-gutentags/')) && executable('ctags')
 endif
 " }}}
 " Cscope setting {{{2
-if has('cscope') && executable('cscope')
-    set cscopetag
+if has('cscope') && executable('cscope') && isdirectory(expand(g:dir_plugin.'/vim-qf/'))
+    " cscope databases are searched first, followed by tag files if cscope did not return any matches.
     set csto=0
+    " always search cscope database as well as tag files.
+    set cscopetag
+    set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
     " Show message when any oterhs cscope db added
     " set cscopeverbose
     let g:cscope_file = 'cscope.out'
@@ -917,9 +932,15 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
         let g:mapleader_map[s:i] = [ s:i.'wincmd w', 'window '.s:i ]
     endfor
 
+    let g:gutentags_project_root = [ g:proj_dir ]
     let g:mapleader_map[','] = [ 'call feedkeys("\<Esc>")','exit' ]
     let g:mapleader_map['?'] = [ 'Maps', 'show-keybindings' ]
-    let g:mapleader_map[';'] = [ 'call feedkeys("\<Plug>NERDCommenterComment")', 'commenter' ]
+    let g:mapleader_map[';'] = {
+                \ 'name' : '+commenter',
+                \ ';' : [ 'call feedkeys("\<Plug>NERDCommenterToggle")', 'comment-toggle' ],
+                \ 'c' : [ 'call feedkeys("\<Plug>NERDCommenterComment")', 'comment-lines' ],
+                \ 'u' : [ 'call feedkeys("\<Plug>NERDCommenterUncomment")', 'uncomment-lines' ],
+                \ }
     let g:mapleader_map['='] = [ 'gg=G<C-O><C-O>:w', 'format-whole-file' ]
     let g:mapleader_map[' '] = [ 'call feedkeys("\<Space>")', 'cmd-line' ]
     " a leader mapping {{{3
@@ -1071,7 +1092,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     let g:mapleader_map['t'] = {
                 \ 'name' : '+toggle',
                 \ 'f' : [ 'NERDTreeToggle', 'toggle nerdtree-file-manager' ],
-                \ 'g' : [ 'GitgutterSignsToggle', 'toggle git-diff-signs' ],
+                \ 'g' : [ 'GitGutterSignsToggle', 'toggle git-diff-signs' ],
                 \ 'G' : [ 'GitGutterLineHighlightsToggle', 'toggle git-diff-highlight' ],
                 \ 'P' : [ 'call PasteToggle()', 'toggle paste' ],
                 \ 's' : [ 'SignatureToggleSigns', 'toggle left-sign-mark' ],
