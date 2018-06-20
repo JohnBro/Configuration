@@ -794,7 +794,6 @@ if has('cscope') && executable('cscope') && isdirectory(expand(g:dir_plugin.'/vi
     set csto=0
     " always search cscope database as well as tag files.
     set cscopetag
-    set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
     " Show message when any oterhs cscope db added
     " set cscopeverbose
     let g:cscope_file = 'cscope.out'
@@ -817,7 +816,7 @@ if has('cscope') && executable('cscope') && isdirectory(expand(g:dir_plugin.'/vi
         endif
     endfunction
 
-    autocmd BufReadPost *.c,*.h,*.cpp,*.cxx
+    autocmd BufReadPost *.c,*.cpp,*.cxx,*.h
                 \ if isdirectory(g:cscope_path) |
                 \     if filereadable(g:cscope_path.'/'.g:cscope_file) |
                 \         exe 'cscope add '.g:cscope_path.'/'.g:cscope_file |
@@ -826,16 +825,16 @@ if has('cscope') && executable('cscope') && isdirectory(expand(g:dir_plugin.'/vi
                 \ endif
 
     " <F10> To establish a cscope enviroment.
-    nnoremap <F10>          : call EstablishCscope()<cr>
-    nnoremap <C-\>a         : cscope add cscope.out<cr>
-    nnoremap <C-\>s         :cs find s <C-R>=expand("<cword>")<CR><CR>
-    nnoremap <C-\>g         :cs find g <C-R>=expand("<cword>")<CR><CR>
-    nnoremap <C-\>c         :cs find c <C-R>=expand("<cword>")<CR><CR>
-    nnoremap <C-\>t         :cs find t <C-R>=expand("<cword>")<CR><CR>
-    nnoremap <C-\>e         :cs find e <C-R>=expand("<cword>")<CR><CR>
-    nnoremap <C-\>f         :cs find f <C-R>=expand("<cfile>")<CR><CR>
-    nnoremap <C-\>i         :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nnoremap <C-\>d         :cs find d <C-R>=expand("<cword>")<CR><CR>
+    nmap <F10>              :call EstablishCscope()<cr>
+    nmap <Plug>Cscope_Add   :exec 'cscope add '.g:cscope_path.'/'.g:cscope_file<cr>
+    nmap <Plug>Cscope_Refer :cs find s <C-R>=expand("<cword>")<CR><CR>
+    nmap <Plug>Cscope_GloDe :cs find g <C-R>=expand("<cword>")<CR><CR>
+    nmap <Plug>Cscope_Calls :cs find c <C-R>=expand("<cword>")<CR><CR>
+    nmap <Plug>Cscope_Instc :cs find t <C-R>=expand("<cword>")<CR><CR>
+    nmap <Plug>Cscope_Egrep :cs find e <C-R>=expand("<cword>")<CR><CR>
+    nmap <Plug>Cscope_File  :cs find f <C-R>=expand("<cfile>")<CR><CR>
+    nmap <Plug>Cscope_Inclu :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    nmap <Plug>Cscope_Calld :cs find d <C-R>=expand("<cword>")<CR><CR>
 endif
 "}}}
 " Vim-Gitgutter setting {{{2
@@ -987,8 +986,25 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ }
     " }}}
     " c leader mapping {{{3
+    "   's'   symbol:   find all references to the token under cursor
+    "   'g'   global:   find global definition(s) of the token under cursor
+    "   'c'   calls:    find all calls to the function name under cursor
+    "   't'   text:     find all instances of the text under cursor
+    "   'e'   egrep:    egrep search for the word under cursor
+    "   'f'   file:     open the filename under cursor
+    "   'i'   includes: find files that include the filename under cursor
+    "   'd'   called:   find functions that function under cursor calls
     let g:mapleader_map['c'] = {
-                \ 'name' : '+commenter/copy',
+                \ 'name' : '+cscope',
+                \ 'a' : [ 'call feedkeys("\<Plug>Cscope_Add")', 'cscope-add-database' ],
+                \ 's' : [ 'call feedkeys("\<Plug>Cscope_Refer")', 'find-global-definition' ],
+                \ 'g' : [ 'call feedkeys("\<Plug>Cscope_GloDe")', 'find-global-definition' ],
+                \ 'c' : [ 'call feedkeys("\<Plug>Cscope_Calls")', 'find-all-calls' ],
+                \ 't' : [ 'call feedkeys("\<Plug>Cscope_Instc")', 'find-all-instance' ],
+                \ 'e' : [ 'call feedkeys("\<Plug>Cscope_Egrep")', 'text-egrep-search' ],
+                \ 'f' : [ 'call feedkeys("\<Plug>Cscope_File")', 'open-the-filename' ],
+                \ 'i' : [ 'call feedkeys("\<Plug>Cscope_Inclu")', 'find-files-included' ],
+                \ 'd' : [ 'call feedkeys("\<Plug>Cscope_Calld")', 'find-all-functions' ],
                 \ }
     " }}}
     " d leader mapping {{{3
