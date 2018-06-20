@@ -102,7 +102,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'terryma/vim-multiple-cursors'
     Plug 'ntpeters/vim-better-whitespace',  { 'for': [ 'c', 'cpp', 'Makefile' ] }
     Plug 'liuchengxu/eleline.vim'
-    Plug 'Valloric/YouCompleteMe',          { 'on': [] }
+    Plug 'Valloric/YouCompleteMe'
     Plug 'rdnetto/YCM-Generator',           { 'on': ['YcmGenerateConfig', 'CCGenerateConfig'], 'branch': 'stable' }
     Plug 'JohnBro/DoxygenToolkit.vim'
     Plug 'JohnBro/Mark'
@@ -523,6 +523,10 @@ if isdirectory(expand(g:dir_plugin.'/ctrlp.vim/'))
     if isdirectory(expand("~/.vim/bundle/ctrlp-py-matcher/"))
         let g:ctrlp_match_func = {'match': 'pymatcher#PyMatch'}
     endif
+
+    nmap <Plug>CtrlP_RecentFiles    :CtrlPMRU<cr>
+    omap <Plug>CtrlP_RecentFiles    :CtrlPMRU<cr>
+    vmap <Plug>CtrlP_RecentFiles    :CtrlPMRU<cr>
 endif
 " }}}
 " Tagbar settings {{{2
@@ -1025,7 +1029,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'm' : [ 'Marks', 'fzf-find-marks' ], 
                 \ 'n' : [ 'let @"=substitute(expand("%"), "/", "\\", "g")', "file-name-copy" ],
                 \ 'p' : [ 'let @"=substitute(expand("%:p"), "/", "\\", "g")', "file-path-copy" ],
-                \ 'r' : [ 'CtrlPMRU', 'ctrlp-recent-files' ],
+                \ 'r' : [ 'call feedkeys("\<Plug>CtrlP_RecentFiles")', 'ctrlp-recent-files' ],
                 \ 's' : [ 'save', 'save-file' ],
                 \ 't' : [ 'Filetypes', 'fzf-find-file-type' ],
                 \ '/' : [ 'Files', 'files-in-current-direcotry' ],
