@@ -76,9 +76,9 @@ endif
 " Vim plugin manager setting {{{1
 let $VIM_PLUGDIR = expand(g:dir_plugin.'/vim-plug')
 if empty(glob(expand($VIM_PLUGDIR."/plug.vim")))
-  silent !curl -fLo $VIM_PLUGDIR/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source ~/.vimrc
+    silent !curl -fLo $VIM_PLUGDIR/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source ~/.vimrc
 endif
 
 if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
@@ -933,7 +933,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     endfor
 
     let g:gutentags_project_root = [ g:proj_dir ]
-    let g:mapleader_map[','] = [ 'call feedkeys("\<Esc>")','exit' ]
+    let g:mapleader_map[','] = [ 'normal <Esc>','exit' ]
     let g:mapleader_map['?'] = [ 'Maps', 'show-keybindings' ]
     let g:mapleader_map[';'] = {
                 \ 'name' : '+commenter',
