@@ -213,10 +213,31 @@ let g:ctags_cmd    = 'ctags -f tags -I __THROW -I __THROWNL -I __nonnull -R --c-
 let g:current_path = getcwd()
 let g:proj_path    = g:current_path.'/'.g:proj_dir
 
-function! RunSystemCmd(Msg, Cmd)
-    echo a:Msg
+" different log level print {{{2
+function! Msg_Err(msg)
+    echohl ErrorMsg
+    echom '[error] '.a:msg
+    echohl None
+endfunction
+
+function! Msg_Warn(msg)
+    echom '[warning] '.a:msg
+endfunction
+
+function! Msg_Info(msg)
+    echom '[info] '.a:msg
+endfunction
+" }}}
+
+function! Sync_RunSysCmd(Msg, Cmd)
+    call Msg_Info(a:Msg)
     call system(a:Cmd)
     echon 'done'
+endfunction
+
+function! Async_RunSysCmd(Msg, Cmd)
+    call Msg_Info(a:Msg)
+    let job = job_start(['/bin/bash', '-c', a:Cmd, { 'on_exit': call Msg_Info("done") })
 endfunction
 
 func! EnterHandler()
@@ -766,14 +787,14 @@ if isdirectory(expand(g:dir_plugin.'/vim-gutentags/')) && executable('ctags')
             let l:ctags_force_gen = input("Ctags file already exist, replace it ?[y/N]")
             if (l:ctags_force_gen == 'y' || l:ctags_force_gen == 'Y')
                 echo "\n"
-                call RunSystemCmd('Start to generate Ctags...', g:ctags_cmd)
+                call Sync_RunSysCmd('Start to generate Ctags...', g:ctags_cmd)
             endif
         else
-            call RunSystemCmd('Start to generate Ctags...', g:ctags_cmd)
+            call Sync_RunSysCmd('Start to generate Ctags...', g:ctags_cmd)
         endif
         setglobal tags+=tags
         if !isdirectory(g:proj_path)
-            call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
+            call Sync_RunSysCmd('Create project directory...', 'mkdir '.g:proj_path)
         endif
     endfunction
 
@@ -789,53 +810,177 @@ if isdirectory(expand(g:dir_plugin.'/vim-gutentags/')) && executable('ctags')
 endif
 " }}}
 " Cscope setting {{{2
-if has('cscope') && executable('cscope') && isdirectory(expand(g:dir_plugin.'/vim-qf/'))
+if has('cscope') && executable('cscope')
     " cscope databases are searched first, followed by tag files if cscope did not return any matches.
     set csto=0
     " always search cscope database as well as tag files.
     set cscopetag
-    set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
+    set cscopequickfix=s+,c+,d+,i+,t+,e+,a+
     " Show message when any oterhs cscope db added
     " set cscopeverbose
     let g:cscope_file = 'cscope.out'
     let g:cscope_path = g:proj_path
-    function! EstablishCscope()
+    let g:cscope_cmd  = 'cscope -Rbq -f '.g:cscope_path.'/'.g:cscope_file
+    let g:cscope_is_building = 0
+
+    " Use s:add_db for both async callback and sync mode {{{3
+    function! s:add_db(channel)
+        " add any database in current directory
+        let db    = findfile('cscope.out', g:cscope_path.';')
+        let l:cmd = g:cscope_cmd
+        " :h cscope-suggestions
+        set nocsverb
+        if !empty(db)
+            " FIXME: when building cscope using job api at the first time, cscope.in.out won't be generated.
+            " Thus it raises errors when running `cs add`, use try-catch to rebuild cscope.
+            try
+                silent cs reset
+                silent! execute 'cs add' db
+            catch
+                call s:build_async(l:cmd)
+            endtry
+            " else add database pointed to by environment
+        elseif !empty($CSCOPE_DB)
+            silent cs reset
+            silent! execute 'cs add' $CSCOPE_DB
+        else
+            call s:build_async(l:cmd)
+        endif
+        set csverb
+        let g:cscope_is_building = 0
+        echo "\r\r"
+    endfunction
+    " }}}
+    " cscope build sync&async function {{{3
+    function! s:build_sync(...)
+        for cmd in a:000
+            call system(cmd)
+        endfor
+        call s:add_db('')
+    endfunction
+
+    function! s:on_exit_cb(job_id, data, event) dict
+        call s:add_db('')
+    endfunction
+
+    function! s:build_async(cmd)
+        let job = job_start(['bash', '-c', a:cmd], { 'close_cb': function('s:add_db') })
+    endfunction
+
+    function! s:build()
+        let g:cscope_is_building = 1
+        let root_dir = g:cscope_path
+        let exts = empty(a:000) ?
+                    \ ['java', 'c', 'h', 'cc', 'hh', 'cpp', 'hpp'] : a:000
+        let tmp   = g:cscope_file
+        let l:cmd = g:cscope_cmd
+        try
+            if exists('*job_start') || exists('*jobstart')
+                call s:build_async(l:cmd)
+            else
+                call s:build_sync(l:cmd)
+            endif
+        finally
+            silent! call delete(tmp)
+        endtry
+    endfunction
+    "}}}
+    " cscope find static function {{{3
+    function! s:find(type)
+        let l:opt = {
+                    \ 'symbol':'s', 'global': 'g', 'calls': 'c', 'text': 't', 'egrep': 'e', 'called':'d',
+                    \ }
+        let l:cword = expand("<cword>")
+        for [l:key, l:value] in items(l:opt)
+            if l:key == a:type
+                try
+                    exe ":cs find ".l:value." ".l:cword
+                    return
+                catch /^Vim\%((\a\+)\)\=:E259/
+                    call Msg_Err('cscope trys finding <'.l:key.'>, but no matches for '.l:cword)
+                endtry
+            endif
+        endfor
+        if a:type == 'file'
+            :cs find f <cfile>
+        elseif a:type == 'includes'
+            :cs find i <cfile>
+        endif
+    endfunction
+    " }}}
+
+    function! Cscope_Build()
         if !isdirectory(g:cscope_path)
-            call RunSystemCmd('Create project directory...', 'mkdir '.g:cscope_path)
+            call Sync_RunSysCmd('Create project directory...', 'mkdir '.g:cscope_path)
         endif
         if filereadable(g:cscope_path.'/'.g:cscope_file)
-            echo "Cscope file already exist!"
+            call Msg_Info("Cscope file already exist!")
             exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
         elseif $CSCOPE_DB != ""
             cscope add $CSCOPE_DB
         else
-            call RunSystemCmd('Generate cscope...', 'cscope -Rbq -f '.g:cscope_path.'/'.g:cscope_file)
-            exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
-        endif
-        if !isdirectory(g:proj_path)
-            call RunSystemCmd('Create project directory...', 'mkdir '.g:proj_path)
+            " Support async feature
+            if exists('*job_start') || exists('*jobstart')
+                call s:build()
+            else
+                call Sync_RunSysCmd('Generate cscope...', g:cscope_cmd)
+                exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
+            endif
         endif
     endfunction
 
-    autocmd BufReadPost *.c,*.cpp,*.cxx,*.h
-                \ if isdirectory(g:cscope_path) |
-                \     if filereadable(g:cscope_path.'/'.g:cscope_file) |
-                \         exe 'cscope add '.g:cscope_path.'/'.g:cscope_file |
-                \     elseif $CSCOPE_DB != "" |
-                \         cscope add $CSCOPE_DB |                \     endif |
-                \ endif
+    function! Cscope_Update()
+        if filereadable(g:cscope_path.'/'.g:cscope_file)
+            call s:build()
+        endif
+    endfunction
+
+    function! Cscope_Find(type)
+        if g:cscope_is_building
+            call Msg_Info('still building the cscope database, please wait for seconds...')
+            return
+        endif
+        try
+            call s:find(a:type)
+        catch /E567: no cscope connections/
+            if filereadable(g:cscope_path.'/'.g:cscope_file)
+                exe 'cscope add '.g:cscope_path.'/'.g:cscope_file
+            elseif $CSCOPE_DB != ""
+                cscope add $CSCOPE_DB
+            else
+                call Cscope_Build()
+            endif
+        endtry
+    endfunction
+
+    augroup signAutoCompleteGroup
+        " Prevent load multiple times
+        autocmd!
+        autocmd BufReadPre *.c,*.cpp,*.h,*.cxx
+                    \ if filereadable(g:cscope_path.'/'.g:cscope_file) |
+                    \     exe 'cscope add '.g:cscope_path.'/'.g:cscope_file |
+                    \ elseif $CSCOPE_DB != "" |
+                    \     cscope add $CSCOPE_DB |
+                    \ endif
+
+        autocmd BufWritePost *.c,*.cpp,*.h,*.cxx
+                    \ if isdirectory(g:cscope_path) |
+                    \     call Cscope_Update()      |
+                    \ endif
+    augroup END
 
     " <F10> To establish a cscope enviroment.
-    nmap <F10>              :call EstablishCscope()<cr>
+    nmap <F10>              :call Cscope_Build()<cr>
     nmap <Plug>Cscope_Add   :exec 'cscope add '.g:cscope_path.'/'.g:cscope_file<cr>
-    nmap <Plug>Cscope_Refer :cs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <Plug>Cscope_GloDe :cs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <Plug>Cscope_Calls :cs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <Plug>Cscope_Instc :cs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <Plug>Cscope_Egrep :cs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <Plug>Cscope_File  :cs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <Plug>Cscope_Inclu :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nmap <Plug>Cscope_Calld :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+    nnoremap <leader>cs :call Cscope_Find('symbol')<CR>
+    nnoremap <leader>cg :call Cscope_Find('global')<CR>
+    nnoremap <leader>cc :call Cscope_Find('calls')<CR>
+    nnoremap <leader>ct :call Cscope_Find('text')<CR>
+    nnoremap <leader>ce :call Cscope_Find('egrep')<CR>
+    nnoremap <leader>cf :call Cscope_Find('file')<CR>
+    nnoremap <leader>ci :call Cscope_Find('includes')<CR>
+    nnoremap <leader>cd :call Cscope_Find('called')<CR>
 endif
 "}}}
 " Vim-Gitgutter setting {{{2
@@ -937,7 +1082,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     endfor
 
     let g:gutentags_project_root = [ g:proj_dir ]
-    let g:mapleader_map[','] = [ 'normal <Esc>','exit' ]
+    let g:mapleader_map[','] = [ 'normal "\<Esc>"','exit' ]
     let g:mapleader_map['?'] = [ 'Maps', 'show-keybindings' ]
     let g:mapleader_map[';'] = {
                 \ 'name' : '+commenter',
@@ -998,14 +1143,16 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     let g:mapleader_map['c'] = {
                 \ 'name' : '+cscope',
                 \ 'a' : [ 'call feedkeys("\<Plug>Cscope_Add")', 'cscope-add-database' ],
-                \ 's' : [ 'call feedkeys("\<Plug>Cscope_Refer")', 'find-global-definition' ],
-                \ 'g' : [ 'call feedkeys("\<Plug>Cscope_GloDe")', 'find-global-definition' ],
-                \ 'c' : [ 'call feedkeys("\<Plug>Cscope_Calls")', 'find-all-calls' ],
-                \ 't' : [ 'call feedkeys("\<Plug>Cscope_Instc")', 'find-all-instance' ],
-                \ 'e' : [ 'call feedkeys("\<Plug>Cscope_Egrep")', 'text-egrep-search' ],
-                \ 'f' : [ 'call feedkeys("\<Plug>Cscope_File")', 'open-the-filename' ],
-                \ 'i' : [ 'call feedkeys("\<Plug>Cscope_Inclu")', 'find-files-included' ],
-                \ 'd' : [ 'call feedkeys("\<Plug>Cscope_Calld")', 'find-all-functions' ],
+                \ 'b' : [ 'call Cscope_Build()', 'cscope-build' ],
+                \ 'u' : [ 'call Cscope_Update()', 'cscope-update' ],
+                \ 's' : [ 'call Cscope_Find("symbol")', 'find-global-definition' ],
+                \ 'g' : [ 'call Cscope_Find("global")', 'find-global-definition' ],
+                \ 'c' : [ 'call Cscope_Find("calls")', 'find-all-calls' ],
+                \ 't' : [ 'call Cscope_Find("text")', 'find-all-instance' ],
+                \ 'e' : [ 'call Cscope_Find("egrep")', 'text-egrep-search' ],
+                \ 'f' : [ 'call Cscope_Find("file")', 'open-the-filename' ],
+                \ 'i' : [ 'call Cscope_Find("includes")', 'find-files-included' ],
+                \ 'd' : [ 'call Cscope_Find("called")', 'find-all-functions' ],
                 \ }
     " }}}
     " d leader mapping {{{3
@@ -1093,7 +1240,6 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " p leader mapping {{{3
     let g:mapleader_map['p'] = {
                 \ 'name' : '+projects',
-                \ 'c' : [ 'call EstablishCscope()', 'establish-cscope-enviroment' ],
                 \ 't' : [ 'call GenerateCtags()', 'generate-ctag-file' ],
                 \ }
     " }}}
