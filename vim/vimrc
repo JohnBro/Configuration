@@ -794,6 +794,7 @@ if has('cscope') && executable('cscope') && isdirectory(expand(g:dir_plugin.'/vi
     set csto=0
     " always search cscope database as well as tag files.
     set cscopetag
+    set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
     " Show message when any oterhs cscope db added
     " set cscopeverbose
     let g:cscope_file = 'cscope.out'
