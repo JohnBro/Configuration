@@ -908,7 +908,7 @@ if has('cscope') && executable('cscope')
         endif
     endfunction
     " }}}
-
+    " Cscope external interface {{{3
     function! Cscope_Build()
         if !isdirectory(g:cscope_path)
             call Sync_RunSysCmd('Create project directory...', 'mkdir '.g:cscope_path)
@@ -952,6 +952,7 @@ if has('cscope') && executable('cscope')
             endif
         endtry
     endfunction
+    " }}}
 
     augroup signAutoCompleteGroup
         " Prevent load multiple times
