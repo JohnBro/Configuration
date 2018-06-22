@@ -956,7 +956,7 @@ if has('cscope') && executable('cscope')
     endfunction
     " }}}
 
-    augroup signAutoCompleteGroup
+    augroup cscopeEnvGroup
         " Prevent load multiple times
         autocmd!
         autocmd BufReadPre *.c,*.cpp,*.h,*.cxx
