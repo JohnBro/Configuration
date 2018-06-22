@@ -331,6 +331,8 @@ nnoremap <Plug>(window_s2) <C-W>s
 nnoremap <Plug>(window_v1) <C-W>v
 nnoremap <Plug>(window_v2) <C-W>v
 nnoremap <Plug>(window_2) <C-W>v
+nnoremap <Plug>(project_cr) :call Sync_RunSysCmd("Create project...", "mkdir -p ".g:proj_path)<cr>
+vnoremap <Plug>(project_cr) :call Sync_RunSysCmd("Create project...", "mkdir -p ".g:proj_path)<cr>
 if (g:os_platform == 'windows')
     inoremap <C-v>              <Esc>"+gP
     vnoremap <C-c>              "+y<Esc>
@@ -1241,6 +1243,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " p leader mapping {{{3
     let g:mapleader_map['p'] = {
                 \ 'name' : '+projects',
+                \ 'c' : [ 'call feedkeys("\<Plug>(project_cr)")', 'create-project-dir' ],
                 \ 't' : [ 'call GenerateCtags()', 'generate-ctag-file' ],
                 \ }
     " }}}
