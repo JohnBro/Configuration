@@ -1009,6 +1009,25 @@ if isdirectory(expand(g:dir_plugin.'/DoxygenToolkit.vim/'))
     let g:DoxygenToolkit_authorName        = "JohnBro lujunboo@gmail.com"
     let g:DoxygenToolkit_blockHeader       = "--------------------------------------------------------------------------"
     let g:DoxygenToolkit_blockFooter       = "--------------------------------------------------------------------------"
+    
+    function! Doxygen(type)
+        let l:opt = {
+                    \ 'author'  : 'DoxAuthor',
+                    \ 'block'   : 'DoxBlock',
+                    \ 'function': 'Dox',
+                    \ 'license' : 'DoxLic',
+                    \ }
+        for [l:key, l:value ] in items(l:opt)
+            if l:key == a:type
+                exe l:value
+            endif
+        endfor
+    endfunction
+
+    nnoremap <leader>da :call Doxygen('author')<cr>
+    nnoremap <leader>db :call Doxygen('block')<cr>
+    nnoremap <leader>df :call Doxygen('function')<cr>
+    nnoremap <leader>dl :call Doxygen('license')<cr>
 endif
 " }}}
 " Tabularize & EasyAlign setting {{{2
@@ -1161,10 +1180,6 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " d leader mapping {{{3
     let g:mapleader_map['d'] = {
                 \ 'name' : '+doxygen',
-                \ 'a' : [ 'DoxAuthor', 'Doxygen autor-announce' ],
-                \ 'b' : [ 'DoxBlock', 'Doxygen a-block-line' ],
-                \ 'f' : [ 'Dox', 'Doxygen a-function' ],
-                \ 'l' : [ 'DoxLic', 'Doxygen a-license' ],
                 \ }
     " }}}
     " e leader mapping {{{3
