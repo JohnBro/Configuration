@@ -713,7 +713,7 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
                 \ }
     let g:ycm_key_detailed_diagnostics            = ""
 
-    augroup spacevimYcm
+    augroup ycmGroup
         autocmd!
         " Enable omni completion.
         autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
@@ -817,7 +817,7 @@ if has('cscope') && executable('cscope')
     set csto=0
     " always search cscope database as well as tag files.
     set cscopetag
-    set cscopequickfix=s+,c+,d+,i+,t+,e+,a+
+    " set cscopequickfix=s+,c+,d+,i+,t+,e+,a+
     " Show message when any oterhs cscope db added
     " set cscopeverbose
     let g:cscope_file = 'cscope.out'
@@ -1061,13 +1061,13 @@ endif
 " vim-signature setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-signature/'))
     let g:SignatureMap = {
-                \ 'Leader'             :  "M",
-                \ 'PlaceNextMark'      :  "M,",
-                \ 'ToggleMarkAtLine'   :  "M.",
-                \ 'PurgeMarksAtLine'   :  "M-",
-                \ 'DeleteMark'         :  "MM",
-                \ 'PurgeMarks'         :  "M<Space>",
-                \ 'PurgeMarkers'       :  "M<BS>",
+                \ 'Leader'             :  "<localleader>mm",
+                \ 'PlaceNextMark'      :  "<localleader>m,",
+                \ 'ToggleMarkAtLine'   :  "<localleader>m.",
+                \ 'PurgeMarksAtLine'   :  "<localleader>m-",
+                \ 'DeleteMark'         :  "<localleader>md",
+                \ 'PurgeMarks'         :  "<localleader>mp",
+                \ 'PurgeMarkers'       :  "<localleader>mP",
                 \ 'GotoNextLineAlpha'  :  "']",
                 \ 'GotoPrevLineAlpha'  :  "'[",
                 \ 'GotoNextSpotAlpha'  :  "`]",
@@ -1080,8 +1080,8 @@ if isdirectory(expand(g:dir_plugin.'/vim-signature/'))
                 \ 'GotoPrevMarker'     :  "[-",
                 \ 'GotoNextMarkerAny'  :  "]=",
                 \ 'GotoPrevMarkerAny'  :  "[=",
-                \ 'ListBufferMarks'    :  "M/",
-                \ 'ListBufferMarkers'  :  "M?"
+                \ 'ListBufferMarks'    :  "<localleader>m/",
+                \ 'ListBufferMarkers'  :  "<localleader>m?"
                 \ }
 endif
 " }}}
@@ -1250,9 +1250,14 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " m leader mapping {{{3
     let g:mapleader_map['m'] = {
                 \ 'name' : '+mark',
+                \ '*' : [ 'call feedkeys("\<Plug>MarkSearch")', 'mark search' ],
+                \ '#' : [ 'call feedkeys("\<Plug>MarkSearchB")', 'mark search-in-buffer' ],
+                \ '/' : [ 'call feedkeys("\<Plug>MarkSearchX")', 'mark search()' ],
+                \ '?' : [ 'call feedkeys("\<Plug>MarkSearchXB")', 'mark search()-in-buffer' ],
                 \ 'r' : [ 'call feedkeys("\<Plug>MarkRegex")', 'mark regex' ],
                 \ 's' : [ 'call feedkeys("\<Plug>MarkSet")', 'mark set' ],
                 \ 'c' : [ 'call feedkeys("\<Plug>MarkClear")', 'mark clear' ],
+                \ 'w' : [ 'call feedkeys("\<Plug>MarkWith")', 'mark with()' ],
                 \ }
     " }}}
     " p leader mapping {{{3
@@ -1343,14 +1348,12 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     vnoremap <silent> <leader> :<c-u>LeaderGuideVisual mapleader<CR>
 
     let g:localleader_map = {}
+    let g:localleader_map['m'] = {
+                \ 'name' : '+marks',
+                \ }
     call leaderGuide#register_prefix_descriptions(localleader, "g:localleader_map")
     nnoremap <silent> <localleader> :<c-u>LeaderGuide localleader<CR>
     vnoremap <silent> <localleader> :<c-u>LeaderGuideVisual localeader<CR>
-
-    let g:markleader_map = {}
-    call leaderGuide#register_prefix_descriptions("M", "g:markleader_map")
-    nnoremap <silent> M :<c-u>LeaderGuide 'M'<CR>
-    vnoremap <silent> M :<c-u>LeaderGuideVisual 'M'<CR>
 endif
 " }}}
 " }}}
