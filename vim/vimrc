@@ -1031,11 +1031,20 @@ endif
 "}}}
 " Vim-Gitgutter setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-gitgutter/'))
-    let g:gitgutter_map_keys = 0
-    let g:gitgutter_highlight_lines = 0
-    let g:gitgutter_max_signs = 5000
+    let g:gitgutter_map_keys                       = 0
+    let g:gitgutter_highlight_lines                = 0
+    let g:gitgutter_max_signs                      = 5000
+    let g:gitgutter_sign_added                     = '+'
+    let g:gitgutter_sign_modified                  = '~'
+    let g:gitgutter_sign_removed                   = '-'
+    let g:gitgutter_sign_removed_first_line        = '^^'
+    let g:gitgutter_sign_modified_removed          = 'ww'
+    let g:gitgutter_override_sign_column_highlight = 0
+
     nmap [h <Plug>GitGutterPrevHunk
     nmap ]h <Plug>GitGutterNextHunk
+
+    nnoremap <silent> <Leader>tg :GitGutterToggle<CR>
 endif
 " }}}
 " DoxygenToolkit.vim setting {{{2
@@ -1100,6 +1109,15 @@ endif
 "}}}
 " vim-fugitive setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-fugitive/'))
+    nnoremap <silent> <Leader>gs :Gstatus<CR>
+    nnoremap <silent> <Leader>gd :Gdiff<CR>
+    nnoremap <silent> <Leader>gc :Gcommit<CR>
+    nnoremap <silent> <Leader>gl :Glog<CR>
+    nnoremap <silent> <Leader>gp :Git push<CR>
+    nnoremap <silent> <Leader>gr :Gread<CR>
+    nnoremap <silent> <Leader>gw :Gwrite<CR>
+    nnoremap <silent> <Leader>ge :Gedit<CR>
+    nnoremap <silent> <Leader>ga :Git add -p %<CR>
 endif
 " vim-signature setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-signature/'))
@@ -1247,21 +1265,25 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     endfor
 
     let g:gutentags_project_root = [ g:proj_dir ]
+    let g:mapleader_map[' '] = [ 'call feedkeys("\<Space>")', 'cmd-line' ]
     let g:mapleader_map[','] = [ 'normal "\<Esc>"','exit' ]
     let g:mapleader_map['?'] = [ 'Maps', 'show-keybindings' ]
+    " ; leader mapping {{{3
     let g:mapleader_map[';'] = {
                 \ 'name' : '+commenter',
                 \ ';' : [ 'call feedkeys("\<Plug>NERDCommenterToggle")', 'comment-toggle' ],
                 \ 'c' : [ 'call feedkeys("\<Plug>NERDCommenterComment")', 'comment-lines' ],
                 \ 'u' : [ 'call feedkeys("\<Plug>NERDCommenterUncomment")', 'uncomment-lines' ],
                 \ }
+    "}}}
+    " = leader mapping {{{3
     let g:mapleader_map['='] = {
-                \ 'name' : '+format',
+                \ 'name' : '+formater',
                 \ '=' : [ 'call feedkeys("\<Plug>(format_g)")', 'general-format' ],
                 \ 'a' : [ 'call Format_With("asic")', 'asic-format' ],
                 \ 'c' : [ 'call Format_With("clang")', 'clang-format' ],
                 \ }
-    let g:mapleader_map[' '] = [ 'call feedkeys("\<Space>")', 'cmd-line' ]
+    " }}}
     " a leader mapping {{{3
     let g:mapleader_map['a'] = {
                 \ 'name' : '+align',
@@ -1369,15 +1391,15 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " g leader mapping {{{3
     let g:mapleader_map['g'] = {
                 \ 'name' : '+git/version-control',
-                \ 'b' : ['Gblame', 'fugitive-blame'],
-                \ 'c' : ['Gcommit', 'fugitive-commit'],
-                \ 'd' : ['Gdiff', 'fugitive-diff'],
-                \ 'e' : ['Gedit', 'fugitive-edit'],
-                \ 'l' : ['Glog', 'fugitive-log'],
-                \ 'r' : ['Gread', 'fugitive-read'],
-                \ 's' : ['Gstatus', 'fugitive-status'],
-                \ 'w' : ['Gwrite', 'fugitive-write'],
-                \ 'p' : ['Git push', 'fugitive-push'],
+                \ 'a' : [ 'nort add -p %""mal "Git add -p %"', 'git add' ],
+                \ 'c' : [ 'Gcommit', 'git commit'],
+                \ 'd' : [ 'Gdiff', 'git diff'],
+                \ 'e' : [ 'Gedit', 'git edit'],
+                \ 'l' : [ 'Glog', 'git log'],
+                \ 'r' : [ 'Gread', 'git read'],
+                \ 's' : [ 'Gstatus', 'git status'],
+                \ 'w' : [ 'Gwrite', 'git write'],
+                \ 'p' : [ 'Git push', 'git push'],
                 \ }
     " }}}
     " h leader mapping {{{3
@@ -1388,7 +1410,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 's' : [ 'History/', 'search history' ],
                 \ }
     " }}}
-    " j leader mapping {{{3
+    " j leader mapping {{{
     let g:mapleader_map['j'] = {
                 \ 'name' : '+jump',
                 \ 'f' : [ 'BTags', 'jump-to-tags-in-buffer' ],
@@ -1447,7 +1469,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'name' : '+toggle',
                 \ '_' : [ 'call feedkeys("\<Plug>CursorWordToggle")', 'toggle cursor-word' ],
                 \ 'f' : [ 'NERDTreeToggle', 'toggle nerdtree-file-manager' ],
-                \ 'g' : [ 'GitGutterSignsToggle', 'toggle git-diff-signs' ],
+                \ 'g' : [ 'GitGutterToggle', 'toggle gitgutter' ],
                 \ 'G' : [ 'GitGutterLineHighlightsToggle', 'toggle git-diff-highlight' ],
                 \ 'i' : [ 'call feedkeys("\<Plug>(IndentLinesToggle)")', 'toggle indent-lines' ],
                 \ 'l' : [ 'call feedkeys("\<Plug>(LeadingSpaceToggle)")', 'toggle leading-space' ],
