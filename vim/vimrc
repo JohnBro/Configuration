@@ -1220,6 +1220,8 @@ if isdirectory(expand(g:dir_plugin.'/vim-autoformat/'))
     endfunction
 
     nnoremap <leader>=a :call Format_With('asic')<cr>
+    vnoremap <leader>=a :call Format_With('asic')<cr>
+    nnoremap <leader>=c :call Format_With('clang')<cr>
     vnoremap <leader>=c :call Format_With('clang')<cr>
 endif
 " }}}
