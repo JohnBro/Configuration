@@ -118,8 +118,9 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'haya14busa/incsearch.vim'
     Plug 'tomasr/molokai'
     Plug 'liuchengxu/space-vim-dark'
-    Plug 'rhysd/vim-clang-format',           { 'for': [ 'c', 'cpp' ] }
-    Plug 'octol/vim-cpp-enhanced-highlight', { 'for': [ 'c', 'cpp' ] }
+    Plug 'rhysd/vim-clang-format',          { 'for': [ 'c', 'cpp' ] }
+    Plug 'octol/vim-cpp-enhanced-highlight',{ 'for': [ 'c', 'cpp' ] }
+    Plug 'Yggdroot/indentLine',             { 'for': [ 'c', 'cpp', 'Makefile', 'python' ] }
     Plug 'romainl/vim-qf'
     if (g:os_gui && g:os_platform == 'windows')
         Plug 'Shougo/neocomplete.vim'
@@ -157,8 +158,9 @@ set    backspace=indent,eol,start
 set    cindent
 set    cinoptions=:0
 set    cinoptions+=g0
-set    clipboard+=unnamedplus
+set    clipboard+=unnamed
 set    cursorline
+set    cursorcolumn
 set    complete+=k
 set    completeopt=menuone,longest,preview
 set    encoding=utf-8
@@ -392,6 +394,8 @@ augroup identationGroup
     autocmd Filetype groovy         setlocal nowrap tabstop=4 shiftwidth=4 softtabstop=4 expandtab
     autocmd Filetype javascript     setlocal nowrap tabstop=4 shiftwidth=4 softtabstop=4 expandtab
     autocmd Filetype typescript     setlocal nowrap tabstop=4 shiftwidth=4 softtabstop=4 expandtab
+    autocmd Filetype Makefile       setlocal nowrap tabstop=4 shiftwidth=4 noexpandtab
+    autocmd Filetype sh             setlocal nowrap tabstop=2 shiftwidth=2 softtabstop=2 expandtab
     autocmd Filetype json           setlocal nowrap tabstop=2 shiftwidth=2 softtabstop=2 expandtab
     autocmd Filetype coffee         setlocal nowrap tabstop=2 shiftwidth=2 softtabstop=2 expandtab
     autocmd Filetype pug            setlocal nowrap tabstop=2 shiftwidth=2 softtabstop=2 expandtab
@@ -400,7 +404,6 @@ augroup identationGroup
     autocmd Filetype styl           setlocal nowrap tabstop=2 shiftwidth=2 softtabstop=2 expandtab
     autocmd Filetype css            setlocal nowrap tabstop=2 shiftwidth=2 softtabstop=2 expandtab
     autocmd Filetype dockerfile     setlocal nowrap tabstop=4 shiftwidth=4 softtabstop=4 expandtab
-    autocmd Filetype Makefile       setlocal nowrap tabstop=4 shiftwidth=4 noexpandtab
     autocmd Filetype *.txt          setlocal spell,wrap,nonu
     autocmd Filetype *.log          setlocal wrap
 augroup END
@@ -1096,6 +1099,30 @@ endif
 let g:cpp_class_scope_highlight = 1
 let g:c_no_curly_error=1
 " }}}
+" indentLine setting {{{2
+if isdirectory(expand(g:dir_plugin.'/indentLine/'))
+    let g:indentLine_char            = '¦'
+    let g:indentLine_enabled         = 1
+    let g:indentLine_color_term      = 239
+    let g:indentLine_color_gui       = '#4A9586'
+    let g:indentLine_concealcursor   = 'vc'
+    let g:indentLine_fileTypeExclude = ['help', 'startify']
+
+    augroup indentLineGroup
+        autocmd!
+        autocmd FileType c,cpp,sh,python,Makefile
+                    \ nnoremap <Plug>(IndentLinesToggle)  :IndentLinesToggle<cr> |
+                    \ vnoremap <Plug>(IndentLinesToggle)  :IndentLinesToggle<cr> |
+                    \ nnoremap <Plug>(LeadingSpaceToggle) :LeadingSpaceToggle<cr>|
+                    \ vnoremap <Plug>(LeadingSpaceToggle) :LeadingSpaceToggle<cr>
+    augroup END
+
+    nmap <leader>ti <Plug>(IndentLinesToggle)
+    vmap <leader>ti <Plug>(IndentLinesToggle)
+    nmap <leader>tl <Plug>(LeadingSpaceToggle)
+    vmap <leader>tl <Plug>(LeadingSpaceToggle)
+endif
+" }}}
 " vim-leader-guide(<leader>) setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     let g:mapleader_map =  {}
@@ -1285,9 +1312,11 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'f' : [ 'NERDTreeToggle', 'toggle nerdtree-file-manager' ],
                 \ 'g' : [ 'GitGutterSignsToggle', 'toggle git-diff-signs' ],
                 \ 'G' : [ 'GitGutterLineHighlightsToggle', 'toggle git-diff-highlight' ],
+                \ 'i' : [ 'call feedkeys("\<Plug>(IndentLinesToggle)")', 'toggle indent-lines' ],
+                \ 'l' : [ 'call feedkeys("\<Plug>(LeadingSpaceToggle)")', 'toggle leading-space' ],
                 \ 'P' : [ 'call PasteToggle()', 'toggle paste' ],
                 \ 's' : [ 'SignatureToggleSigns', 'toggle left-sign-mark' ],
-                \ 'w' : [ 'ToggleStripWhitespaceOnSave', 'toggle remove whitespace' ],
+                \ 'w' : [ 'ToggleStripWhitespaceOnSave', 'toggle remove-whitespace' ],
                 \ }
     let g:mapleader_map['T'] = {
                 \ 'name' : '+Tab-ops',
