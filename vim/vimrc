@@ -1266,11 +1266,12 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
 
     let g:gutentags_project_root = [ g:proj_dir ]
     let g:mapleader_map[' '] = [ 'call feedkeys("\<Space>")', 'cmd-line' ]
-    let g:mapleader_map[','] = [ 'normal "\<Esc>"','exit' ]
+    let g:mapleader_map[','] = [ 'call feedkeys("\<Esc>")', 'exit' ]
     let g:mapleader_map['?'] = [ 'Maps', 'show-keybindings' ]
     " ; leader mapping {{{3
     let g:mapleader_map[';'] = {
                 \ 'name' : '+commenter',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ ';' : [ 'call feedkeys("\<Plug>NERDCommenterToggle")', 'comment-toggle' ],
                 \ 'c' : [ 'call feedkeys("\<Plug>NERDCommenterComment")', 'comment-lines' ],
                 \ 'u' : [ 'call feedkeys("\<Plug>NERDCommenterUncomment")', 'uncomment-lines' ],
@@ -1279,6 +1280,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " = leader mapping {{{3
     let g:mapleader_map['='] = {
                 \ 'name' : '+formater',
+                \ ',' : [ 'call feedkeys("\<Esc>")','exit' ],
                 \ '=' : [ 'call feedkeys("\<Plug>(format_g)")', 'general-format' ],
                 \ 'a' : [ 'call Format_With("asic")', 'asic-format' ],
                 \ 'c' : [ 'call Format_With("clang")', 'clang-format' ],
@@ -1303,6 +1305,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " b leader mapping {{{3
     let g:mapleader_map['b'] = {
                 \ 'name' : '+buffer',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ '1' : ['b1', 'buffer 1'],
                 \ '2' : ['b2', 'buffer 2'],
                 \ '3' : ['b3', 'buffer 3'],
@@ -1334,6 +1337,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     "   'd'   called:   find functions that function under cursor calls
     let g:mapleader_map['c'] = {
                 \ 'name' : '+cscope',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'a' : [ 'call feedkeys("\<Plug>Cscope_Add")', 'cscope-add-database' ],
                 \ 'b' : [ 'call Cscope_Build()', 'cscope-build' ],
                 \ 'u' : [ 'call Cscope_Update()', 'cscope-update' ],
@@ -1350,11 +1354,13 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " d leader mapping {{{3
     let g:mapleader_map['d'] = {
                 \ 'name' : '+doxygen',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ }
     " }}}
     " e leader mapping {{{3
     let g:mapleader_map['e'] = {
                 \ 'name' : '+errors',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'n' : ['call feedkeys("\<Plug>(ale_next)")', 'next-error'],
                 \ 'p' : ['call feedkeys("\<Plug>(ale_previous)")', 'previous-error'],
                 \ 'v' : [ 'vsplit $MYVIMRC', 'edit local-vimrc'],
@@ -1363,6 +1369,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " f leader mapping {{{3
     let g:mapleader_map['f'] = {
                 \ 'name' : '+find/files/fold',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ '0' : [ 'set foldlevel=0', '0-fold-level' ],
                 \ '1' : [ 'set foldlevel=1', '1-fold-level' ],
                 \ '2' : [ 'set foldlevel=2', '2-fold-level' ],
@@ -1391,6 +1398,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " g leader mapping {{{3
     let g:mapleader_map['g'] = {
                 \ 'name' : '+git/version-control',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'a' : [ 'nort add -p %""mal "Git add -p %"', 'git add' ],
                 \ 'c' : [ 'Gcommit', 'git commit'],
                 \ 'd' : [ 'Gdiff', 'git diff'],
@@ -1405,6 +1413,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " h leader mapping {{{3
     let g:mapleader_map['h'] = {
                 \ 'name' : '+help/history',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'c' : [ 'History:', 'command history' ],
                 \ 'f' : [ 'History', 'file history' ],
                 \ 's' : [ 'History/', 'search history' ],
@@ -1413,6 +1422,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " j leader mapping {{{
     let g:mapleader_map['j'] = {
                 \ 'name' : '+jump',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'f' : [ 'BTags', 'jump-to-tags-in-buffer' ],
                 \ 'g' : [ 'Tags', 'jump-to-tags-in-project' ],
                 \ }
@@ -1420,6 +1430,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " m leader mapping {{{3
     let g:mapleader_map['m'] = {
                 \ 'name' : '+mark',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ '*' : [ 'call feedkeys("\<Plug>MarkSearch")', 'mark search' ],
                 \ '#' : [ 'call feedkeys("\<Plug>MarkSearchB")', 'mark search-in-buffer' ],
                 \ '/' : [ 'call feedkeys("\<Plug>MarkSearchX")', 'mark search()' ],
@@ -1433,6 +1444,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " p leader mapping {{{3
     let g:mapleader_map['p'] = {
                 \ 'name' : '+projects',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'c' : [ 'call feedkeys("\<Plug>(project_cr)")', 'create project-dir' ],
                 \ 'd' : [ 'call feedkeys("\<Plug>(project_de)")', 'delect project-dir' ],
                 \ 't' : [ 'call GenerateCtags()', 'generate ctag-file' ],
@@ -1441,6 +1453,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " q leader mapping {{{3
     let g:mapleader_map['q'] = {
                 \ 'name' : '+quit',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'q' : [ 'call feedkeys("\<Plug>(quit_q)")', 'quit' ],
                 \ 'a' : [ 'call feedkeys("\<Plug>(quit_a)")', 'quit-all' ],
                 \ 'f' : [ 'call feedkeys("\<Plug>(quit_f)")', 'quit-all' ],
@@ -1449,6 +1462,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " r leader mapping {{{3
     let g:mapleader_map['r'] = {
                 \ 'name' : '+replace',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'w' : [ 'call feedkeys("\<Plug>Replace")', 'replace-selection' ],
                 \ }
     " }}}
@@ -1458,6 +1472,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     nmap <leader>sb <Plug>(search_b)
     let g:mapleader_map['s'] = {
                 \ 'name' : '+save/source',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'f' : [ 'call feedkeys("\<Plug>(search_f)")', 'search for()' ],
                 \ 'b' : [ 'call feedkeys("\<Plug>(search_b)")', 'search for()-buffers' ],
                 \ 'v' : [ 'source $MYVIMRC', 'source local-vimrc' ],
@@ -1467,6 +1482,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " t leader mapping {{{3
     let g:mapleader_map['t'] = {
                 \ 'name' : '+toggle',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ '_' : [ 'call feedkeys("\<Plug>CursorWordToggle")', 'toggle cursor-word' ],
                 \ 'f' : [ 'NERDTreeToggle', 'toggle nerdtree-file-manager' ],
                 \ 'g' : [ 'GitGutterToggle', 'toggle gitgutter' ],
@@ -1489,11 +1505,13 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " v leader mapping {{{3
     let g:mapleader_map['v'] = {
                 \ 'name' : '+vim/visual',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ }
     " }}}
     " w leader mapping {{{3
     let g:mapleader_map['w'] = {
                 \ 'name' : '+windows',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'w' : ['call feedkeys("\<Plug>(window_w)")', 'other-window'],
                 \ 'd' : ['call feedkeys("\<Plug>(window_d)")', 'delete-window'],
                 \ '-' : ['call feedkeys("\<Plug>(window_s1)")', 'split-window-below'],
@@ -1516,6 +1534,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " x leader mapping {{{3
     let g:mapleader_map['x'] = {
                 \ 'name' : '+text',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'a' : ['call feedkeys("\<Plug>(AlignWith?)")', 'easy-align'],
                 \ 'd' : ['StripWhitespace', 'delete-trailing-whitespace'],
                 \ 's' : ['SignatureListBufferMarks', 'list-buffer-mark-signs' ],
@@ -1525,6 +1544,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " y leader mapping {{{3
     let g:mapleader_map['y'] = {
                 \ 'name' : '+ycm',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'c' : [ 'YcmCompleter GoToDeclaration', 'go-to-deClaration' ],
                 \ 'e' : [ 'YcmDiags', 'errors-diags' ],
                 \ 'f' : [ 'YcmCompleter GoToDefinition', 'go-to-function-Definition' ],
@@ -1539,6 +1559,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     let g:localleader_map = {}
     let g:localleader_map['m'] = {
                 \ 'name' : '+marks',
+                \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ }
     call leaderGuide#register_prefix_descriptions(localleader, "g:localleader_map")
     nnoremap <silent> <localleader> :<c-u>LeaderGuide localleader<CR>
