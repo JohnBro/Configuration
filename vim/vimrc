@@ -123,6 +123,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'Yggdroot/indentLine',             { 'for': [ 'c', 'cpp', 'Makefile', 'python' ] }
     Plug 'romainl/vim-qf'
     Plug 'itchyny/vim-cursorword'
+    Plug 'jiangmiao/auto-pairs'
     if (g:os_gui && g:os_platform == 'windows')
         Plug 'plasticboy/vim-markdown'
         Plug 'iamcco/mathjax-support-for-mkdp'
@@ -271,16 +272,6 @@ function! VisualReplace()
     let l:word = input("Replace " . l:pattern . " with:")
     :exe '%s/' . l:pattern . '/' . l:word . '/gc'
     let @" = l:saved_reg
-endfunction
-
-" Used be as parenthesis complete, if "}",")","]" already exist, just to move right a character.
-" Otherwise readly type it.
-function! ClosePair(char)
-    if getline('.')[col('.') - 1] == a:char
-        return "\<Right>"
-    else
-        return a:char
-    endif
 endfunction
 
 function! PasteToggle()
@@ -434,20 +425,6 @@ augroup projectConfigGroup
     autocmd VimLeave * call LeaveHandler()
 augroup END
 
-augroup signAutoCompleteGroup
-    " Prevent load multiple times
-    autocmd!
-    autocmd FileType c,cpp,jva,javascript,python,php,json,css
-                \ inoremap ( ()<ESC>i|
-                \ inoremap ) <c-r>=ClosePair(')')<CR>|
-                \ inoremap { {}<ESC>i|
-                \ inoremap } <c-r>=ClosePair('}')<CR>|
-                \ inoremap [ []<ESC>i|
-                \ inoremap ] <c-r>=ClosePair(']')<CR>|
-                \ inoremap " ""<ESC>i|
-                \ inoremap ' ''<ESC>i
-augroup END
-
 " smark cursor line
 augroup cursorlineGroup
     autocmd!
@@ -503,25 +480,25 @@ endif
 " Ctrlp.vim settings {{{2
 if isdirectory(expand(g:dir_plugin.'/ctrlp.vim/'))
     nnoremap <F4>       :CtrlPMRU<cr>
-    let g:loaded_ctrlp=0
-    let g:ctrlp_working_path_mode='ra'
-    let g:ctrlp_match_window='bottom,order:btt,min:1,max:12,results:12'
-    let g:ctrlp_by_filename=1
-    let g:ctrlp_switch_buffer = 'et'
-    let g:ctrlp_regexp = 1
-    let g:ctrlp_default_input=0
-    let g:ctrlp_use_caching=1
-    let g:ctrlp_clear_cache_on_exit=0
-    let g:ctrlp_mruf_max = 250
-    let g:ctrlp_max_history=&history
-    let g:ctrlp_lazy_update=1
-    let g:ctrlp_map = '<c-p>'
-    let g:ctrlp_cmd = 'CtrlP'
-    let g:ctrlp_follow_symlinks = 1
-    let g:ctrlp_mruf_relative = 1
-    let g:ctrlp_mruf_execlude = '/tmp/.*\|/temp/.*'
-    let g:ctrlp_cache_dir=$HOME.'/.cache/ctrlp'
-    let g:ctrlp_custom_ignore = {
+    let g:loaded_ctrlp              = 0
+    let g:ctrlp_working_path_mode   = 'ra'
+    let g:ctrlp_match_window        = 'bottom,order:btt,min:1,max:12,results:12'
+    let g:ctrlp_by_filename         = 1
+    let g:ctrlp_switch_buffer       = 'et'
+    let g:ctrlp_regexp              = 1
+    let g:ctrlp_default_input       = 0
+    let g:ctrlp_use_caching         = 1
+    let g:ctrlp_clear_cache_on_exit = 0
+    let g:ctrlp_mruf_max            = 250
+    let g:ctrlp_max_history         = &history
+    let g:ctrlp_lazy_update         = 1
+    let g:ctrlp_map                 = '<c-p>'
+    let g:ctrlp_cmd                 = 'CtrlP'
+    let g:ctrlp_follow_symlinks     = 1
+    let g:ctrlp_mruf_relative       = 1
+    let g:ctrlp_mruf_execlude       = '/tmp/.*\|/temp/.*'
+    let g:ctrlp_cache_dir           = $HOME.'/.cache/ctrlp'
+    let g:ctrlp_custom_ignore       = {
                 \ 'dir':  '\v[\/]\.(git|hg|svn)$',
                 \ 'file': '\v(\.exe|\.so|\.dll|\.bin|\.pkg|\.bak|\.\~|\.mak|Makefile|\.zip|\.tar|\.gz|\.bz2)',
                 \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
@@ -530,16 +507,16 @@ if isdirectory(expand(g:dir_plugin.'/ctrlp.vim/'))
         " Use Ag over Grep
         set grepprg=ag\ --nogroup\ --nocolor
         " Use Ag in Ctrlp for listing files
-        let s:ctrlp_fallback = 'ag %s -l -g ""'
+        let s:ctrlp_fallback    = 'ag %s -l -g ""'
         let g:ctrlp_use_caching = 0
     elseif executable('ack-grep')
-        let s:ctrlp_fallback='ack-grep %s --nogroup -f ""'
+        let s:ctrlp_fallback    = 'ack-grep %s --nogroup -f ""'
         let g:ctrlp_use_caching = 0
     elseif executable('ack')
-        let s:ctrlp_fallback='ack %s --nogroup -f ""'
+        let s:ctrlp_fallback    = 'ack %s --nogroup -f ""'
         let g:ctrlp_use_caching = 0
     elseif has('win32')
-        let s:ctrlp_fallback='dir %s /-n /b /s /a-d'
+        let s:ctrlp_fallback    = 'dir %s /-n /b /s /a-d'
         let g:ctrlp_use_caching = 0
     else
         if (g:os_platform == 'windows')
@@ -1182,8 +1159,16 @@ if isdirectory(expand(g:dir_plugin.'/vim-cursorword/'))
         let g:cursorword = !g:cursorword
     endfunction
 
-    nnoremap <Plug>CursorWordToggle :call CursorWordTogglle()<cr>
-    vnoremap <Plug>CursorWordToggle :call CursorWordTogglle()<cr>
+    nnoremap <silent> <Plug>CursorWordToggle :call CursorWordTogglle()<cr>
+    vnoremap <silent> <Plug>CursorWordToggle :call CursorWordTogglle()<cr>
+endif
+" }}}
+" auto-pairs setting {{{2
+if isdirectory(expand(g:dir_plugin.'/auto-pairs/'))
+    let g:AutoPairsShortcutFastWrap   = ""
+    let g:AutoPairsShortcutJump       = ""
+    let g:AutoPairsShortcutBackInsert = ""
+    let g:AutoPairsShortcutToggle     = ",t%"
 endif
 " }}}
 " vim-leader-guide(<leader>) setting {{{2
