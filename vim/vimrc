@@ -999,11 +999,6 @@ if has('cscope') && executable('cscope')
                     \ elseif $CSCOPE_DB != "" |
                     \     cscope add $CSCOPE_DB |
                     \ endif
-
-        autocmd BufWritePost *.c,*.cpp,*.h,*.cxx
-                    \ if isdirectory(g:cscope_path) |
-                    \     call Cscope_Update()      |
-                    \ endif
     augroup END
 
     " <F10> To establish a cscope enviroment.
