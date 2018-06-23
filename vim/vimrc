@@ -339,6 +339,8 @@ nnoremap <silent> <Plug>(save_s) :update<cr>
 vnoremap <silent> <Plug>(save_s) :update<cr>
 nnoremap <silent> <Plug>(text_u) <Esc>viwU<Esc>
 vnoremap <silent> <Plug>(text_u) U<Esc>
+nnoremap <Plug>(format_g) gg=G<C-O><C-O>
+vnoremap <Plug>(format_g) <Esc>gg=G<C-O><C-O>
 if (g:os_platform == 'windows')
     inoremap <C-v>              <Esc>"+gP
     vnoremap <C-c>              "+y<Esc>
@@ -1201,16 +1203,29 @@ if isdirectory(expand(g:dir_plugin.'/vim-autoformat/'))
     let g:autoformat_autoindent             = 0
     let g:autoformat_retab                  = 0
     let g:autoformat_remove_trailing_spaces = 0
-    let g:formatdef_allman                  = '"astyle --style=allman --pad-oper"'
-    " Using ASIC stle to format code
-    let g:formatters_c                      = ['allman']
-    let g:formatters_cpp                    = ['allman']
 
-    nnoremap <Plug>(format_a) :Autoformat<cr>
-    vnoremap <Plug>(format_a) :Autoformat<cr>
+    " Only customized for c/c++
+    function! Format_With(type)
+        let l:opt = {
+                    \ "asic"  : "astyle",
+                    \ "clang" : "clang-format",
+                    \ }
+        for [ l:key, l:value  ] in items(l:opt)
+            if l:key == a:type
+                if l:value == "astyle"
+                    let g:formatters_c   = ['astyle_c']
+                    let g:formatters_cpp = ['astyle_cpp']
+                elseif l:value == "clang-format"
+                    let g:formatters_c   = ['clangformat']
+                    let g:formatters_cpp = ['clangformat']
+                endif
+            endif
+        endfor
+        exe "Autoformat"
+    endfunction
 
-    nmap <leader>= <Plug>(format_a) 
-    vmap <leader>= <Plug>(format_a)
+    nnoremap <leader>=a :call Format_With('asic')<cr>
+    vnoremap <leader>=c :call Format_With('clang')<cr>
 endif
 " }}}
 " vim-leader-guide(<leader>) setting {{{2
@@ -1229,7 +1244,12 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'c' : [ 'call feedkeys("\<Plug>NERDCommenterComment")', 'comment-lines' ],
                 \ 'u' : [ 'call feedkeys("\<Plug>NERDCommenterUncomment")', 'uncomment-lines' ],
                 \ }
-    let g:mapleader_map['='] = [ 'call feedkeys("\<Plug>(format_a)")', 'format file' ]
+    let g:mapleader_map['='] = {
+                \ 'name' : '+format',
+                \ '=' : [ 'call feedkeys("\<Plug>(format_g)")', 'general-format' ],
+                \ 'a' : [ 'call Format_With("asic")', 'asic-format' ],
+                \ 'c' : [ 'call Format_With("clang")', 'clang-format' ],
+                \ }
     let g:mapleader_map[' '] = [ 'call feedkeys("\<Space>")', 'cmd-line' ]
     " a leader mapping {{{3
     let g:mapleader_map['a'] = {
