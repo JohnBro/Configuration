@@ -103,11 +103,11 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'ntpeters/vim-better-whitespace',  { 'for': [ 'c', 'cpp', 'Makefile' ] }
     Plug 'liuchengxu/eleline.vim'
     Plug 'Valloric/YouCompleteMe'
-    Plug 'rdnetto/YCM-Generator',           { 'on': ['YcmGenerateConfig', 'CCGenerateConfig'], 'branch': 'stable' }
+    Plug 'rdnetto/YCM-Generator',           { 'for': [ 'c', 'cpp' ], 'on': ['YcmGenerateConfig', 'CCGenerateConfig'], 'branch': 'stable' }
     Plug 'JohnBro/DoxygenToolkit.vim'
     Plug 'JohnBro/Mark'
     Plug 'JohnBro/dictionary.vim'
-    Plug 'junegunn/fzf', { 'do': './install --all' }
+    Plug 'junegunn/fzf',                    { 'do': './install --all' }
     Plug 'junegunn/fzf.vim'
     Plug 'justinmk/vim-sneak'
     Plug 'airblade/vim-gitgutter'
@@ -123,7 +123,6 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'Yggdroot/indentLine',             { 'for': [ 'c', 'cpp', 'Makefile', 'python' ] }
     Plug 'romainl/vim-qf'
     if (g:os_gui && g:os_platform == 'windows')
-        Plug 'Shougo/neocomplete.vim'
         Plug 'plasticboy/vim-markdown'
         Plug 'iamcco/mathjax-support-for-mkdp'
         Plug 'iamcco/markdown-preview.vim'
@@ -673,6 +672,8 @@ inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
 inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
 inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
 inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
+inoremap <expr> <Tab>      pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab>    pumvisible() ? "\<C-p>" : "\<S-Tab>"
 "}}}
 " YouCompleteMe settings {{{3
 " !Windows : Completer by YouCompleteMe
@@ -696,31 +697,30 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
     let g:ycm_cache_omnifunc                      = 0
     let g:ycm_add_preview_to_completeopt          = 0
     let g:ycm_key_invoke_completion               = '<C-z>'
-    let g:ycm_python_binary_path                  = '/usr/bin/python3'
-    let g:ycm_server_python_interpreter           = '/usr/bin/python3'
+    let g:ycm_python_binary_path                  = '/usr/local/bin/python3'
+    let g:ycm_server_python_interpreter           = '/usr/local/bin/python3'
     let g:ycm_semantic_triggers                   = {
-                \   'c' : ['->', '.', 're!\w{3}'],
-                \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
-                \             're!\[.*\]\s'],
-                \   'ocaml' : ['.', '#'],
+                \   'c'      : ['->', '.', 're!\w{3}'],
+                \   'objc'   : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s', 're!\[.*\]\s'],
+                \   'ocaml'  : ['.', '#'],
                 \   'cpp,cuda,objcpp' : ['->', '.', '::', 're!\w{3}'],
-                \   'perl' : ['->'],
-                \   'php' : ['->', '::'],
+                \   'perl'   : ['->'],
+                \   'php'    : ['->', '::'],
                 \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
-                \   'ruby' : ['.', '::'],
-                \   'lua' : ['.', ':'],
+                \   'ruby'   : ['.', '::'],
+                \   'lua'    : ['.', ':'],
                 \   'erlang' : [':'],
                 \ }
     let g:ycm_filetype_blacklist                  = {
-                \ 'tagbar' : 1,
+                \ 'tagbar'   : 1,
                 \ 'nerdtree' : 1,
                 \ 'markdown' : 1,
-                \ 'unite' : 1,
-                \ 'text' : 1,
-                \ 'vimwiki' : 1,
-                \ 'pandoc' : 1,
-                \ 'infolog' : 1,
-                \ 'mail' : 1
+                \ 'unite'    : 1,
+                \ 'text'     : 1,
+                \ 'vimwiki'  : 1,
+                \ 'pandoc'   : 1,
+                \ 'infolog'  : 1,
+                \ 'mail'     : 1
                 \ }
     let g:ycm_key_detailed_diagnostics            = ""
 
@@ -748,6 +748,38 @@ if (isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')))
                     \   nnoremap <LocalLeader>gt :YcmCompleter GetType<CR>
         autocmd FileType c,cpp
                     \   nnoremap <LocalLeader>gp :YcmCompleter GetParent<CR>
+    augroup END
+endif
+" }}}
+" deoplete.nvim setting {{{3
+if isdirectory(expand(g:dir_plugin.'/deoplete.nvim/'))
+    let g:deoplete#enable_at_startup = 1
+    let g:min_pattern_length         = 2
+    let g:require_same_filetype      = 'False'
+    let refresh_always               = 'True'
+
+    " register omni
+    call deoplete#custom#source('omni', 'functions', {
+                \ 'html'     : 'htmlcomplete#CompleteTags',
+                \ 'css'      : 'csscomplete#CompleteCSS',
+                \ 'scss'     : 'csscomplete#CompleteCSS',
+                \ 'sass'     : 'csscomplete#CompleteCSS',
+                \ 'xml'      : 'xmlcomplete#CompleteTags',
+                \ 'markdown' : 'htmlcomplete#CompleteTags',
+                \ })
+    call deoplete#custom#source('omni', 'input_patterns', {
+                \ 'html' : '<[^>]',
+                \ 'css'  : '^\s\+\w\+\|\w\+[):;]\?\s\+\w*\|[@!]',
+                \ 'scss' : '^\s\+\w\+\|\w\+[):;]\?\s\+\w*\|[@!]',
+                \ 'sass' : '^\s\+\w\+\|\w\+[):;]\?\s\+\w*\|[@!]',
+                \ 'xml'  : '<[^>]*',
+                \ 'md'   : '<[^>]*',
+                \ })
+    augroup deopleteGroup
+        autocmd!
+        autocmd FileType c,cpp autocmd BufEnter *
+                    \ let g:deoplete#enable_at_startup = 0 |
+                    \ call deoplete#disable()
     augroup END
 endif
 " }}}
@@ -1020,7 +1052,7 @@ if isdirectory(expand(g:dir_plugin.'/DoxygenToolkit.vim/'))
     let g:DoxygenToolkit_authorName        = "JohnBro lujunboo@gmail.com"
     let g:DoxygenToolkit_blockHeader       = "--------------------------------------------------------------------------"
     let g:DoxygenToolkit_blockFooter       = "--------------------------------------------------------------------------"
-    
+
     function! Doxygen(type)
         let l:opt = {
                     \ 'author'  : 'DoxAuthor',
@@ -1104,8 +1136,10 @@ if isdirectory(expand(g:dir_plugin.'/dictionary.vim/'))
 endif
 " }}}
 " c-c++ setting {{{2
-let g:cpp_class_scope_highlight = 1
-let g:c_no_curly_error=1
+if isdirectory(expand(g:dir_plugin.'vim-cpp-enhanced-highlight')) && isdirectory(expand(g:dir_plugin.'vim-clang-format'))
+    let g:cpp_class_scope_highlight = 1
+    let g:c_no_curly_error=1
+endif
 " }}}
 " indentLine setting {{{2
 if isdirectory(expand(g:dir_plugin.'/indentLine/'))
@@ -1243,7 +1277,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'd' : [ 'NERDTreeFind', 'find-current-buffer-in-NERDTree' ],
                 \ 'f' : [ 'Files '.g:current_path, 'files-in-project-direcotry' ],
                 \ 'h' : [ 'Files ~', 'files-in-home-direcotry' ],
-                \ 'm' : [ 'Marks', 'fzf-find-marks' ], 
+                \ 'm' : [ 'Marks', 'fzf-find-marks' ],
                 \ 'n' : [ 'let @"=substitute(expand("%"), "/", "\\", "g")', "file-name-copy" ],
                 \ 'p' : [ 'let @"=substitute(expand("%:p"), "/", "\\", "g")', "file-path-copy" ],
                 \ 'r' : [ 'call feedkeys("\<Plug>CtrlP_RecentFiles")', 'ctrlp-recent-files' ],
