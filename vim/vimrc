@@ -310,7 +310,6 @@ inoremap <C-l>                  <Esc><C-W>l
 nnoremap <C-a>                  ggVG
 inoremap <C-a>                  <C-O>gg<C-O>V<C-O>G
 vnoremap <C-a>                  <C-C>ggVG
-noremap  <C-S>                  :update<CR>
 vnoremap <silent><C-S>                  <C-C>:update<CR>
 inoremap <silent><C-S>                  <C-O>:update<CR>
 nnoremap <C-Down>               ddp
@@ -335,6 +334,14 @@ nnoremap <Plug>(window_v2) <C-W>v
 nnoremap <Plug>(window_2) <C-W>v
 nnoremap <Plug>(project_cr) :call Sync_RunSysCmd("Create project...", "mkdir -p ".g:proj_path)<cr>
 vnoremap <Plug>(project_cr) :call Sync_RunSysCmd("Create project...", "mkdir -p ".g:proj_path)<cr>
+nnoremap <silent> <Plug>(quit_q) :wq<cr>
+vnoremap <silent> <Plug>(quit_q) :wq<cr>
+nnoremap <silent> <Plug>(quit_a) :wqa!<cr>
+vnoremap <silent> <Plug>(quit_a) :wqa!<cr>
+nnoremap <silent> <Plug>(quit_f) :q!<cr>
+vnoremap <silent> <Plug>(quit_f) :q!<cr>
+nnoremap <silent> <Plug>(save_s) :update<cr>
+vnoremap <silent> <Plug>(save_s) :update<cr>
 if (g:os_platform == 'windows')
     inoremap <C-v>              <Esc>"+gP
     vnoremap <C-c>              "+y<Esc>
@@ -1294,6 +1301,14 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 't' : [ 'call GenerateCtags()', 'generate-ctag-file' ],
                 \ }
     " }}}
+    " q leader mapping {{{3
+    let g:mapleader_map['q'] = {
+                \ 'name' : '+quit',
+                \ 'q' : [ 'call feedkeys("\<Plug>(quit_q)")', 'quit' ],
+                \ 'a' : [ 'call feedkeys("\<Plug>(quit_a)")', 'quit-all' ],
+                \ 'f' : [ 'call feedkeys("\<Plug>(quit_f)")', 'quit-all' ],
+                \ }
+    " }}}
     " r leader mapping {{{3
     let g:mapleader_map['r'] = {
                 \ 'name' : '+replace',
@@ -1302,8 +1317,9 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " }}}
     " s leader mapping {{{3
     let g:mapleader_map['s'] = {
-                \ 'name' : '+search/source',
-                \ 'v' : [ 'source $MYVIMRC', 'reload local vimrc'],
+                \ 'name' : '+save/source',
+                \ 'v' : [ 'source $MYVIMRC', 'source local-vimrc' ],
+                \ 's' : [ 'call feedkeys("\<Plug>(save_s)")', 'save-changed' ],
                 \ }
     " }}}
     " t leader mapping {{{3
