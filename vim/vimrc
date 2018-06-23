@@ -124,6 +124,9 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'romainl/vim-qf'
     Plug 'itchyny/vim-cursorword'
     Plug 'jiangmiao/auto-pairs'
+    Plug 'pelodelfuego/vim-swoop'
+    Plug 'tpope/vim-surround'
+    Plug 'Chiel92/vim-autoformat',          { 'on': 'Autoformat' }
     if (g:os_gui && g:os_platform == 'windows')
         Plug 'plasticboy/vim-markdown'
         Plug 'iamcco/mathjax-support-for-mkdp'
@@ -367,6 +370,7 @@ vnoremap >                  >gv     " Deindent in visual mode shiftwidth
 " New learnning.
 nnoremap <leader>w" viw<Esc>i"<Esc>hbi"<Esc>lel
 vnoremap <leader>w" iw<Esc>i"<Esc>h`<<Esc>i"<Esc>l`>l
+" Use cp or dp to delete content in parenthesis
 onoremap p i(
 onoremap in( :<C-u>normal! f(vi(<cr>
 onoremap il( :<C-u>normal! F)vi(<cr>
@@ -1171,6 +1175,44 @@ if isdirectory(expand(g:dir_plugin.'/auto-pairs/'))
     let g:AutoPairsShortcutToggle     = ",t%"
 endif
 " }}}
+" vim-swoop setting {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-swoop/'))
+    " Do not let vim-swoop create keybindings
+    let g:swoopUseDefaultKeyMap = 0
+    " Visual selection mode mapping: swoop current selection.
+    vnoremap <Plug>(search_f) :call SwoopMultiSelection()<CR>
+    nnoremap <Plug>(search_f) :call Swoop()<CR>
+    nnoremap <plug>(search_b) :call SwoopMulti()<CR>
+
+    "   <Leader>sf to start swoop buffer.
+    "   <Leader>sb to swoop in multiple buffers.
+    vmap <leader>sf <Plug>(search_f)
+    nmap <leader>sf <Plug>(search_f)
+    nmap <leader>sb <Plug>(search_b)
+endif
+" }}}
+" vim-surround settings {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-surround/'))
+    " this plugins was used for operator remap.
+endif
+" }}}
+" vim-autoformat setting {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-autoformat/'))
+    let g:autoformat_autoindent             = 0
+    let g:autoformat_retab                  = 0
+    let g:autoformat_remove_trailing_spaces = 0
+    let g:formatdef_allman                  = '"astyle --style=allman --pad-oper"'
+    " Using ASIC stle to format code
+    let g:formatters_c                      = ['allman']
+    let g:formatters_cpp                    = ['allman']
+
+    nnoremap <Plug>(format_a) :Autoformat<cr>
+    vnoremap <Plug>(format_a) :Autoformat<cr>
+
+    nmap <leader>= <Plug>(format_a) 
+    vmap <leader>= <Plug>(format_a)
+endif
+" }}}
 " vim-leader-guide(<leader>) setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     let g:mapleader_map =  {}
@@ -1187,7 +1229,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'c' : [ 'call feedkeys("\<Plug>NERDCommenterComment")', 'comment-lines' ],
                 \ 'u' : [ 'call feedkeys("\<Plug>NERDCommenterUncomment")', 'uncomment-lines' ],
                 \ }
-    let g:mapleader_map['='] = [ 'gg=G<C-O><C-O>:w', 'format-whole-file' ]
+    let g:mapleader_map['='] = [ 'call feedkeys("\<Plug>(format_a)")', 'format file' ]
     let g:mapleader_map[' '] = [ 'call feedkeys("\<Space>")', 'cmd-line' ]
     " a leader mapping {{{3
     let g:mapleader_map['a'] = {
@@ -1357,10 +1399,15 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ }
     " }}}
     " s leader mapping {{{3
+    vmap <leader>sf <Plug>(search_f)
+    nmap <leader>sf <Plug>(search_f)
+    nmap <leader>sb <Plug>(search_b)
     let g:mapleader_map['s'] = {
                 \ 'name' : '+save/source',
+                \ 'f' : [ 'call feedkeys("\<Plug>(search_f)")', 'search for()' ],
+                \ 'b' : [ 'call feedkeys("\<Plug>(search_b)")', 'search for()-buffers' ],
                 \ 'v' : [ 'source $MYVIMRC', 'source local-vimrc' ],
-                \ 's' : [ 'call feedkeys("\<Plug>(save_s)")', 'save-changed' ],
+                \ 's' : [ 'call feedkeys("\<Plug>(save_s)")', 'save changed' ],
                 \ }
     " }}}
     " t leader mapping {{{3
