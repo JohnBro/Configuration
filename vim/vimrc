@@ -1254,10 +1254,10 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ '#' : [ 'call feedkeys("\<Plug>MarkSearchB")', 'mark search-in-buffer' ],
                 \ '/' : [ 'call feedkeys("\<Plug>MarkSearchX")', 'mark search()' ],
                 \ '?' : [ 'call feedkeys("\<Plug>MarkSearchXB")', 'mark search()-in-buffer' ],
+                \ 'c' : [ 'call feedkeys("\<Plug>MarkClear")', 'mark clear' ],
+                \ 'f' : [ 'call feedkeys("\<Plug>MarkFor")', 'mark with()' ],
                 \ 'r' : [ 'call feedkeys("\<Plug>MarkRegex")', 'mark regex' ],
                 \ 's' : [ 'call feedkeys("\<Plug>MarkSet")', 'mark set' ],
-                \ 'c' : [ 'call feedkeys("\<Plug>MarkClear")', 'mark clear' ],
-                \ 'w' : [ 'call feedkeys("\<Plug>MarkWith")', 'mark with()' ],
                 \ }
     " }}}
     " p leader mapping {{{3
