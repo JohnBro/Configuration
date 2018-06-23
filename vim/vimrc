@@ -122,6 +122,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'octol/vim-cpp-enhanced-highlight',{ 'for': [ 'c', 'cpp' ] }
     Plug 'Yggdroot/indentLine',             { 'for': [ 'c', 'cpp', 'Makefile', 'python' ] }
     Plug 'romainl/vim-qf'
+    Plug 'itchyny/vim-cursorword'
     if (g:os_gui && g:os_platform == 'windows')
         Plug 'plasticboy/vim-markdown'
         Plug 'iamcco/mathjax-support-for-mkdp'
@@ -445,6 +446,13 @@ augroup signAutoCompleteGroup
                 \ inoremap ] <c-r>=ClosePair(']')<CR>|
                 \ inoremap " ""<ESC>i|
                 \ inoremap ' ''<ESC>i
+augroup END
+
+" smark cursor line
+augroup cursorlineGroup
+    autocmd!
+    autocmd InsertLeave,WinEnter * set cursorline   | set cursorcolumn
+    autocmd InsertEnter,WinLeave * set nocursorline | set nocursorcolumn
 augroup END
 
 " }}}
@@ -1165,6 +1173,19 @@ if isdirectory(expand(g:dir_plugin.'/indentLine/'))
     vmap <leader>tl <Plug>(LeadingSpaceToggle)
 endif
 " }}}
+" vim-cursorword setting {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-cursorword/'))
+    function! CursorWordTogglle()
+        if !exists('g:cursorword')
+            let g:cursorword = 1
+        endif
+        let g:cursorword = !g:cursorword
+    endfunction
+
+    nnoremap <Plug>CursorWordToggle :call CursorWordTogglle()<cr>
+    vnoremap <Plug>CursorWordToggle :call CursorWordTogglle()<cr>
+endif
+" }}}
 " vim-leader-guide(<leader>) setting {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     let g:mapleader_map =  {}
@@ -1360,6 +1381,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " t leader mapping {{{3
     let g:mapleader_map['t'] = {
                 \ 'name' : '+toggle',
+                \ '_' : [ 'call feedkeys("\<Plug>CursorWordToggle")', 'toggle cursor-word' ],
                 \ 'f' : [ 'NERDTreeToggle', 'toggle nerdtree-file-manager' ],
                 \ 'g' : [ 'GitGutterSignsToggle', 'toggle git-diff-signs' ],
                 \ 'G' : [ 'GitGutterLineHighlightsToggle', 'toggle git-diff-highlight' ],
