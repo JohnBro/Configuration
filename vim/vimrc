@@ -205,7 +205,6 @@ set  nowritebackup
 set    sessionoptions=buffers,globals,localoptions,curdir,tabpages,winsize,winpos,resize
 set  noswapfile
 set    ignorecase
-
 " }}}
 " Basic Functions {{{1
 let g:proj_dir     = ".projDir" " Used for manage current project
@@ -314,6 +313,8 @@ vnoremap <silent><C-S>                  <C-C>:update<CR>
 inoremap <silent><C-S>                  <C-O>:update<CR>
 nnoremap <C-Down>               ddp
 nnoremap <C-Up>                 ddkP
+nnoremap <C-u>                  <Esc>viwU<Esc>
+inoremap <C-u>                  <Esc>viwU<Esc>$a
 nnoremap <Plug>(window_w) <C-W>w
 nnoremap <Plug>(window_r) <C-W>r
 nnoremap <Plug>(window_d) <C-W>c
@@ -322,10 +323,10 @@ nnoremap <Plug>(window_j) <C-W>j
 nnoremap <Plug>(window_k) <C-W>k
 nnoremap <Plug>(window_h) <C-W>h
 nnoremap <Plug>(window_l) <C-W>l
-nnoremap <Plug>(window_H) <C-W>5<
-nnoremap <Plug>(window_L) <C-W>5>
-nnoremap <Plug>(window_J) :resize +5<CR>
-nnoremap <Plug>(window_K) :resize -5<CR>
+nnoremap <Plug>(window_H) <C-W>20<
+nnoremap <Plug>(window_L) <C-W>20>
+nnoremap <Plug>(window_J) :resize +20<CR>
+nnoremap <Plug>(window_K) :resize -20<CR>
 nnoremap <Plug>(window_b) <C-W>=
 nnoremap <Plug>(window_s1) <C-W>s
 nnoremap <Plug>(window_s2) <C-W>s
@@ -342,6 +343,8 @@ nnoremap <silent> <Plug>(quit_f) :q!<cr>
 vnoremap <silent> <Plug>(quit_f) :q!<cr>
 nnoremap <silent> <Plug>(save_s) :update<cr>
 vnoremap <silent> <Plug>(save_s) :update<cr>
+nnoremap <silent> <Plug>(text_u) <Esc>viwU<Esc>
+vnoremap <silent> <Plug>(text_u) U<Esc>
 if (g:os_platform == 'windows')
     inoremap <C-v>              <Esc>"+gP
     vnoremap <C-c>              "+y<Esc>
@@ -359,8 +362,6 @@ nnoremap <silent>H              0
 nnoremap <silent>L              $
 nnoremap <Left>                 :bp<cr>
 nnoremap <Right>                :bn<cr>
-nnoremap <C-u>                  <Esc>ViwU<Esc>
-inoremap <C-u>                  <Esc>ViwU<Esc>$a
 nnoremap <Plug>Replace          :call NormalReplace()<cr>
 vnoremap <Plug>Replace          :call VisualReplace()<cr>
 nnoremap n                  nzz
@@ -1289,7 +1290,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ '/' : [ 'call feedkeys("\<Plug>MarkSearchX")', 'mark search()' ],
                 \ '?' : [ 'call feedkeys("\<Plug>MarkSearchXB")', 'mark search()-in-buffer' ],
                 \ 'c' : [ 'call feedkeys("\<Plug>MarkClear")', 'mark clear' ],
-                \ 'f' : [ 'call feedkeys("\<Plug>MarkFor")', 'mark with()' ],
+                \ 'f' : [ 'call feedkeys("\<Plug>MarkFor")', 'mark for()' ],
                 \ 'r' : [ 'call feedkeys("\<Plug>MarkRegex")', 'mark regex' ],
                 \ 's' : [ 'call feedkeys("\<Plug>MarkSet")', 'mark set' ],
                 \ }
@@ -1376,6 +1377,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'a' : ['call feedkeys("\<Plug>(AlignWith?)")', 'easy-align'],
                 \ 'd' : ['StripWhitespace', 'delete-trailing-whitespace'],
                 \ 's' : ['SignatureListBufferMarks', 'list-buffer-mark-signs' ],
+                \ 'u' : ['call feedkeys("\<Plug>(text_u)")', 'upper-covert'],
                 \ }
     " }}}
     " y leader mapping {{{3
