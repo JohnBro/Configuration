@@ -329,6 +329,8 @@ nnoremap <Plug>(window_v2) <C-W>v
 nnoremap <Plug>(window_2) <C-W>v
 nnoremap <Plug>(project_cr) :call Sync_RunSysCmd("Create project...", "mkdir -p ".g:proj_path)<cr>
 vnoremap <Plug>(project_cr) :call Sync_RunSysCmd("Create project...", "mkdir -p ".g:proj_path)<cr>
+nnoremap <Plug>(project_de) :call Sync_RunSysCmd("Delete project...", "rm -rf ".g:proj_path)<cr>
+vnoremap <Plug>(project_de) :call Sync_RunSysCmd("Delete project...", "rm -rf ".g:proj_path)<cr>
 nnoremap <silent> <Plug>(quit_q) :wq<cr>
 vnoremap <silent> <Plug>(quit_q) :wq<cr>
 nnoremap <silent> <Plug>(quit_a) :wqa!<cr>
@@ -841,7 +843,19 @@ if isdirectory(expand(g:dir_plugin.'/vim-gutentags/')) && executable('ctags')
     let g:gutentags_auto_add_gtags_cscope  = 0
     let g:gutentags_cache_dir              = ''
 
-    autocmd BufReadPre *.c,*.h,*.cpp,*.cxx  set tags+=tags;,tags;
+    augroup ctagsGroup
+        autocmd!
+        autocmd FileType c,cpp autocmd InsertEnter *
+                    \ if isdirectory(g:proj_path) |
+                    \     call plug#load('vim-gutentags') |
+                    \ endif
+        autocmd FileType c,cpp autocmd BufReadPre *
+                    \ if isdirectory(g:proj_path) && !filereadable(g:ctags_path.'/'.g:ctags_file) |
+                    \     exe "GutentagsUpdate" |
+                    \ endif |
+                    \ set tags+=tags;,tags;
+    augroup END
+
     nnoremap <F9>        : call GenerateCtags()<cr>
 endif
 " }}}
@@ -993,7 +1007,7 @@ if has('cscope') && executable('cscope')
     augroup cscopeEnvGroup
         " Prevent load multiple times
         autocmd!
-        autocmd BufReadPre *.c,*.cpp,*.h,*.cxx
+        autocmd FileType c,cpp autocmd BufReadPre *
                     \ if filereadable(g:cscope_path.'/'.g:cscope_file) |
                     \     exe 'cscope add '.g:cscope_path.'/'.g:cscope_file |
                     \ elseif $CSCOPE_DB != "" |
@@ -1397,8 +1411,9 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     " p leader mapping {{{3
     let g:mapleader_map['p'] = {
                 \ 'name' : '+projects',
-                \ 'c' : [ 'call feedkeys("\<Plug>(project_cr)")', 'create-project-dir' ],
-                \ 't' : [ 'call GenerateCtags()', 'generate-ctag-file' ],
+                \ 'c' : [ 'call feedkeys("\<Plug>(project_cr)")', 'create project-dir' ],
+                \ 'd' : [ 'call feedkeys("\<Plug>(project_de)")', 'delect project-dir' ],
+                \ 't' : [ 'call GenerateCtags()', 'generate ctag-file' ],
                 \ }
     " }}}
     " q leader mapping {{{3
