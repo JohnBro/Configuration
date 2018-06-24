@@ -118,15 +118,14 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'haya14busa/incsearch.vim'
     Plug 'tomasr/molokai'
     Plug 'liuchengxu/space-vim-dark'
-    Plug 'rhysd/vim-clang-format',          { 'for': [ 'c', 'cpp' ] }
     Plug 'octol/vim-cpp-enhanced-highlight',{ 'for': [ 'c', 'cpp' ] }
+    Plug 'Chiel92/vim-autoformat',          { 'on': 'Autoformat' }
     Plug 'Yggdroot/indentLine',             { 'for': [ 'c', 'cpp', 'Makefile', 'python' ] }
     Plug 'romainl/vim-qf'
     Plug 'itchyny/vim-cursorword'
     Plug 'jiangmiao/auto-pairs'
     Plug 'pelodelfuego/vim-swoop'
     Plug 'tpope/vim-surround'
-    Plug 'Chiel92/vim-autoformat',          { 'on': 'Autoformat' }
     if (g:os_gui && g:os_platform == 'windows')
         Plug 'plasticboy/vim-markdown'
         Plug 'iamcco/mathjax-support-for-mkdp'
@@ -209,6 +208,7 @@ set  nowritebackup
 set    sessionoptions=buffers,globals,localoptions,curdir,tabpages,winsize,winpos,resize
 set  noswapfile
 set    ignorecase
+"term setting
 let &t_SI.="\e[5 q"
 let &t_SR.="\e[4 q"
 let &t_EI.="\e[1 q"
