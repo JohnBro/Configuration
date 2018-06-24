@@ -103,8 +103,8 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'ntpeters/vim-better-whitespace',  { 'for': [ 'c', 'cpp', 'Makefile' ] }
     Plug 'liuchengxu/eleline.vim'
     Plug 'Valloric/YouCompleteMe'
-    Plug 'rdnetto/YCM-Generator',           { 'for': [ 'c', 'cpp' ], 'on': ['YcmGenerateConfig', 'CCGenerateConfig'], 'branch': 'stable' }
-    Plug 'JohnBro/DoxygenToolkit.vim'
+    Plug 'rdnetto/YCM-Generator',           { 'for': [ 'c', 'cpp' ], 'on': [ 'YcmGenerateConfig', 'CCGenerateConfig' ], 'branch': 'stable' }
+    Plug 'JohnBro/DoxygenToolkit.vim',      { 'for': [ 'c', 'cpp' ] }
     Plug 'JohnBro/Mark'
     Plug 'JohnBro/dictionary.vim'
     Plug 'junegunn/fzf',                    { 'do': './install --all' }
