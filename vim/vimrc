@@ -5,9 +5,11 @@
 if (has('win32') || has('win64'))
     let g:os_windows = 1
     let g:dir_plugin = $VIM.'\vimfiles\plugins'
-elseif( has( 'Unix' ) )
+elseif( has( 'unix' ) )
     let g:os_unix = 1
     let g:dir_plugin = $HOME.'/.vim/plugins'
+elseif( has( 'macunix' ) )
+    let g:os_macos = 1
 endif
 
 if !exists('g:os_windows')
@@ -16,6 +18,10 @@ endif
 
 if !exists('g:os_unix')
     let g:os_unix = 0
+endif
+
+if !exists('g:os_macos')
+    let g:os_macos = 0
 endif
 
 if has('gui_running')
@@ -128,7 +134,6 @@ set    cursorcolumn
 set    complete+=k
 set    completeopt=menuone,longest,preview
 set    encoding=utf-8
-set    fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1,default
 set    foldenable
 set    foldmethod=marker
 set    guioptions-=Trml
