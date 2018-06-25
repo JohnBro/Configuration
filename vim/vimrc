@@ -2,25 +2,31 @@
 " Time 12/25/2017
 
 " Define OS type and GUI type in a global variable{{{1
-if(has("win32") || has("win64") || has("win95") || has("win16"))
-    let g:os_platform = "windows"
-    let g:dir_plugin = $VIM.'/vimfiles/plugins'
-elseif(has('Unix'))
-    let g:os_platform = "unix"
-    let g:dir_plugin = "~/.vim/plugins"
-else
-    let g:os_platform = ""
+if (has('win32') || has('win64'))
+    let g:os_windows = 1
+    let g:dir_plugin = $VIM.'\vimfiles\plugins'
+elseif( has( 'Unix' ) )
+    let g:os_unix = 1
+    let g:dir_plugin = $HOME.'/.vim/plugins'
 endif
 
-if has("gui_running")
+if !exists('g:os_windows')
+    let g:os_windows = 0
+endif
+
+if !exists('g:os_unix')
+    let g:os_unix = 0
+endif
+
+if has('gui_running')
     let g:os_gui = 1
 else
     let g:os_gui = 0
 endif
 " }}}
 " Windows GUI setting {{{1
-if (g:os_platform=='windows' && g:os_gui)
-    source $VIMRUNTIME/mswin.vimj
+if (g:os_windows == 1 && g:os_gui == 1)
+    source $VIMRUNTIME/mswin.vim
     source $VIMRUNTIME/delmenu.vim
     behave mswin
     winpos 50 50        " Window Position
@@ -58,8 +64,8 @@ if (g:os_platform=='windows' && g:os_gui)
 endif
 " }}}
 " Unix GUI setting {{{1
-if(g:os_platform=='unix')
-    if(g:os_gui)
+if ( g:os_unix == 1 )
+    if ( g:os_gui == 1 )
         if filereadable("/etc/vim/gvimrc.local")
             source /etc/vim/gvimrc.local
         endif
@@ -74,14 +80,22 @@ if(g:os_platform=='unix')
 endif
 " }}}
 " Vim plugin manager setting {{{1
-let $VIM_PLUGDIR = expand(g:dir_plugin.'/vim-plug')
-if empty(glob(expand($VIM_PLUGDIR."/plug.vim")))
-    silent !curl -fLo $VIM_PLUGDIR/plug.vim --create-dirs
-                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+if (g:os_windows == 1)
+    let $VIM_PLUGDIR = expand($VIM.'\vimfiles\autoload\vim-plug')
+else
+    let $VIM_PLUGDIR = expand($HOME.'/.vim/autoload/vim-plug/')
+endif
+
+if !isdirectory($VIM_PLUGDIR)
+    " For Windows platform, install manually
+    if ( g:os_unix == 1 )
+        silent !curl -fLo $VIM_PLUGDIR/plug.vim --create-dirs
+                    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    endif
     autocmd VimEnter * PlugInstall --sync | source ~/.vimrc
 endif
 
-if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
+if isdirectory(expand($VIM_PLUGDIR))
 
     set nocompatible
     source $VIM_PLUGDIR/plug.vim
@@ -126,7 +140,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-plug/'))
     Plug 'jiangmiao/auto-pairs'
     Plug 'pelodelfuego/vim-swoop'
     Plug 'tpope/vim-surround'
-    if (g:os_gui && g:os_platform == 'windows')
+    if (g:os_gui == 1 && g:os_windows == 1)
         Plug 'plasticboy/vim-markdown'
         Plug 'iamcco/mathjax-support-for-mkdp'
         Plug 'iamcco/markdown-preview.vim'
@@ -168,10 +182,16 @@ set    complete+=k
 set    completeopt=menuone,longest,preview
 set    encoding=utf-8
 set    langmenu=none
-set    termencoding=utf-8
+if (g:os_unix == 1)
+    set    termencoding=utf-8
+endif
 set    fileencoding=utf-8
 set    fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1,default
-set    fileformats=unix,dos
+if (g:os_unix == 1)
+    set    fileformats=unix
+else
+    set    fileformats=dos
+endif
 set    foldenable
 set    foldmethod=marker
 set    guioptions-=Trml
@@ -209,9 +229,11 @@ set    sessionoptions=buffers,globals,localoptions,curdir,tabpages,winsize,winpo
 set  noswapfile
 set    ignorecase
 "term setting
-let &t_SI.="\e[5 q"
-let &t_SR.="\e[4 q"
-let &t_EI.="\e[1 q"
+if (g:os_unix == 1)
+    let &t_SI.="\e[5 q"
+    let &t_SR.="\e[4 q"
+    let &t_EI.="\e[1 q"
+endif
 " }}}
 " Basic Functions {{{1
 let g:proj_dir     = ".projDir" " Used for manage current project
@@ -346,7 +368,7 @@ nnoremap <silent> <Plug>(text_u) <Esc>viwU<Esc>
 vnoremap <silent> <Plug>(text_u) U<Esc>
 nnoremap <Plug>(format_g) gg=G<C-O><C-O>
 vnoremap <Plug>(format_g) <Esc>gg=G<C-O><C-O>
-if (g:os_platform == 'windows')
+if (g:os_windows == 1)
     inoremap <C-v>              <Esc>"+gP
     vnoremap <C-c>              "+y<Esc>
     cnoremap <C-v>              <C-R>+
@@ -355,7 +377,7 @@ if (g:os_platform == 'windows')
     nnoremap <M-h>              :vertical resize -5<cr>
     nnoremap <M-l>              :vertical resize +5<cr>
 endif
-if (g:os_platform == 'Unix')
+if (g:os_unix == 1)
     vnoremap <leader>yy :w !pbcopy<CR>
     nnoremap <leader>pp :r !pbpaste<CR>
 endif
@@ -530,7 +552,7 @@ if isdirectory(expand(g:dir_plugin.'/ctrlp.vim/'))
         let s:ctrlp_fallback    = 'dir %s /-n /b /s /a-d'
         let g:ctrlp_use_caching = 0
     else
-        if (g:os_platform == 'windows')
+        if (g:os_windows == 1)
             let s:ctrlp_fallback = 'dir %s /-n /b /s /a-d' " Windows
         else
             let s:ctrlp_fallback = 'find %s -type f'       " MacOSX/Linux
