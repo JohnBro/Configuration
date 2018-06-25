@@ -24,61 +24,6 @@ else
     let g:os_gui = 0
 endif
 " }}}
-" Windows GUI setting {{{1
-if (g:os_windows == 1 && g:os_gui == 1)
-    source $VIMRUNTIME/mswin.vim
-    source $VIMRUNTIME/delmenu.vim
-    behave mswin
-    winpos 50 50        " Window Position
-
-    set    lines=30        " Line number of Window
-    set    columns=100     " Column number of Window
-    set    diffexpr=MyDiff()
-    set    ambiwidth=double
-    set    winaltkeys=no
-    set    guifont=Inconsolata-dz\ for\ Powerline:h12
-
-    function! MyDiff()
-        let opt = '-a --binary '
-        if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
-        if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
-        let arg1 = v:fname_in
-        if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
-        let arg2 = v:fname_new
-        if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
-        let arg3 = v:fname_out
-        if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
-        let eq = ''
-        if $VIMRUNTIME =~ ' '
-            if &sh =~ '\<cmd'
-                let cmd = '""' . $VIMRUNTIME . '\diff"'
-                let eq = '"'
-            else
-                let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
-            endif
-        else
-            let cmd = $VIMRUNTIME . '\diff'
-        endif
-        silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq
-    endfunction
-endif
-" }}}
-" Unix GUI setting {{{1
-if ( g:os_unix == 1 )
-    if ( g:os_gui == 1 )
-        if filereadable("/etc/vim/gvimrc.local")
-            source /etc/vim/gvimrc.local
-        endif
-    else
-        set term=xterm-256color "colored airline
-        set t_Co=256
-        set t_ut=
-        if filereadable("/etc/vim/vimrc.local")
-            source /etc/vim/vimrc.local
-        endif
-    endif
-endif
-" }}}
 " Vim plugin manager setting {{{1
 if (g:os_windows == 1)
     let $VIM_PLUGDIR = expand($VIM.'\vimfiles\autoload\vim-plug')
@@ -116,7 +61,9 @@ if isdirectory(expand($VIM_PLUGDIR))
     Plug 'terryma/vim-multiple-cursors'
     Plug 'ntpeters/vim-better-whitespace',  { 'for': [ 'c', 'cpp', 'Makefile' ] }
     Plug 'liuchengxu/eleline.vim'
-    Plug 'Valloric/YouCompleteMe'
+    if ( g:os_unix == 1 )
+        Plug 'Valloric/YouCompleteMe'
+    endif
     Plug 'rdnetto/YCM-Generator',           { 'for': [ 'c', 'cpp' ], 'on': [ 'YcmGenerateConfig', 'CCGenerateConfig' ], 'branch': 'stable' }
     Plug 'JohnBro/DoxygenToolkit.vim',      { 'for': [ 'c', 'cpp' ] }
     Plug 'JohnBro/Mark'
@@ -181,17 +128,7 @@ set    cursorcolumn
 set    complete+=k
 set    completeopt=menuone,longest,preview
 set    encoding=utf-8
-set    langmenu=none
-if (g:os_unix == 1)
-    set    termencoding=utf-8
-endif
-set    fileencoding=utf-8
 set    fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1,default
-if (g:os_unix == 1)
-    set    fileformats=unix
-else
-    set    fileformats=dos
-endif
 set    foldenable
 set    foldmethod=marker
 set    guioptions-=Trml
@@ -228,11 +165,79 @@ set  nowritebackup
 set    sessionoptions=buffers,globals,localoptions,curdir,tabpages,winsize,winpos,resize
 set  noswapfile
 set    ignorecase
-"term setting
+" Customized with different platforms
 if (g:os_unix == 1)
-    let &t_SI.="\e[5 q"
-    let &t_SR.="\e[4 q"
-    let &t_EI.="\e[1 q"
+    set    termencoding=utf-8
+    set    langmenu=none
+    set    fileencoding=utf-8
+    set    fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1,default
+    set    fileformats=unix
+    set    termencoding=utf-8
+    let    &t_SI.="\e[5 q"
+    let    &t_SR.="\e[4 q"
+    let    &t_EI.="\e[1 q"
+else
+    set    langmenu=zh_cm.utf-8
+    set    fileencoding=chinese
+    set    fileencodings=utf-8,chinese,latin-1
+    set    fileformats=dos
+    let    $LANG="zh_CN.UTF-8"
+    set    termencoding=chinese
+endif
+" }}}
+" Windows GUI setting {{{1
+if (g:os_windows == 1 && g:os_gui == 1)
+    source $VIMRUNTIME\mswin.vim
+    source $VIMRUNTIME\delmenu.vim
+    behave mswin
+    winpos 50 50        " Window Position
+
+    set    lines=30        " Line number of Window
+    set    columns=100     " Column number of Window
+    set    diffexpr=MyDiff()
+    set    ambiwidth=double
+    set    winaltkeys=no
+    set    guifont=Inconsolata-dz\ for\ Powerline:h12
+
+    function! MyDiff()
+        let opt = '-a --binary '
+        if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+        if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+        let arg1 = v:fname_in
+        if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+        let arg2 = v:fname_new
+        if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+        let arg3 = v:fname_out
+        if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+        let eq = ''
+        if $VIMRUNTIME =~ ' '
+            if &sh =~ '\<cmd'
+                let cmd = '""' . $VIMRUNTIME . '\diff"'
+                let eq = '"'
+            else
+                let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+            endif
+        else
+            let cmd = $VIMRUNTIME . '\diff'
+        endif
+        silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq
+    endfunction
+endif
+" }}}
+" Unix GUI setting {{{1
+if ( g:os_unix == 1 )
+    if ( g:os_gui == 1 )
+        if filereadable("/etc/vim/gvimrc.local")
+            source /etc/vim/gvimrc.local
+        endif
+    else
+        set term=xterm-256color "colored airline
+        set t_Co=256
+        set t_ut=
+        if filereadable("/etc/vim/vimrc.local")
+            source /etc/vim/vimrc.local
+        endif
+    endif
 endif
 " }}}
 " Basic Functions {{{1
