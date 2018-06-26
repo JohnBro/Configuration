@@ -487,14 +487,14 @@ if executable('ag') && isdirectory(expand(g:dir_plugin.'/ag.vim/'))
         :exe 'AgBuffer! '.s:ag_symbol
     endfunction
 
-    let s:ag_ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
-    let s:ag_ignores .= ' --ignore "*.so" --ignore "*.o"'                   " files
-    let g:ag_arg = 'ag --vimgrep --smart-case --nocolumn --nogroup --skip-vcs-ignores '.s:ag_ignores
-    let g:ag_highlight=1
-    let g:ag_format="%f:%l:%m"
-    let g:ag_qhandler="botright copen 12"
-    let g:ag_autoclose=1
-    let g:ag_working_path_mode='r'
+    let s:ag_ignores            = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/"'  " dirs
+    let s:ag_ignores           .= ' --ignore "*.so" --ignore "*.o"'                   " files
+    let g:ag_arg                = 'ag --vimgrep --smart-case --nocolumn --nogroup --skip-vcs-ignores '.s:ag_ignores
+    let g:ag_highlight          = 1
+    let g:ag_format             = "%f:%l:%m"
+    let g:ag_qhandler           = "botright copen 12"
+    let g:ag_autoclose          = 1
+    let g:ag_working_path_mode  = 'r'
 
     noremap <F5>        :AgBuffer! <C-R><C-W><CR>
 endif
@@ -593,16 +593,16 @@ endif
 " Tagbar settings {{{2
 if isdirectory(expand(g:dir_plugin.'/tagbar/')) && executable('ctags')
     nnoremap <F2> :TagbarToggle<cr>
-    let g:tagbar_left=1
-    let g:tagbar_width=30
-    let g:tagbar_autoclose=1
-    let g:tagbar_autofocus=1
-    let g:tagbar_sort=0
-    let g:tagbar_compact = 1
-    let g:tagbar_indent = 1
-    let g:tagbar_autopreview = 1
-    let g:tagbar_foldlevel=2
-    let g:tagbar_previewwin_pos="rightbelow"
+    let g:tagbar_left           = 1
+    let g:tagbar_width          = 30
+    let g:tagbar_autoclose      = 1
+    let g:tagbar_autofocus      = 1
+    let g:tagbar_sort           = 0
+    let g:tagbar_compact        = 1
+    let g:tagbar_indent         = 1
+    let g:tagbar_autopreview    = 1
+    let g:tagbar_foldlevel      = 2
+    let g:tagbar_previewwin_pos = "rightbelow"
 endif
 " }}}
 " Nerdtree settings {{{2
@@ -618,10 +618,10 @@ if isdirectory(expand(g:dir_plugin.'/nerdtree/'))
     augroup END
 
     nnoremap <F3> :NERDTreeToggle<cr>
-    let NERDTreeQuitOnOpen=1
-    let NERDTreeShowLineNumbers=1
-    let NERDTreeWinPos="right"
-    let NERDTreeWinSize=30
+    let NERDTreeQuitOnOpen      = 1
+    let NERDTreeShowLineNumbers = 1
+    let NERDTreeWinPos          = "right"
+    let NERDTreeWinSize         = 30
     if isdirectory(expand("~/.vim/bundle/nerdtree-git-plugin"))
         let g:NERDTreeIndicatorMapCustom = {
                     \ "Modified"  : "✹",
@@ -645,20 +645,19 @@ if isdirectory(expand(g:dir_plugin.'/syntastic/'))
     set    statusline+=%*
     "let g:syntastic_always_populate_loc_list = 1
     "let g:syntastic_auto_loc_list = 1
-    let g:syntastic_check_on_open = 1
-    let g:syntastic_check_on_wq = 1
-    let g:syntastic_error_symbol='>>'
-    let g:syntastic_warning_symbol='>'
-    let g:syntastic_enable_highlighting=1
-    let g:syntastic_auto_jump=0
-    "let g:syntastic_airline
+    let g:syntastic_check_on_open       = 1
+    let g:syntastic_check_on_wq         = 1
+    let g:syntastic_error_symbol        = '>>'
+    let g:syntastic_warning_symbol      = '>'
+    let g:syntastic_enable_highlighting = 1
+    let g:syntastic_auto_jump           = 0
     let g:syntastic_javascript_checkers = ['jsl', 'jshint']
-    let g:syntastic_html_checkers=['tidy', 'jshint']
+    let g:syntastic_html_checkers       = ['tidy', 'jshint']
 
-    let g:syntastic_c_check_header = 0
-    let g:syntastic_c_remove_include_headers=1
-    let g:syntastic_cpp_check_errors = 1
-    let g:syntastic_cpp_remove_include_headers=0
+    let g:syntastic_c_check_header             = 0
+    let g:syntastic_c_remove_include_headers   = 1
+    let g:syntastic_cpp_check_errors           = 1
+    let g:syntastic_cpp_remove_include_headers = 0
     function! ToggleErrors()
         let old_last_winnr = winnr('$')
         lclose
@@ -817,11 +816,11 @@ endif
 " }}}
 " vim Markdown setting, just in gui {{{2
 if isdirectory(expand(g:dir_plugin.'/markdown-preview.vim/'))
-    let g:mkdp_path_to_chrome = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-    let g:mkdp_auto_start = 0
-    let g:mkdp_auto_open = 0
-    let g:mkdp_auto_close = 1
-    let g:mkdp_refresh_slow = 0
+    let g:mkdp_path_to_chrome     = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+    let g:mkdp_auto_start         = 0
+    let g:mkdp_auto_open          = 0
+    let g:mkdp_auto_close         = 1
+    let g:mkdp_refresh_slow       = 0
     let g:mkdp_command_for_global = 0
     nnoremap <silent> <F11> <Plug>MarkdownPreview
     inoremap <silent> <F11> <Plug>MarkdownPreview
@@ -846,9 +845,9 @@ endif
 if isdirectory(expand(g:dir_plugin.'/vim-better-whitespace/'))
     hi ExtraWhitespace guifg=#FF2626 gui=underline ctermfg=124 cterm=underline
     match ExtraWhitespace /\s\+$/
-    let g:better_whitespace_filetypes_blacklist=['txt', 'log', 'diff', 'unite', 'qf', 'help']
-    let g:better_whitespace_verbosity = 0
-    let g:better_whitespace_oprator = '<localleader>wt'
+    let g:better_whitespace_filetypes_blacklist = ['txt', 'log', 'diff', 'unite', 'qf', 'help']
+    let g:better_whitespace_verbosity           = 0
+    let g:better_whitespace_oprator             = '<localleader>wt'
     autocmd     FileType    javascript,c,cpp,java,html,ruby,vimscript,shell
                 \ autocmd BufEnter <buffer>     EnableWhitespace
 endif
@@ -1045,7 +1044,7 @@ if has('cscope') && executable('cscope')
     augroup cscopeEnvGroup
         " Prevent load multiple times
         autocmd!
-        autocmd FileType c,cpp autocmd BufReadPre *
+        autocmd FileType c,cpp autocmd VimEnter *
                     \ if filereadable(g:cscope_path.'/'.g:cscope_file) |
                     \     exe 'cscope add '.g:cscope_path.'/'.g:cscope_file |
                     \ elseif $CSCOPE_DB != "" |
@@ -1194,7 +1193,7 @@ endif
 " c-c++ setting {{{2
 if isdirectory(expand(g:dir_plugin.'vim-cpp-enhanced-highlight')) && isdirectory(expand(g:dir_plugin.'vim-clang-format'))
     let g:cpp_class_scope_highlight = 1
-    let g:c_no_curly_error=1
+    let g:c_no_curly_error          = 1
 endif
 " }}}
 " indentLine setting {{{2
@@ -1303,9 +1302,9 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
     endfor
 
     let g:gutentags_project_root = [ g:proj_dir ]
-    let g:mapleader_map[' '] = [ 'call feedkeys("\<Space>")', 'cmd-line' ]
-    let g:mapleader_map[','] = [ 'call feedkeys("\<Esc>")', 'exit' ]
-    let g:mapleader_map['?'] = [ 'Maps', 'show-keybindings' ]
+    let g:mapleader_map[' ']     = [ 'call feedkeys("\<Space>")', 'cmd-line' ]
+    let g:mapleader_map[',']     = [ 'call feedkeys("\<Esc>")', 'exit' ]
+    let g:mapleader_map['?']     = [ 'Maps', 'show-keybindings' ]
     " ; leader mapping {{{3
     let g:mapleader_map[';'] = {
                 \ 'name' : '+commenter',
