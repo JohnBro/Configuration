@@ -93,7 +93,8 @@ if isdirectory(expand($VIM_PLUGDIR))
     Plug 'jiangmiao/auto-pairs'
     Plug 'pelodelfuego/vim-swoop'
     Plug 'tpope/vim-surround'
-    if (g:os_gui == 1 && g:os_windows == 1)
+    if (g:os_gui == 1)
+        Plug 'godlygeek/tabular'
         Plug 'plasticboy/vim-markdown'
         Plug 'iamcco/mathjax-support-for-mkdp'
         Plug 'iamcco/markdown-preview.vim'
@@ -231,6 +232,7 @@ endif
 " }}}
 " Unix GUI setting {{{1
 if ( g:os_unix == 1 )
+    set guifont=Monaco:h16
     if ( g:os_gui == 1 )
         if filereadable("/etc/vim/gvimrc.local")
             source /etc/vim/gvimrc.local
