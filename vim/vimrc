@@ -3,35 +3,35 @@
 
 " Define OS type and GUI type in a global variable{{{1
 if (has('win32') || has('win64'))
-    let g:os_windows = 1
+    let g:os_is_windows = 1
     let g:dir_plugin = $VIM.'\vimfiles\plugins'
 elseif( has( 'unix' ) )
-    let g:os_unix = 1
+    let g:os_is_unix = 1
     let g:dir_plugin = $HOME.'/.vim/plugins'
 elseif( has( 'macunix' ) )
-    let g:os_macos = 1
+    let g:os_is_macos = 1
 endif
 
-if !exists('g:os_windows')
-    let g:os_windows = 0
+if !exists('g:os_is_windows')
+    let g:os_is_windows = 0
 endif
 
-if !exists('g:os_unix')
-    let g:os_unix = 0
+if !exists('g:os_is_unix')
+    let g:os_is_unix = 0
 endif
 
 if !exists('g:os_macos')
-    let g:os_macos = 0
+    let g:os_is_macos = 0
 endif
 
 if has('gui_running')
-    let g:os_gui = 1
+    let g:os_has_gui = 1
 else
-    let g:os_gui = 0
+    let g:os_has_gui = 0
 endif
 " }}}
 " Vim plugin manager setting {{{1
-if (g:os_windows == 1)
+if (g:os_is_windows == 1)
     let $VIM_PLUGDIR = expand($VIM.'\vimfiles\autoload\vim-plug')
 else
     let $VIM_PLUGDIR = expand($HOME.'/.vim/autoload/vim-plug/')
@@ -39,7 +39,7 @@ endif
 
 if !isdirectory($VIM_PLUGDIR)
     " For Windows platform, install manually
-    if ( g:os_unix == 1 )
+    if ( g:os_is_unix == 1 )
         silent !curl -fLo $VIM_PLUGDIR/plug.vim --create-dirs
                     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     endif
@@ -67,7 +67,7 @@ if isdirectory(expand($VIM_PLUGDIR))
     Plug 'terryma/vim-multiple-cursors'
     Plug 'ntpeters/vim-better-whitespace',  { 'for': [ 'c', 'cpp', 'Makefile' ] }
     Plug 'liuchengxu/eleline.vim'
-    if ( g:os_unix == 1 )
+    if ( g:os_is_unix == 1 )
         Plug 'Valloric/YouCompleteMe'
     endif
     Plug 'rdnetto/YCM-Generator',           { 'for': [ 'c', 'cpp' ], 'on': [ 'YcmGenerateConfig', 'CCGenerateConfig' ], 'branch': 'stable' }
@@ -93,7 +93,7 @@ if isdirectory(expand($VIM_PLUGDIR))
     Plug 'jiangmiao/auto-pairs'
     Plug 'pelodelfuego/vim-swoop'
     Plug 'tpope/vim-surround'
-    if (g:os_gui == 1)
+    if (g:os_has_gui == 1)
         Plug 'godlygeek/tabular'
         Plug 'plasticboy/vim-markdown'
         Plug 'iamcco/mathjax-support-for-mkdp'
@@ -103,13 +103,12 @@ if isdirectory(expand($VIM_PLUGDIR))
     call plug#end()
 endif
 " }}}
-
 " Basic Setting {{{1
 filetype plugin on
 filetype indent on
 syntax enable
 syntax on
-silent! color space-vim-dark
+silent! colorscheme space-vim-dark
 set  nocompatible
 set    expandtab
 set    shiftwidth=4
@@ -137,7 +136,6 @@ set    completeopt=menuone,longest,preview
 set    encoding=utf-8
 set    foldenable
 set    foldmethod=marker
-set    guioptions-=Trml
 set    helplang=en
 set    hidden
 set    history=100
@@ -172,7 +170,7 @@ set    sessionoptions=buffers,globals,localoptions,curdir,tabpages,winsize,winpo
 set  noswapfile
 set    ignorecase
 " Customized with different platforms
-if (g:os_unix == 1)
+if (g:os_is_unix == 1)
     set    termencoding=utf-8
     set    langmenu=none
     set    fileencoding=utf-8
@@ -192,18 +190,30 @@ else
 endif
 " }}}
 " Windows GUI setting {{{1
-if (g:os_windows == 1 && g:os_gui == 1)
+if (g:os_has_gui == 1)
+    set    guioptions-=T 
+    set    guioptions-=L
+    set    guioptions-=r
+    set    guioptions-=b
+    set    guioptions-=m
+    " Using internal tap style rather than gui
+    set    guioptions-=e
+    if isdirectory(g:dir_plugin.'/space-vim-dark/')
+        let    g:space_vim_dark_background = 234
+    endif
+endif
+if (g:os_is_windows == 1 && g:os_has_gui == 1)
     source $VIMRUNTIME\mswin.vim
     source $VIMRUNTIME\delmenu.vim
     behave mswin
-    winpos 50 50        " Window Position
+    winpos 50 50           " Window Position
 
     set    lines=30        " Line number of Window
     set    columns=100     " Column number of Window
     set    diffexpr=MyDiff()
     set    ambiwidth=double
     set    winaltkeys=no
-    set    guifont=Inconsolata-dz\ for\ Powerline:h12
+    set    guifont=Inconsolata-g\ for\ Powerline:h11
 
     function! MyDiff()
         let opt = '-a --binary '
@@ -230,10 +240,10 @@ if (g:os_windows == 1 && g:os_gui == 1)
     endfunction
 endif
 " }}}
-" Unix GUI setting {{{1
-if ( g:os_unix == 1 )
+" Unix GUI setting {{{2
+if ( g:os_is_unix == 1 )
     set guifont=Monaco:h16
-    if ( g:os_gui == 1 )
+    if ( g:os_has_gui == 1 )
         if filereadable("/etc/vim/gvimrc.local")
             source /etc/vim/gvimrc.local
         endif
@@ -246,6 +256,7 @@ if ( g:os_unix == 1 )
         endif
     endif
 endif
+" }}}
 " }}}
 " Basic Functions {{{1
 let g:proj_dir     = ".projDir" " Used for manage current project
@@ -380,7 +391,7 @@ nnoremap <silent> <Plug>(text_u) <Esc>viwU<Esc>
 vnoremap <silent> <Plug>(text_u) U<Esc>
 nnoremap <Plug>(format_g) gg=G<C-O><C-O>
 vnoremap <Plug>(format_g) <Esc>gg=G<C-O><C-O>
-if (g:os_windows == 1)
+if (g:os_is_windows == 1)
     inoremap <C-v>              <Esc>"+gP
     vnoremap <C-c>              "+y<Esc>
     cnoremap <C-v>              <C-R>+
@@ -389,7 +400,7 @@ if (g:os_windows == 1)
     nnoremap <M-h>              :vertical resize -5<cr>
     nnoremap <M-l>              :vertical resize +5<cr>
 endif
-if (g:os_unix == 1)
+if (g:os_is_unix == 1)
     vnoremap <leader>yy :w !pbcopy<CR>
     nnoremap <leader>pp :r !pbpaste<CR>
 endif
@@ -564,7 +575,7 @@ if isdirectory(expand(g:dir_plugin.'/ctrlp.vim/'))
         let s:ctrlp_fallback    = 'dir %s /-n /b /s /a-d'
         let g:ctrlp_use_caching = 0
     else
-        if (g:os_windows == 1)
+        if (g:os_is_windows == 1)
             let s:ctrlp_fallback = 'dir %s /-n /b /s /a-d' " Windows
         else
             let s:ctrlp_fallback = 'find %s -type f'       " MacOSX/Linux
