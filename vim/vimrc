@@ -74,7 +74,6 @@ if isdirectory(expand($VIM_PLUGDIR))
     Plug 'junegunn/vim-easy-align',         { 'on': [ '<Plug>(EasyAlign)', 'EasyAlign' ] }
     Plug 'terryma/vim-multiple-cursors'
     Plug 'ntpeters/vim-better-whitespace',  { 'for': [ 'c', 'cpp', 'Makefile' ] }
-    Plug 'liuchengxu/eleline.vim'
     if ( g:os_is_unix == 1 )
         Plug 'Valloric/YouCompleteMe'
     endif
@@ -102,10 +101,13 @@ if isdirectory(expand($VIM_PLUGDIR))
     Plug 'pelodelfuego/vim-swoop'
     Plug 'tpope/vim-surround'
     if (g:os_has_gui == 1)
-        Plug 'godlygeek/tabular'
         Plug 'plasticboy/vim-markdown'
         Plug 'iamcco/mathjax-support-for-mkdp'
         Plug 'iamcco/markdown-preview.vim'
+        Plug 'vim-airline/vim-airline-themes'
+        Plug 'vim-airline/vim-airline'
+    else
+        Plug 'liuchengxu/eleline.vim'
     endif
 
     call plug#end()
@@ -399,6 +401,8 @@ nnoremap <silent> <Plug>(text_u) <Esc>viwU<Esc>
 vnoremap <silent> <Plug>(text_u) U<Esc>
 nnoremap <Plug>(format_g) gg=G<C-O><C-O>
 vnoremap <Plug>(format_g) <Esc>gg=G<C-O><C-O>
+nnoremap <silent> <Plug>(load_v) :source $MYVIMRC<cr>
+vnoremap <silent> <Plug>(load_v) :source $MYVIMRC<cr>
 if (g:os_is_windows == 1)
     inoremap <C-v>              <Esc>"+gP
     vnoremap <C-c>              "+y<Esc>
@@ -625,6 +629,37 @@ if isdirectory(expand(g:dir_plugin.'/tagbar/')) && executable('ctags')
     let g:tagbar_previewwin_pos = "rightbelow"
 
     nnoremap <F2> :TagbarToggle<cr>
+endif
+" }}}
+" vim-airline setting {{{2
+if isdirectory(g:dir_plugin.'/vim-airline/')
+    let g:airline_theme='violet'
+    let g:Powerline_symbols='fancy'
+    let g:airline#extensions#branch#enabled = 1
+    let g:airline#extensions#tabline#enabled=1
+    let g:airline#extensions#tabline#buffer_idx_mode = 1
+    let g:airline#extensions#tabline#buffer_nr_show = 1
+    let g:airline#extensions#tabline#buffer_nr_format = '%s:'
+    let g:airline#extensions#tabline#fnamemod = ':t'
+    let g:airline#extensions#tabline#fnamecollapse = 1
+    let g:airline#extensions#tabline#fnametruncate = 0
+    let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+    let g:airline#extensions#default#section_truncate_width = {
+                \ 'b': 79,
+                \ 'x': 60,
+                \ 'y': 88,
+                \ 'z': 45,
+                \ 'warning': 80,
+                \ 'error': 80,
+                \ }
+    let g:airline#extensions#default#layout = [
+                \ [ 'a', 'error', 'warning', 'b', 'c' ],
+                \ [ 'x', 'y', 'z' ]
+                \ ]
+    " Distinct background color is enough to discriminate the warning and
+    " error information.
+    let g:airline#extensions#ale#error_symbol = '•'
+    let g:airline#extensions#ale#warning_symbol = '•'
 endif
 " }}}
 " Nerdtree settings {{{2
@@ -1477,12 +1512,18 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 's' : [ 'History/', 'search history' ],
                 \ }
     " }}}
-    " j leader mapping {{{
+    " j leader mapping {{{3
     let g:mapleader_map['j'] = {
                 \ 'name' : '+jump',
                 \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'f' : [ 'BTags', 'jump-to-tags-in-buffer' ],
                 \ 'g' : [ 'Tags', 'jump-to-tags-in-project' ],
+                \ }
+    " }}}
+    " l header mapping {{{3
+    let g:mapleader_map['l'] = {
+                \ 'name' : '+load/list',
+                \ 'v' : [ 'call feedkeys("\<Plug>(load_v)")', 'source local-vimrc' ],
                 \ }
     " }}}
     " m leader mapping {{{3
@@ -1533,7 +1574,6 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'f' : [ 'call feedkeys("\<Plug>(search_f)")', 'search for()' ],
                 \ 'b' : [ 'call feedkeys("\<Plug>(search_b)")', 'search for()-buffers' ],
-                \ 'v' : [ 'source $MYVIMRC', 'source local-vimrc' ],
                 \ 's' : [ 'call feedkeys("\<Plug>(save_s)")', 'save changed' ],
                 \ }
     " }}}
