@@ -1,6 +1,14 @@
 " JohnBro's vim configuration
 " Time 12/25/2017
 
+" Install vim {{{1 :
+" 1. configuration
+" ./configure --with-features=huge --enable-multibyte --enable-rubyinterp=yes --enable-python2interp=yes
+" --with-python2-config-dir=/usr/lib/python2.7/config-x86_64-linux-gnu/ --enable-python3interp=yes
+" --with-python3-config-dir=/usr/lib/python3.4/config-3.4m-x86_64-linux-gnu/ --enable-perlinterp=yes
+" --enable-luainterp=yes --enable-gui=gtk2 --enable-cscope --prefix=/usr/local/
+" 2. make ; make install
+" }}}
 " Define OS type and GUI type in a global variable{{{1
 if (has('win32') || has('win64'))
     let g:os_is_windows = 1
@@ -57,7 +65,7 @@ if isdirectory(expand($VIM_PLUGDIR))
     Plug 'rking/ag.vim'
     Plug 'kien/ctrlp.vim',                  { 'on': [ 'CtrlP', 'CtrlPMRU' ] }
     Plug 'FelikZ/ctrlp-py-matcher',         { 'on': [ 'CtrlP', 'CtrlPMRU' ] }
-    Plug 'majutsushi/tagbar'
+    Plug 'majutsushi/tagbar',               { 'on': [ 'TagbarToggle' ]}
     Plug 'scrooloose/nerdtree',             { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
     Plug 'Xuyuanp/nerdtree-git-plugin',     { 'on': [ 'NERDTreeToogle', 'NERDTreeFind' ] }
     Plug 'danro/rename.vim',                { 'on': 'Rename' }
@@ -109,6 +117,9 @@ filetype indent on
 syntax enable
 syntax on
 silent! colorscheme space-vim-dark
+if isdirectory(g:dir_plugin.'/space-vim-dark/')
+    let    g:space_vim_dark_background = 234
+endif
 set  nocompatible
 set    expandtab
 set    shiftwidth=4
@@ -159,7 +170,7 @@ set    pumheight=15
 set    scrolloff=5
 set    smartindent
 set    cmdheight=1
-set    textwidth=180
+set    textwidth=120
 set    timeoutlen=250
 set    updatetime=1000
 set    whichwrap=h,l
@@ -198,9 +209,6 @@ if (g:os_has_gui == 1)
     set    guioptions-=m
     " Using internal tap style rather than gui
     set    guioptions-=e
-    if isdirectory(g:dir_plugin.'/space-vim-dark/')
-        let    g:space_vim_dark_background = 234
-    endif
 endif
 if (g:os_is_windows == 1 && g:os_has_gui == 1)
     source $VIMRUNTIME\mswin.vim
@@ -242,8 +250,8 @@ endif
 " }}}
 " Unix GUI setting {{{2
 if ( g:os_is_unix == 1 )
-    set guifont=Monaco:h16
     if ( g:os_has_gui == 1 )
+        set guifont=Monaco:h16
         if filereadable("/etc/vim/gvimrc.local")
             source /etc/vim/gvimrc.local
         endif
@@ -605,17 +613,18 @@ endif
 " }}}
 " Tagbar settings {{{2
 if isdirectory(expand(g:dir_plugin.'/tagbar/')) && executable('ctags')
-    nnoremap <F2> :TagbarToggle<cr>
     let g:tagbar_left           = 1
-    let g:tagbar_width          = 30
+    let g:tagbar_width          = 35
     let g:tagbar_autoclose      = 1
     let g:tagbar_autofocus      = 1
     let g:tagbar_sort           = 0
     let g:tagbar_compact        = 1
     let g:tagbar_indent         = 1
-    let g:tagbar_autopreview    = 1
+    let g:tagbar_autopreview    = 0
     let g:tagbar_foldlevel      = 2
     let g:tagbar_previewwin_pos = "rightbelow"
+
+    nnoremap <F2> :TagbarToggle<cr>
 endif
 " }}}
 " Nerdtree settings {{{2
@@ -788,7 +797,6 @@ if isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')) && isdirectory(expand(g:d
                     \   nnoremap <LocalLeader>gt :YcmCompleter GetType<CR>
         autocmd FileType c,cpp
                     \   nnoremap <LocalLeader>gp :YcmCompleter GetParent<CR>
-        " Ycm-Generator mapping
         autocmd FileType c,cpp,python,go,javascript,rust
                     \   nnoremap <leader>yg :YcmGenerateConfig<cr>
     augroup END
@@ -899,7 +907,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-gutentags/')) && executable('ctags')
                     \ if isdirectory(g:proj_path) |
                     \     call plug#load('vim-gutentags') |
                     \ endif
-        autocmd FileType c,cpp autocmd BufReadPre *
+        autocmd FileType c,cpp autocmd BufReadPost *
                     \ if isdirectory(g:proj_path) && !filereadable(g:ctags_path.'/'.g:ctags_file) |
                     \     exe "GutentagsUpdate" |
                     \ endif |
