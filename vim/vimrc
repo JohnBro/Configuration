@@ -1270,7 +1270,7 @@ else
 endif
 
 function! MarkdownInit()
-    if !s:loaded
+    if !s:markdown_loaded
         " markdown-preview.vim {
         let g:mkdp_path_to_chrome = s:path_to_chrome
         " }
@@ -1287,13 +1287,13 @@ function! MarkdownInit()
         let g:vim_markdown_toc_autofit = 1
         " }
     endif
-    let s:loaded = 1
+    let s:markdown_loaded = 1
 endfunction
 
 augroup markdownGroup
     autocmd!
     autocmd FileType markdown autocmd VimEnter *
-                \ call MarkDownInit()
+                \ call MarkdownInit()
 augroup END
 " }}}
 " indentLine setting {{{2
