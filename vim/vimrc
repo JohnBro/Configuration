@@ -105,10 +105,11 @@ if isdirectory(expand($VIM_PLUGDIR))
     Plug 'mzlogin/vim-markdown-toc',        { 'for': [ 'markdown' ] }
     Plug 'iamcco/markdown-preview.vim',     { 'for': [ 'markdown' ] }
     Plug 'plasticboy/vim-markdown',         { 'for': [ 'markdown' ] }
-    if (g:os_has_gui == 1)
+    if (g:os_has_gui == 0)
         Plug 'vim-airline/vim-airline-themes'
         Plug 'vim-airline/vim-airline'
     else
+        Plug 'mkitt/tabline.vim'
         Plug 'liuchengxu/eleline.vim'
     endif
 
@@ -1343,6 +1344,15 @@ if isdirectory(expand(g:dir_plugin.'/auto-pairs/'))
     let g:AutoPairsShortcutJump       = ""
     let g:AutoPairsShortcutBackInsert = ""
     let g:AutoPairsShortcutToggle     = ",t%"
+endif
+" }}}
+" tabline setting {{{2
+" Make sure to set the following settings within your color theme:
+" hi TabLine      ctermfg=Black  ctermbg=Green     cterm=NONE
+" hi TabLineFill  ctermfg=Black  ctermbg=Green     cterm=NONE
+" hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
+if isdirectory(expand(g:dir_plugin.'/tabline.vim/'))
+    let g:tablineclosebutton = 1
 endif
 " }}}
 " vim-swoop setting {{{2
