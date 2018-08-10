@@ -492,8 +492,8 @@ augroup fileOperateGroup
                 \ if line("'\"") > 0 && line("'\"") <= line("$") |
                 \ exe "normal g'\"" |
                 \ endif
-    " autocmd BufEnter * silent! lcd %:p:h
-    " autocmd VimLeave * silent! lcd g:current_path
+    autocmd BufEnter * silent! lcd %:p:h
+    autocmd VimLeave * silent! lcd g:current_path
 augroup END
 
 augroup projectConfigGroup
@@ -689,7 +689,11 @@ if isdirectory(expand(g:dir_plugin.'/nerdtree/'))
     let NERDTreeShowLineNumbers = 1
     let NERDTreeWinPos          = "right"
     let NERDTreeWinSize         = 30
-    if isdirectory(expand("~/.vim/bundle/nerdtree-git-plugin"))
+    if (0)
+        let NERDTreeDirArrowExpandable  = '+'
+        let NERDTreeDirArrowCollapsible = '-'
+    endif
+    if isdirectory(expand(g:dir_plugin.'/nerdtree-git-plugin'))
         let g:NERDTreeIndicatorMapCustom = {
                     \ "Modified"  : "✹",
                     \ "Staged"    : "✚",
