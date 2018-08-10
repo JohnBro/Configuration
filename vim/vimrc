@@ -37,6 +37,7 @@ if has('gui_running')
 else
     let g:os_has_gui = 0
 endif
+let g:terminal_is_putty = 0
 " }}}
 " Vim plugin manager setting {{{1
 if (g:os_is_windows == 1)
@@ -99,13 +100,15 @@ if isdirectory(expand($VIM_PLUGDIR))
     Plug 'jiangmiao/auto-pairs'
     Plug 'pelodelfuego/vim-swoop'
     Plug 'tpope/vim-surround'
+    Plug 'will133/vim-dirdiff'
+    Plug 'chrisbra/vim-diff-enhanced'
     " For C-C++ lang enhance plugin
     Plug 'octol/vim-cpp-enhanced-highlight',{ 'for': [ 'c', 'cpp' ] }
     " For Markdown lang enhance plugin
     Plug 'mzlogin/vim-markdown-toc',        { 'for': [ 'markdown' ] }
     Plug 'iamcco/markdown-preview.vim',     { 'for': [ 'markdown' ] }
     Plug 'plasticboy/vim-markdown',         { 'for': [ 'markdown' ] }
-    if (g:os_has_gui == 0)
+    if (1) 
         Plug 'vim-airline/vim-airline-themes'
         Plug 'vim-airline/vim-airline'
     else
@@ -123,7 +126,7 @@ syntax enable
 syntax on
 silent! colorscheme space-vim-dark
 if isdirectory(g:dir_plugin.'/space-vim-dark/')
-    let    g:space_vim_dark_background = 234
+    let    g:space_vim_dark_background = 233
 endif
 set  nocompatible
 set    expandtab
@@ -374,6 +377,8 @@ nnoremap <C-Down>               ddp
 nnoremap <C-Up>                 ddkP
 nnoremap <C-u>                  <Esc>viwU<Esc>
 inoremap <C-u>                  <Esc>viwU<Esc>$a
+nnoremap <Tab>                  :tabnext<cr>
+vnoremap <Tab>                  :tabnext<cr>
 nnoremap <Plug>(window_w) <C-W>w
 nnoremap <Plug>(window_r) <C-W>r
 nnoremap <Plug>(window_d) <C-W>c
@@ -654,6 +659,9 @@ if isdirectory(g:dir_plugin.'/vim-airline/')
     let g:airline#extensions#tabline#fnamecollapse          = 1
     let g:airline#extensions#tabline#fnametruncate          = 0
     let g:airline#extensions#tabline#formatter              = 'unique_tail_improved'
+    let g:airline#extensions#tagbar#enabled                 = 1
+    let g:airline#extensions#whitespace#enabled             = 1
+    let g:airline#extensions#whitespace#checks              = [ 'trailing', 'long' ]
     let g:airline#extensions#default#section_truncate_width = {
                 \ 'b': 79,
                 \ 'x': 60,
@@ -670,6 +678,26 @@ if isdirectory(g:dir_plugin.'/vim-airline/')
     " error information.
     let g:airline#extensions#ale#error_symbol   = '•'
     let g:airline#extensions#ale#warning_symbol = '•'
+    let g:airline#extensions#gutentags#enabled  = 1
+    let g:airline#extensions#ycm#enabled        = 1
+    let g:airline#extensions#ycm#error_symbol   = 'E:'
+    let g:airline#extensions#ycm#warning_symbol = 'W:'
+
+    if !exists('g:airline_symbols')
+        let g:airline_symbols = {}
+    endif
+    if (g:terminal_is_putty)
+        let g:airline_left_sep           = ''
+        let g:airline_right_sep          = ''
+        let g:airline_symbols.crypt      = '='
+        let g:airline_symbols.linenr     = 'L:'
+        let g:airline_symbols.maxlinenr  = 'M'
+        let g:airline_symbols.branch     = 'BR'
+        let g:airline_symbols.paste      = 'PASTE'
+        let g:airline_symbols.spell      = 'SPELL'
+        let g:airline_symbols.notexists  = 'NE'
+        let g:airline_symbols.whitespace = 'WS'
+    endif
 endif
 " }}}
 " Nerdtree settings {{{2
@@ -688,24 +716,39 @@ if isdirectory(expand(g:dir_plugin.'/nerdtree/'))
     let NERDTreeQuitOnOpen      = 1
     let NERDTreeShowLineNumbers = 1
     let NERDTreeWinPos          = "right"
-    let NERDTreeWinSize         = 30
-    if (0)
+    let NERDTreeWinSize         = 35
+    if (g:terminal_is_putty)
         let NERDTreeDirArrowExpandable  = '+'
         let NERDTreeDirArrowCollapsible = '-'
     endif
     if isdirectory(expand(g:dir_plugin.'/nerdtree-git-plugin'))
-        let g:NERDTreeIndicatorMapCustom = {
-                    \ "Modified"  : "✹",
-                    \ "Staged"    : "✚",
-                    \ "Untracked" : "✭",
-                    \ "Renamed"   : "➜",
-                    \ "Unmerged"  : "═",
-                    \ "Deleted"   : "✖",
-                    \ "Dirty"     : "✗",
-                    \ "Clean"     : "✔︎",
-                    \ 'Ignored'   : '☒',
-                    \ "Unknown"   : "?"
-                    \ }
+        if (g:terminal_is_putty)
+            let g:NERDTreeIndicatorMapCustom = {
+                        \ "Modified"  : "Md",
+                        \ "Staged"    : "St",
+                        \ "Untracked" : "Ut",
+                        \ "Renamed"   : "Rn",
+                        \ "Unmerged"  : "Um",
+                        \ "Deleted"   : "De",
+                        \ "Dirty"     : "Di",
+                        \ "Clean"     : "Cl",
+                        \ 'Ignored'   : 'Ig',
+                        \ "Unknown"   : "?"
+                        \ }
+        else
+            let g:NERDTreeIndicatorMapCustom = {
+                        \ "Modified"  : "✹",
+                        \ "Staged"    : "✚",
+                        \ "Untracked" : "✭",
+                        \ "Renamed"   : "➜",
+                        \ "Unmerged"  : "═",
+                        \ "Deleted"   : "✖",
+                        \ "Dirty"     : "✗",
+                        \ "Clean"     : "✔︎",
+                        \ 'Ignored'   : '☒',
+                        \ "Unknown"   : "?"
+                        \ }
+        endif
     endif
 endif
 " }}}
@@ -1378,6 +1421,14 @@ endif
 " vim-surround settings {{{2
 if isdirectory(expand(g:dir_plugin.'/vim-surround/'))
     " this plugins was used for operator remap.
+endif
+" }}}
+" vim-dirdiff settings {{{2
+if isdirectory(expand(g:dir_plugin.'/vim-diff-enhanced/'))
+    " started In Diff-Mode set diffexpr (plugin not loaded yet)
+    if &diff
+        let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
+    endif
 endif
 " }}}
 " vim-autoformat setting {{{2
