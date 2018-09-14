@@ -11,8 +11,14 @@ VIM_NAT="vim/vimrc"
 VIM_COF=".vimrc"
 TMU_NAT="tmux/tmux.conf"
 TMU_COF=".tmux.conf"
-BAS_NAT="bash/bashrc"
-BAS_COF=".bashrc"
+sysOS=`uname -s`
+if [ $sysOS == 'Darwin'  ]; then
+  BAS_NAT="bash/bash_profile"
+  BAS_COF=".bash_profile"
+else
+  BAS_NAT="bash/bashrc"
+  BAS_COF=".bashrc"
+fi
 
 ###################### Native file table ########################
 #

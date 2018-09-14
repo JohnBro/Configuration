@@ -838,8 +838,8 @@ if isdirectory(expand(g:dir_plugin.'/YouCompleteMe/')) && isdirectory(expand(g:d
     let g:ycm_cache_omnifunc                      = 0
     let g:ycm_add_preview_to_completeopt          = 0
     let g:ycm_key_invoke_completion               = '<C-z>'
-    let g:ycm_python_binary_path                  = '/usr/bin/python3'
-    let g:ycm_server_python_interpreter           = '/usr/bin/python3'
+    let g:ycm_python_binary_path                  = '/usr/local/bin/python3'
+    let g:ycm_server_python_interpreter           = '/usr/local/bin/python3'
     let g:ycm_semantic_triggers                   = {
                 \   'c'      : ['->', '.', 're!\w{3}'],
                 \   'objc'   : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s', 're!\[.*\]\s'],
