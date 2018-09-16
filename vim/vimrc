@@ -3,10 +3,7 @@
 
 " Install vim {{{1 :
 " 1. configuration
-" ./configure --with-features=huge --enable-multibyte --enable-rubyinterp=yes --enable-python2interp=yes
-" --with-python2-config-dir=/usr/lib/python2.7/config-x86_64-linux-gnu/ --enable-python3interp=yes
-" --with-python3-config-dir=/usr/lib/python3.4/config-3.4m-x86_64-linux-gnu/ --enable-perlinterp=yes
-" --enable-luainterp=yes --enable-gui=gtk2 --enable-cscope --prefix=/usr/local/
+"./configure --with-features=huge --enable-multibyte --enable-rubyinterp=yes --enable-python2interp=yes --with-python2-config-dir=/usr/lib/python2.7/config-x86_64-linux-gnu/ --enable-python3interp=yes --with-python3-config-dir=/usr/lib/python3.4/config-3.4m-x86_64-linux-gnu/ --enable-perlinterp=yes --enable-luainterp=yes --enable-gui=gtk2 --enable-cscope --prefix=/usr/local/
 " 2. make ; make install
 " }}}
 " Define OS type and GUI type in a global variable{{{1

@@ -106,3 +106,9 @@ fi
 ulimit -c unlimited
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# Specified my local soft Env param
+export PATH=/usr/local/llvm/bin:${PATH}
+export C_INCLUDE_PATH=/usr/local/llvm/include:${C_INCLUDE_PATH}
+export CPLUS_INCLUDE_PATH=/usr/local/llvm/include:${CPLUS_INCLUDE_PATH}
+export LD_LIBRARY_PATH=/usr/local/llvm/lib:${LD_LIBRARY_PATH}
