@@ -537,9 +537,15 @@ endif
 " FZF setting {{{2
 if isdirectory(expand(g:dir_plugin.'/fzf/')) && isdirectory(expand(g:dir_plugin.'/fzf.vim/'))
     let g:fzf_tags_command = g:ctags_cmd
+
     function! AgSymbolProj()
         let s:ag_symbol = input("Ag symbol in project:")
         :exe 'FAg '.s:ag_symbol
+    endfunction
+
+    function! JumpToSymbol()
+        exe 'lcd '.g:current_path
+        exe 'Tags'
     endfunction
 
     command! -bang -nargs=* FAg
@@ -551,7 +557,9 @@ if isdirectory(expand(g:dir_plugin.'/fzf/')) && isdirectory(expand(g:dir_plugin.
     command! -bang -nargs=? -complete=dir Files
                 \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 
-    noremap  <F6>       :FAg! <C-R><C-W><CR>
+    noremap <F6>                         :FAg! <C-R><C-W><CR>
+    nmap <silent><Plug>(fzf_jump_symbol) :call JumpToSymbol()<cr>
+    vmap <silent><Plug>(fzf_jump_symbol) :call JumpToSymbol()<cr>
 endif
 " }}}
 " Ctrlp.vim settings {{{2
@@ -1627,7 +1635,7 @@ if isdirectory(expand(g:dir_plugin.'/vim-leader-guide/'))
                 \ 'name' : '+jump',
                 \ ',' : [ 'call feedkeys("\<Esc>")', 'exit' ],
                 \ 'f' : [ 'BTags', 'jump-to-tags-in-buffer' ],
-                \ 'g' : [ 'Tags', 'jump-to-tags-in-project' ],
+                \ 'g' : [ 'call feedkeys("\<Plug>(fzf_jump_symbol)")', 'jump-to-tags-in-project' ],
                 \ }
     " }}}
     " l header mapping {{{3
