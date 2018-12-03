@@ -1,19 +1,14 @@
-// 将键绑定放入此文件中以覆盖默认值
+// 将按键绑定配置放入此文件中即可覆盖默认值auto[]
 [
     {
-        "key": "ctrl+]",
-        "command": "C_Cpp.GoToDeclaration",
-        "when": "editorTextFocus && editorLangId == 'c'"
-    },
-    {
-        "key": "ctrl+f12",
-        "command": "-C_Cpp.GoToDeclaration",
-        "when": "editorTextFocus && editorLangId == 'c'"
+        "key": "ctrl+shift+.",
+        "command": "editor.action.indentLines",
+        "when": "editorTextFocus && !editorReadonly"
     },
     {
         "key": "ctrl+]",
-        "command": "C_Cpp.GoToDeclaration",
-        "when": "editorTextFocus && editorLangId == 'cpp'"
+        "command": "-editor.action.indentLines",
+        "when": "editorTextFocus && !editorReadonly"
     },
     {
         "key": "ctrl+f12",
@@ -21,28 +16,48 @@
         "when": "editorTextFocus && editorLangId == 'cpp'"
     },
     {
-        "key": "ctrl+[",
-        "command": "editor.action.referenceSearch.trigger",
-        "when": "editorHasReferenceProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
+        "key": "ctrl+f12",
+        "command": "-C_Cpp.GoToDeclaration",
+        "when": "editorTextFocus && editorLangId == 'c'"
     },
     {
-        "key": "shift+f12",
-        "command": "-editor.action.referenceSearch.trigger",
-        "when": "editorHasReferenceProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
+        "key": "ctrl+alt+f12",
+        "command": "-C_Cpp.PeekDeclaration",
+        "when": "editorTextFocus && editorLangId == 'cpp'"
     },
     {
-        "key": "ctrl+[",
-        "command": "-extension.vim_ctrl+[",
-        "when": "editorTextFocus && vim.active && vim.use<C-[> && !inDebugRepl"
+        "key": "ctrl+alt+f12",
+        "command": "-C_Cpp.PeekDeclaration",
+        "when": "editorTextFocus && editorLangId == 'c'"
     },
     {
         "key": "ctrl+]",
-        "command": "editor.action.goToDeclaration",
+        "command": "editor.action.goToImplementation",
+        "when": "editorHasImplementationProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    {
+        "key": "ctrl+f12",
+        "command": "-editor.action.goToImplementation",
+        "when": "editorHasImplementationProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    {
+        "key": "ctrl+shift+]",
+        "command": "editor.action.peekImplementation",
+        "when": "editorHasImplementationProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    {
+        "key": "ctrl+shift+f12",
+        "command": "-editor.action.peekImplementation",
+        "when": "editorHasImplementationProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    {
+        "key": "ctrl+k ]",
+        "command": "editor.action.openDeclarationToTheSide",
         "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor"
     },
     {
-        "key": "f12",
-        "command": "-editor.action.goToDeclaration",
+        "key": "ctrl+k f12",
+        "command": "-editor.action.openDeclarationToTheSide",
         "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor"
     },
     {
@@ -50,51 +65,34 @@
         "command": "workbench.action.showAllSymbols"
     },
     {
-        "key": "cmd+t",
+        "key": "ctrl+t",
         "command": "-workbench.action.showAllSymbols"
     },
     {
-        "key": "alt+f",
-        "command": "workbench.action.gotoSymbol"
+        "key": "ctrl+k ctrl+t",
+        "command": "-workbench.action.selectTheme"
     },
     {
-        "key": "shift+cmd+o",
-        "command": "-workbench.action.gotoSymbol"
+        "key": "ctrl+shift+t",
+        "command": "-workbench.action.reopenClosedEditor"
     },
     {
-        "key": "ctrl+f",
-        "command": "-cursorRight",
-        "when": "textInputFocus"
+        "key": "ctrl+t",
+        "command": "workbench.action.navigateBack"
     },
     {
-        "key": "ctrl+f",
-        "command": "-extension.vim_ctrl+f",
-        "when": "editorTextFocus && vim.active && vim.use<C-f> && !inDebugRepl"
+        "key": "alt+left",
+        "command": "-workbench.action.navigateBack"
     },
     {
-        "key": "ctrl+f",
-        "command": "workbench.action.findInFiles",
-        "when": "!searchInputBoxFocus"
+        "key": "ctrl+t",
+        "command": "workbench.action.quickInputBack",
+        "when": "inQuickOpen"
     },
     {
-        "key": "shift+cmd+f",
-        "command": "-workbench.action.findInFiles",
-        "when": "!searchInputBoxFocus"
-    },
-    {
-        "key": "ctrl+alt+f12",
-        "command": "-C_Cpp.PeekDeclaration",
-        "when": "editorTextFocus && editorLangId == 'c'"
-    },
-    {
-        "key": "ctrl+alt+f12",
-        "command": "-C_Cpp.PeekDeclaration",
-        "when": "editorTextFocus && editorLangId == 'cpp'"
-    },
-    {
-        "key": "cmd+k f12",
-        "command": "-editor.action.openDeclarationToTheSide",
-        "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor"
+        "key": "alt+left",
+        "command": "-workbench.action.quickInputBack",
+        "when": "inQuickOpen"
     },
     {
         "key": "alt+]",
@@ -107,23 +105,195 @@
         "when": "editorHasDefinitionProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
     },
     {
-        "key": "alt+\\",
-        "command": "editor.action.goToImplementation",
-        "when": "editorHasImplementationProvider && editorTextFocus && !isInEmbeddedEditor"
+        "key": "ctrl+e",
+        "command": "-workbench.action.quickOpen"
     },
     {
-        "key": "cmd+f12",
-        "command": "-editor.action.goToImplementation",
-        "when": "editorHasImplementationProvider && editorTextFocus && !isInEmbeddedEditor"
+        "key": "ctrl+tab",
+        "command": "-workbench.action.quickOpenNavigateNextInEditorPicker",
+        "when": "inEditorsPicker && inQuickOpen"
     },
     {
-        "key": "ctrl+\\",
-        "command": "editor.action.peekImplementation",
-        "when": "editorHasImplementationProvider && editorTextFocus && !isInEmbeddedEditor"
+        "key": "ctrl+p",
+        "command": "-workbench.action.quickOpenNavigateNextInFilePicker",
+        "when": "inFilesPicker && inQuickOpen"
     },
     {
-        "key": "shift+cmd+f12",
-        "command": "-editor.action.peekImplementation",
-        "when": "editorHasImplementationProvider && editorTextFocus && !isInEmbeddedEditor"
+        "key": "ctrl+e",
+        "command": "-workbench.action.quickOpenNavigateNextInFilePicker",
+        "when": "inFilesPicker && inQuickOpen"
+    },
+    {
+        "key": "ctrl+r",
+        "command": "-workbench.action.quickOpenNavigateNextInRecentFilesPicker",
+        "when": "inQuickOpen && inRecentFilesPicker"
+    },
+    {
+        "key": "ctrl+q",
+        "command": "-workbench.action.quickOpenNavigateNextInViewPicker",
+        "when": "inQuickOpen && inViewsPicker"
+    },
+    {
+        "key": "ctrl+shift+tab",
+        "command": "-workbench.action.quickOpenNavigatePreviousInEditorPicker",
+        "when": "inEditorsPicker && inQuickOpen"
+    },
+    {
+        "key": "ctrl+shift+e",
+        "command": "-workbench.action.quickOpenNavigatePreviousInFilePicker",
+        "when": "inFilesPicker && inQuickOpen"
+    },
+    {
+        "key": "ctrl+shift+p",
+        "command": "-workbench.action.quickOpenNavigatePreviousInFilePicker",
+        "when": "inFilesPicker && inQuickOpen"
+    },
+    {
+        "key": "ctrl+shift+r",
+        "command": "-workbench.action.quickOpenNavigatePreviousInRecentFilesPicker",
+        "when": "inQuickOpen && inRecentFilesPicker"
+    },
+    {
+        "key": "ctrl+shift+q",
+        "command": "-workbench.action.quickOpenNavigatePreviousInViewPicker",
+        "when": "inQuickOpen && inViewsPicker"
+    },
+    {
+        "key": "ctrl+alt+,",
+        "command": "editor.action.outdentLines",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "-editor.action.outdentLines",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "shift+alt+,",
+        "command": "editor.fold",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+[",
+        "command": "-editor.fold",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+k alt+[",
+        "command": "editor.foldRecursively",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+k ctrl+[",
+        "command": "-editor.foldRecursively",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+'",
+        "command": "editor.action.referenceSearch.trigger",
+        "when": "editorHasReferenceProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
+    },
+    {
+        "key": "shift+f12",
+        "command": "-editor.action.referenceSearch.trigger",
+        "when": "editorHasReferenceProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
+    },
+    {
+        "key": "ctrl+shift+'",
+        "command": "references-view.find",
+        "when": "editorHasReferenceProvider"
+    },
+    {
+        "key": "shift+alt+f12",
+        "command": "-references-view.find",
+        "when": "editorHasReferenceProvider"
+    },
+    {
+        "key": "ctrl+]",
+        "command": "editor.action.goToDeclaration",
+        "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    {
+        "key": "f12",
+        "command": "-editor.action.goToDeclaration",
+        "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    {
+        "key": "ctrl+k ctrl+q",
+        "command": "-workbench.action.navigateToLastEditLocation"
+    },
+    {
+        "key": "alt+q",
+        "command": "workbench.action.quickOpenView"
+    },
+    {
+        "key": "ctrl+q",
+        "command": "-workbench.action.quickOpenView"
+    },
+    {
+        "key": "ctrl+q",
+        "command": "workbench.action.closeActiveEditor"
+    },
+    {
+        "key": "ctrl+f4",
+        "command": "-workbench.action.closeActiveEditor"
+    },
+    {
+        "key": "ctrl+q",
+        "command": "workbench.action.closeGroup",
+        "when": "activeEditorGroupEmpty && multipleEditorGroups"
+    },
+    {
+        "key": "ctrl+f4",
+        "command": "-workbench.action.closeGroup",
+        "when": "activeEditorGroupEmpty && multipleEditorGroups"
+    },
+    {
+        "key": "ctrl+q",
+        "command": "extension.node-debug.pickLoadedScript",
+        "when": "debugType == 'node'"
+    },
+    {
+        "key": "ctrl+f4",
+        "command": "-extension.node-debug.pickLoadedScript",
+        "when": "debugType == 'node'"
+    },
+    {
+        "key": "ctrl+q",
+        "command": "extension.node-debug.pickLoadedScript",
+        "when": "debugType == 'node2'"
+    },
+    {
+        "key": "ctrl+f4",
+        "command": "-extension.node-debug.pickLoadedScript",
+        "when": "debugType == 'node2'"
+    },
+    {
+        "key": "ctrl+d",
+        "command": "-editor.action.addSelectionToNextFindMatch",
+        "when": "editorFocus"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "C_Cpp.GoToDeclaration"
+    },
+    {
+        "key": "alt+[",
+        "command": "C_Cpp.PeekDeclaration"
+    },
+    {
+        "key": "ctrl+shift+.",
+        "command": "-breadcrumbs.focusAndSelect",
+        "when": "breadcrumbsPossible"
+    },
+    {
+        "key": "ctrl+shift+.",
+        "command": "-breadcrumbs.toggleToOn",
+        "when": "!config.breadcrumbs.enabled"
+    },
+    {
+        "key": "ctrl+shift+.",
+        "command": "-editor.action.inPlaceReplace.down",
+        "when": "editorTextFocus && !editorReadonly"
     }
 ]

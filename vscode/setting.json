@@ -1,0 +1,97 @@
+{
+    // Plugins has been installed: [Active File In StatusBar], [Better Align], [C/C++], [Chinese Language], [GitLens],
+    //[Markdown All in one], [Markdown PDF], [Markdown Preview Mermaid Support], [One Dark Pro], [Python], [vscode-icons]
+    "editor.tabSize": 4,
+    "editor.fontSize": 14,
+    "editor.wordWrapColumn": 120,
+    "editor.fontLigatures": true,
+    "editor.snippetSuggestions": "top",
+    "editor.minimap.enabled": false,
+    "editor.lineNumbers": "relative",
+    "editor.trimAutoWhitespace": true,
+    "editor.detectIndentation": false,
+    "editor.renderWhitespace": "boundary",
+    "editor.renderIndentGuides": true,
+    "editor.rulers": [120],
+    "editor.cursorStyle": "line",
+    "editor.cursorBlinking": "smooth",
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": false
+    },
+    "editor.quickSuggestionsDelay": 50,
+    "window.zoomLevel": 0,
+    "workbench.colorTheme": "One Dark Pro",
+    "workbench.iconTheme": "vscode-icons",
+    "workbench.statusBar.feedback.visible": false,
+    "files.defaultLanguage": "markdown",
+    "files.encoding": "utf8",
+    "files.eol": "\n",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/tmp": true,
+        "**/.bin": true,
+        "**/.log": true,
+        "**/tags": true
+    },
+    "files.autoSave": "onFocusChange",
+    "files.associations": {
+        "*.mak": "makefile"
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/.git": true,
+        "**/.DS_Store": true
+    },
+    "search.smartCase": true,
+    "search.showLineNumbers": true,
+    "search.useGlobalIgnoreFiles": true,
+    "breadcrumbs.enabled": true,
+    "[c]": {
+        "editor.autoIndent": true,
+        "editor.wordWrap": "wordWrapColumn",
+        "editor.autoClosingBrackets": "always",
+        "editor.autoClosingQuotes": "always",
+        "editor.insertSpaces": true,
+        "editor.tabCompletion": "onlySnippets",
+    },
+    "[cpp]": {
+        "editor.autoIndent": true,
+        "editor.wordWrap": "wordWrapColumn",
+        "editor.autoClosingBrackets": "always",
+        "editor.autoClosingQuotes": "always",
+        "editor.insertSpaces": true,
+        "editor.tabCompletion": "onlySnippets"
+    },
+    "[makefile]": {
+        "editor.insertSpaces": false,
+        "editor.autoIndent": true,
+        "editor.autoClosingBrackets": "always",
+        "editor.autoClosingQuotes": "always"
+    },
+    "[markdown]": {
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": false
+    }, 
+    "C_Cpp.autocomplete": "Default",
+    "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
+    "C_Cpp.default.cStandard": "c99",
+    "C_Cpp.default.cppStandard": "c++11",
+    "C_Cpp.intelliSenseEngine": "Default",
+    "vsicons.dontShowNewVersionMessage": true,
+    "git.ignoreMissingGitWarning": true,
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "git.path": "C:\\PortableGit\\bin",
+    "merge-conflict.autoNavigateNextConflict.enabled": true,
+    "terminal.integrated.shell.windows": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "terminal.integrated.cursorBlinking": true,
+    "window.openFilesInNewWindow": "default",
+    "diffEditor.ignoreTrimWhitespace": true,
+}
