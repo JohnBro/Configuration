@@ -60,6 +60,11 @@
         "editor.autoClosingQuotes": "always",
         "editor.insertSpaces": true,
         "editor.tabCompletion": "onlySnippets",
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": true,
+            "strings": false
+        }
     },
     "[cpp]": {
         "editor.autoIndent": true,
@@ -67,7 +72,12 @@
         "editor.autoClosingBrackets": "always",
         "editor.autoClosingQuotes": "always",
         "editor.insertSpaces": true,
-        "editor.tabCompletion": "onlySnippets"
+        "editor.tabCompletion": "onlySnippets",
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": true,
+            "strings": false
+        }
     },
     "[makefile]": {
         "editor.insertSpaces": false,
@@ -84,14 +94,19 @@
     "C_Cpp.default.cStandard": "c99",
     "C_Cpp.default.cppStandard": "c++11",
     "C_Cpp.intelliSenseEngine": "Default",
+    "C_Cpp.intelliSenseEngineFallback": "Enabled",
+    "C_Cpp.clang_format_path": "D:\\Program Files\\LLVM\\bin\\clang-format.exe",
+    "C_Cpp.clang_format_sortIncludes": true,
     "vsicons.dontShowNewVersionMessage": true,
     "git.ignoreMissingGitWarning": true,
     "explorer.confirmDelete": false,
     "explorer.confirmDragAndDrop": false,
-    "git.path": "C:\\PortableGit\\bin",
     "merge-conflict.autoNavigateNextConflict.enabled": true,
     "terminal.integrated.shell.windows": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
     "terminal.integrated.cursorBlinking": true,
     "window.openFilesInNewWindow": "default",
     "diffEditor.ignoreTrimWhitespace": true,
+    "git.path": "C:\\PortableGit\\bin",
+    "gnuGlobal.globalExecutable": "D:\\Tools\\glo662wb\\bin\\global.exe",
+    "gnuGlobal.gtagsExecutable": "D:\\Tools\\glo662wb\\bin\\gtags.exe"
 }
