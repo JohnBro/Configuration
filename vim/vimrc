@@ -256,12 +256,11 @@ endif
 " Unix GUI setting {{{2
 if ( g:os_is_unix == 1 )
     if ( g:os_has_gui == 1 )
-        set guifont=Monaco:h16
+        set guifont=Courier\ New:h16
         if filereadable("/etc/vim/gvimrc.local")
             source /etc/vim/gvimrc.local
         endif
     else
-        set term=xterm-256color "colored airline
         set t_Co=256
         set t_ut=
         if filereadable("/etc/vim/vimrc.local")
@@ -269,7 +268,6 @@ if ( g:os_is_unix == 1 )
         endif
     endif
 endif
-" }}}
 " }}}
 " Basic Functions {{{1
 let g:proj_dir     = ".projDir" " Used for manage current project
