@@ -1,25 +1,26 @@
 (require 'cl)
 
 (when (>= emacs-major-version 24)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-  )
-
-
+  (setq package-archives '(("gnu"   . "http://elpa.emacs-china.org/gnu/")
+			   ("melpa" . "http://elpa.emacs-china.org/melpa/"))))
 
 ;;add whatever packages you want here
 (defvar johnbro/packages '(
-				 company
-				 monokai-theme
-				 hungry-delete
-				 swiper
-				 counsel
-				 smartparens
-				 js2-mode
-				 nodejs-repl
-				 exec-path-from-shell
-				 popwin
-				 
-				 )  "Default packages")
+			   ;;----------- Complete  ----------------
+			   company
+			   monokai-theme
+			   ;;------------ Better edit -------------
+			   smooth-scrolling
+			   hungry-delete
+			   swiper
+			   counsel
+			   smartparens
+			   ;;----------- Major mode ---------------
+			   js2-mode
+			   nodejs-repl
+			   exec-path-from-shell
+			   popwin
+			   )  "Default packages")
 
 (setq package-selected-packages johnbro/packages)
 
