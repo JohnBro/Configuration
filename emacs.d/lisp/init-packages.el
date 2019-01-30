@@ -16,10 +16,18 @@
 			   counsel
 			   smartparens
 			   ;;----------- Major mode ---------------
-			   js2-mode
-			   nodejs-repl
 			   exec-path-from-shell
+			   evil
+			   evil-leader
+			   evil-surround
+			   evil-nerd-commenter
+			   which-key
+			   window-numbering
+			   ;;----------- Useful pkg ---------------
 			   popwin
+			   reveal-in-osx-finder
+			   expand-region
+			   iedit
 			   )  "Default packages")
 
 (setq package-selected-packages johnbro/packages)
@@ -63,5 +71,31 @@
 
 (require 'popwin)    ;;when require, wh(setq company-minimum-prefix-length 1)en not require
 (popwin-mode t)
+
+(global-evil-leader-mode t)
+(evil-mode 1)
+(window-numbering-mode 1)
+(which-key-mode 1)
+(evilnc-default-hotkeys)
+(require 'evil-surround)
+(global-evil-surround-mode)
+
+(evil-leader/set-leader "<SPC>")
+
+(define-key evil-insert-state-map [escape] 'evil-normal-state)
+
+(evil-leader/set-key
+  "ff" 'find-file
+  "bb" 'switch-to-buffer
+  "0"  'select-window-0
+  "1"  'select-window-1
+  "2"  'select-window-2
+  "3"  'select-window-3
+  "w/" 'split-window-right
+  "w-" 'split-window-below
+  ":"  'counsel-M-x
+  ";"  'evilnc-comment-or-uncomment-lines
+  "wM" 'delete-other-windows
+  )
 
 (provide 'init-packages)

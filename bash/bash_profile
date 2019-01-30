@@ -83,8 +83,8 @@ alias la='ls -A'
 alias l='ls -CF'
 alias ctags=/usr/local/bin/ctags
 alias cindex='ctags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds=+p --fields=+iaS --extra=+q'
-alias vim='nvim'
-alias vi='nvim'
+alias vi='vim'
+alias em='emacs'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
