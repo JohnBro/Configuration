@@ -72,12 +72,12 @@
 ;;do not use "'" in lisp
 (sp-local-pair '(emacs-lisp-mode lisp-interaction-mode) "'" nil :actions nil)
 
-(define-advice show-paren-function (:around (fn) fix-show-paren-function)
-  "Highlight enclosing parens."
-  (cond ((looking-at-p "\\s(") (funcall fn))
+(defadvice show-paren-function (around fix-show-paren-function activate)
+  (cond ((looking-at-p "\\s(") ad-do-it)
 	(t (save-excursion
 	     (ignore-errors (backward-up-list))
-	     (funcall fn)))))
+	     ad-do-it)))
+  )
 
 (defun hidden-dos-eol ()
   "Do not show ^M in files containing mixed UNIX and DOS line endings."
@@ -105,5 +105,17 @@
 	regexp-history)
   (call-interactively 'occur))
 (global-set-key (kbd "M-s o") 'occur-dwim)
+
+;; Use <C-n> <C-p> to select the complete preview
+(with-eval-after-load 'company
+  (define-key company-active-map (kbd "M-n") nil)
+  (define-key company-active-map (kbd "M-p") nil)
+  (define-key company-active-map (kbd "C-n") #'company-select-next)
+  (define-key company-active-map (kbd "C-p") #'company-select-previous))
+
+;;Set default encodings
+(set-language-environment "UTF-8")
+
+(add-hook 'cc-mode 'flycheck-mode)
 
 (provide 'init-better-defaults)

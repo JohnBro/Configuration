@@ -28,6 +28,11 @@
 			   reveal-in-osx-finder
 			   expand-region
 			   iedit
+			   helm-ag
+			   flycheck
+			   ;;----------- Code enhance ------------
+			   yasnippet
+			   auto-yasnippet
 			   )  "Default packages")
 
 (setq package-selected-packages johnbro/packages)
@@ -66,11 +71,13 @@
 
 (global-company-mode t)
 
-
 (load-theme 'monokai t)
 
 (require 'popwin)    ;;when require, wh(setq company-minimum-prefix-length 1)en not require
 (popwin-mode t)
+
+(require 'yasnippet)
+(add-hook 'prog-mode-hook #'yas-minor-mode)
 
 (global-evil-leader-mode t)
 (evil-mode 1)
@@ -85,7 +92,7 @@
 (define-key evil-insert-state-map [escape] 'evil-normal-state)
 
 (evil-leader/set-key
-  "ff" 'find-file
+  "ff" 'counsel-find-file
   "bb" 'switch-to-buffer
   "0"  'select-window-0
   "1"  'select-window-1
@@ -97,5 +104,7 @@
   ";"  'evilnc-comment-or-uncomment-lines
   "wM" 'delete-other-windows
   )
+
+(evil-normal-state)
 
 (provide 'init-packages)

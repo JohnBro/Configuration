@@ -7,7 +7,7 @@
 
 (setq  initial-frame-alist (quote ((fullscreen . maximized))))
 
-(set-face-attribute 'default nil :height 160)
+(set-face-attribute 'default nil :height 140)
 
 (global-hl-line-mode t)
 
