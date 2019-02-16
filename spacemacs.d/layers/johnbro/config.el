@@ -26,7 +26,6 @@ teractive)
   )
 
 (defun johnbro/setup-indent()
-  ;; (interactive)
   ;; java/c/c++
   (setq c-basic-offset 4)
   ;; web development
@@ -41,3 +40,22 @@ teractive)
   )
 
 (johnbro/setup-indent)
+
+(add-hook 'c-mode-hook
+          '(lambda()
+             (setq indent-tabs-mode nil)
+             (setq c-basic-offset 4)
+             (setq tab-width 4)
+             (setq gtags-enable-by-default t)))
+
+(add-hook 'c++-mode-hook
+          '(lambda()
+             (setq indent-tabs-mode nil)
+             (setq c-basic-offset 4)
+             (setq tab-width 4)
+             (setq gtags-enable-by-default t)))
+
+(add-hook 'shell-mode
+          '(lambda()
+             (setq indent-tabs-mode nil)
+             (setq tab-width 2)))

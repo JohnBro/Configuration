@@ -10,3 +10,13 @@
 ;;; License: GPLv3
 
 (spacemacs/set-leader-keys "oo" 'occur-dwim)
+
+;; use jk to repleace escape
+(setq-default evil-escape-key-sequence "jk")
+
+;; Evil-normal state remap, gj -> j, gk -> k.
+(define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+(define-key evil-normal-state-map (kbd "k") 'evil-previous-line)
+
+;; Evil-insert state remap
+(define-key evil-insert-state-map (kbd "TAB") 'tab-to-tab-stop)
