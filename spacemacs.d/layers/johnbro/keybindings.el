@@ -14,6 +14,11 @@
 ;; use jk to repleace escape
 (setq-default evil-escape-key-sequence "jk")
 
+;; use jkhl in other mode
+(evil-add-hjkl-bindings package-menu-mode-map 'emacs)
+(evil-add-hjkl-bindings custom-mode-map 'emacs)
+(evil-add-hjkl-bindings recentf-dialog-mode-map 'emacs)
+
 ;; Evil-normal state remap, gj -> j, gk -> k.
 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-line)

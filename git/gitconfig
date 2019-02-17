@@ -9,7 +9,7 @@
 	default = simple
 [color]
     ui = auto
-    diff = always
+	diff = no
     grep = always
 [merge]
     tool = vim

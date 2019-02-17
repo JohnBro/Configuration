@@ -30,39 +30,70 @@
 ;;; Code:
 
 (defconst johnbro-packages
-  '(youdao-dictionary)
-  "The list of Lisp packages required by the johnbro layer.
-
-Each entry is either:
-
-1. A symbol, which is interpreted as a package to be installed, or
-
-2. A list of the form (PACKAGE KEYS...), where PACKAGE is the
-    name of the package to be installed or loaded, and KEYS are
-    any number of keyword-value-pairs.
-
-    The following keys are accepted:
-
-    - :excluded (t or nil): Prevent the package from being loaded
-      if value is non-nil
-
-    - :location: Specify a custom installation location.
-      The following values are legal:
-
-      - The symbol `elpa' (default) means PACKAGE will be
-        installed using the Emacs package manager.
-
-      - The symbol `local' directs Spacemacs to load the file at
-        `./local/PACKAGE/PACKAGE.el'
-
-      - A list beginning with the symbol `recipe' is a melpa
-        recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
+  '(youdao-dictionary
+    lsp-mode
+    lsp-ui
+    company-lsp
+    ccls
+    ))
 
 (defun johnbro/init-youdao-dictionary()
   (use-package youdao-dictionary
     :defer t
+    :config
+    (spacemacs/set-leader-keys "oy" 'youdao-dictionary-search-at-point+))
+  )
+
+(defun johnbro/init-lsp-mode()
+  (use-package lsp-mode
+    :ensure t
+    :defer t
+    :commands lsp
+    )
+  )
+
+(defun johnbro/init-lsp-ui()
+  (use-package lsp-ui
+    :ensure t
+    :defer t
+    :config
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+  )
+
+(defun johnbro/init-company-lsp()
+  (use-package company-lsp
+    :ensure t
+    :defer t
+    :commands company-lsp
+    :config
+    (setq company-quickhelp-delay 0)
+    ;; Language servers have better idea filtering and sorting,
+    ;; don't filter results on the client side.
+    (setq company-transformers nil
+          company-lsp-async t
+          company-lsp-cache-candidates nil))
+  )
+
+(defun johnbro/init-ccls()
+  (use-package ccls
+    :hook ((c-mode c++-mode objc-mode) .
+           (lambda ()
+             (cl-pushnew #'company-lsp company-backends)
+             (require 'ccls) (lsp)))
     :init
-    (spacemacs/set-leader-keys "oy" 'youdao-dictionary-search-at-point+)
+    (setq ccls-executable "/usr/local/bin/ccls")
+    (setq ccls-args '("--log-file=/tmp/ccls.log"))
+    (setq ccls-initialization-options '(:index (:comments 2) :completion (:detailedLabel t)))
+    :config
+    (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
+    (spacemacs/set-leader-keys-for-major-mode 'c-mode "la" 'xref-find-apropos)
+    (spacemacs/set-leader-keys-for-major-mode 'c-mode "ld" 'xref-find-definitions)
+    (spacemacs/set-leader-keys-for-major-mode 'c-mode "lD" 'xref-find-definitions-other-window)
+    (spacemacs/set-leader-keys-for-major-mode 'c-mode "ll" 'lsp-find-definition)
+    (spacemacs/set-leader-keys-for-major-mode 'c-mode "lr" 'lsp-find-references)
+    (spacemacs/set-leader-keys-for-major-mode 'c-mode "ls" 'lsp-ui-find-workspace-symbol)
+    (spacemacs/set-leader-keys-for-major-mode 'c-mode "lt" 'lsp-find-type-definition)
+    (spacemacs/set-leader-keys-for-major-mode 'c-mode "lp" 'lsp-ui-find-workspace-symbol)
     )
   )
 

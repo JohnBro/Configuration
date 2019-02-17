@@ -130,3 +130,12 @@ if brew list | grep coreutils > /dev/null ; then
     alias egrep='egrep --color=auto'
     eval `gdircolors -b $HOME/.dir_colors`
 fi
+
+##
+# Your previous /Users/johnbro/.bash_profile file was backed up as /Users/johnbro/.bash_profile.macports-saved_2019-02-17_at_15:23:33
+##
+
+# MacPorts Installer addition on 2019-02-17_at_15:23:33: adding an appropriate PATH variable for use with MacPorts.
+export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+# Finished adapting your PATH environment variable for use with MacPorts.
+

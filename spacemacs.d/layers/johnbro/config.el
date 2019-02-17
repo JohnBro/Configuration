@@ -12,8 +12,7 @@
 ;; dwim = do waht I means
 (defun occur-dwim()
   "Call `occur' with a sane default"
-  (in
-teractive)
+  (interactive)
   (push (if (region-active-p)
             (buffer-substring-no-properties
              (region-beginning)
@@ -55,7 +54,7 @@ teractive)
              (setq tab-width 4)
              (setq gtags-enable-by-default t)))
 
-(add-hook 'shell-mode
+(add-hook 'shell-mode-hook
           '(lambda()
              (setq indent-tabs-mode nil)
              (setq tab-width 2)))
