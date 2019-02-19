@@ -46,7 +46,7 @@ values."
      git
      org
      (shell :variables
-            shell-default-shell 'eshell
+            shell-default-shell 'ansi-term
             shell-default-height 50
             shell-default-position 'bottom)
      emacs-lisp
@@ -71,7 +71,7 @@ values."
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '(
-                                    auto-complete helm-flyspell flyspell-correct-helm
+                                    auto-complete helm-flyspell flyspell-correct-helm exec-path-from-shell
                                     )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -329,11 +329,11 @@ before packages are loaded. If you are unsure, you should try in setting them in
         ("org-cn"   . "http://elpa.emacs-china.org/org/")
         ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 
-  (setq exec-path-from-shell-check-startup-files nil)
   ;; https://github.com/syl20bnr/spacemacs/issues/2705
   ;; (setq tramp-mode nil)
   (setq tramp-ssh-controlmaster-options
         "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+  (setq socks-server '("Default Server" "127.0.0.1" 1080 5))
   (setq byte-compile-warnings '(not obsolete))
   (setq warning-minimum-level :error)
   )
@@ -347,7 +347,10 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
   ;; set powerline to be arrow shape
+  (setq-default dotspacemacs-enable-paste-transient-state t)
   (setq-default powerline-default-separator 'arrow)
+  (setq-default evil-escape-delay 0.4)
+  (prefer-coding-system 'utf-8-unix)
 
   ;; Put all custom setting into custom.el
   (setq custom-file (expand-file-name "custom.el" dotspacemacs-directory))
@@ -366,7 +369,7 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (helm-xref compan-lsp lsp-ui ccls lsp-mode ht dash-functional company-lsp flyspell-correct-helm company-quickhelp vimrc-mode insert-shebang fish-mode dactyl-mode company-shell glsl-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help helm-gtags ggtags flyspell-correct-ivy flyspell-correct flycheck-pos-tip flycheck engine-mode auto-dictionary youdao-dictionary names chinese-word-at-point pos-tip ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org spaceline powerline smex smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox spinner orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-plus-contrib org-mime org-download mwim mmm-mode markdown-toc markdown-mode magit-gitflow ivy-hydra htmlize helm-gitignore request helm-company helm-c-yasnippet gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy evil-magit magit magit-popup git-commit with-editor disaster counsel-projectile counsel swiper ivy company-statistics company-c-headers company cmake-mode clang-format auto-yasnippet yasnippet ac-ispell auto-complete org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode bind-key auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (transient lv helm-xref compan-lsp lsp-ui ccls lsp-mode ht dash-functional company-lsp flyspell-correct-helm company-quickhelp vimrc-mode insert-shebang fish-mode dactyl-mode company-shell glsl-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help helm-gtags ggtags flyspell-correct-ivy flyspell-correct flycheck-pos-tip flycheck engine-mode auto-dictionary youdao-dictionary names chinese-word-at-point pos-tip ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org spaceline powerline smex smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox spinner orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-plus-contrib org-mime org-download mwim mmm-mode markdown-toc markdown-mode magit-gitflow ivy-hydra htmlize helm-gitignore request helm-company helm-c-yasnippet gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy evil-magit magit magit-popup git-commit with-editor disaster counsel-projectile counsel swiper ivy company-statistics company-c-headers company cmake-mode clang-format auto-yasnippet yasnippet ac-ispell auto-complete org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode bind-key auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
