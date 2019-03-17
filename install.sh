@@ -13,6 +13,8 @@ TMU_NAT="tmux/tmux.conf"
 TMU_COF=".tmux.conf"
 SPACEMACS_NAT="spacemacs.d"
 SPACEMACS_COF=".spacemacs.d"
+ZSH_NAT="zsh/zshrc"
+ZSH_COF=".zshrc"
 sysOS=`uname -s`
 if [ $sysOS == 'Darwin'  ]; then
   BAS_NAT="bash/bash_profile"
@@ -33,6 +35,7 @@ $TOP/$GIT_NAT
 $TOP/$TMU_NAT
 $TOP/$BAS_NAT
 $TOP/$SPACEMACS_NAT
+$TOP/$ZSH_NAT
 )
 
 ###################### Config file table ########################
@@ -42,6 +45,7 @@ $HOME/$GIT_COF
 $HOME/$TMU_COF
 $HOME/$BAS_COF
 $HOME/$SPACEMACS_COF
+$HOME/$ZSH_COF
 )
 
 echo $TOP/$GIT_NAT
@@ -50,3 +54,10 @@ for (( i = 0; i < ${#TBL_NAT[@]}; i++ )); do
   printf "ln %s -> %s\n" ${TBL_NAT[$i]} ${TBL_COF[$i]}
   ln -sf ${TBL_NAT[$i]} ${TBL_COF[$i]}
 done
+
+#################### Install zsh/oh-my-zsh #####################
+export ZSH="$HOME/.config/oh-my-zsh"
+
+if [ ! -d $ZSH ]; then
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+fi
