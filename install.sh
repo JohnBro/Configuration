@@ -31,20 +31,20 @@ fi
 ################################################################
 TBL_NAT=(
 $TOP/$VIM_NAT
-$TOP/$GIT_NAT
+#$TOP/$GIT_NAT
 $TOP/$TMU_NAT
-$TOP/$BAS_NAT
-$TOP/$SPACEMACS_NAT
+#$TOP/$BAS_NAT
+#$TOP/$SPACEMACS_NAT
 $TOP/$ZSH_NAT
 )
 
 ###################### Config file table ########################
 TBL_COF=(
 $HOME/$VIM_COF
-$HOME/$GIT_COF
+#$HOME/$GIT_COF
 $HOME/$TMU_COF
-$HOME/$BAS_COF
-$HOME/$SPACEMACS_COF
+#$HOME/$BAS_COF
+#$HOME/$SPACEMACS_COF
 $HOME/$ZSH_COF
 )
 

@@ -72,9 +72,6 @@ if isdirectory(expand($VIM_PLUGDIR))
     Plug 'junegunn/vim-easy-align',         { 'on': [ '<Plug>(EasyAlign)', 'EasyAlign' ] }
     Plug 'terryma/vim-multiple-cursors'
     Plug 'ntpeters/vim-better-whitespace',  { 'for': [ 'c', 'cpp', 'Makefile' ] }
-    if ( g:os_is_unix == 1 )
-        Plug 'Valloric/YouCompleteMe'
-    endif
     Plug 'rdnetto/YCM-Generator',           { 'for': [ 'c', 'cpp' ], 'on': [ 'YcmGenerateConfig', 'CCGenerateConfig' ], 'branch': 'stable' }
     Plug 'JohnBro/DoxygenToolkit.vim',      { 'for': [ 'c', 'cpp' ] }
     Plug 'JohnBro/Mark'
@@ -122,9 +119,6 @@ filetype indent on
 syntax enable
 syntax on
 silent! colorscheme space-vim-dark
-if isdirectory(g:dir_plugin.'/space-vim-dark/')
-    let    g:space_vim_dark_background = 233
-endif
 set  nocompatible
 set    expandtab
 set    shiftwidth=4
@@ -253,7 +247,7 @@ if (g:os_is_windows == 1 && g:os_has_gui == 1)
     endfunction
 endif
 " }}}
-" Unix GUI setting {{{2
+" Unix GUI setting {{{1
 if ( g:os_is_unix == 1 )
     if ( g:os_has_gui == 1 )
         set guifont=Courier\ New:h16
@@ -349,10 +343,10 @@ function! CursorToggle()
 endfunction
 " }}}
 " Usful mapping {{{1
-let mapleader=','
-let localleader="\\"
-nnoremap <Space>                :
-vnoremap <Space>                :
+let mapleader=' '
+let localleader=","
+nnoremap <Enter>                :
+vnoremap <Enter>                :
 inoremap jk                     <Esc>
 vnoremap hl                     <Esc>
 nnoremap <C-h>                  <C-W>h
@@ -427,8 +421,6 @@ if (g:os_is_unix == 1)
 endif
 nnoremap <silent>H              0
 nnoremap <silent>L              $
-nnoremap <Left>                 :bp<cr>
-nnoremap <Right>                :bn<cr>
 nnoremap <Plug>Replace          :call NormalReplace()<cr>
 vnoremap <Plug>Replace          :call VisualReplace()<cr>
 nnoremap n                  nzz
