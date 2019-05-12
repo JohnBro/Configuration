@@ -5,6 +5,9 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+# System OS name
+sysOS=$(uname -s)
+
 # don't put duplicate lines in the history. See bash(1) for more options
 # ... or force ignoredups and ignorespace
 HISTCONTROL=ignoredups:ignorespace
@@ -16,65 +19,83 @@ shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=2000
 
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
-shopt -s checkwinsize
-
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color) color_prompt=yes;;
-esac
-
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-#force_color_prompt=yes
-
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
-    else
-	color_prompt=
-    fi
-fi
-
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
-unset color_prompt force_color_prompt
-
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
+xterm* | rxvt*)
+	PS1='\[\e[0;31m\]\u@\h [\A]\[\e[m\] \[\e[1;34m\]\w\[\e[m\] \[\e[0;31m\]^_^\[\e[m\]\[\e[0;32m\]\n-> '
+	;;
+*) ;;
+
 esac
+
+###############################################################################
+cl() {
+	if [ -d $1 ]; then
+		cd $1
+		ls
+	else
+		echo "bash: cl: $1: Directory not found"
+	fi
+}
+
+extract() {
+	local c e i
+
+	(($#)) || return
+
+	for i; do
+		c=''
+		e=1
+
+		if [[ ! -r $i ]]; then
+			echo "$0: file is unreadable: \`$i'" >&2
+			continue
+		fi
+
+		case $i in
+		*.t@[gz | lz | xz | b@[2 | z?[2]] | a@[z | r?[.@[Z | bz?[2] | gz | lzma | xz]]]])
+			c='bsdtar xvf'
+			;;
+		*.7z) c='7z x' ;;
+		*.Z) c='uncompress' ;;
+		*.bz2) c='bunzip2' ;;
+		*.exe) c='cabextract' ;;
+		*.gz) c='gunzip' ;;
+		*.rar) c='unrar x' ;;
+		*.xz) c='unxz' ;;
+		*.zip) c='unzip' ;;
+		*)
+			echo "$0: unrecognized file extension: \`$i'" >&2
+			continue
+			;;
+		esac
+
+		command $c "$i"
+	done
+}
+
+findgrep() { # find | grep
+	if [ $# -eq 0 ]; then
+		echo "findgrep: No arguments entered."
+		return 1
+	else
+		# "{.[a-zA-Z],}*" instead of "." makes the output cleaner
+		find {.[a-zA-Z],}* -type f | xargs grep -n $* /dev/null \
+			2>/dev/null
+	fi
+}
+###############################################################################
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+	alias ls='ls --color=auto'
+	alias dir='dir --color=auto'
+	alias vdir='vdir --color=auto'
 
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+	alias grep='grep --color=auto'
+	alias fgrep='fgrep --color=auto'
+	alias egrep='egrep --color=auto'
 fi
 
 # some more ls aliases
@@ -86,57 +107,55 @@ alias cindex='ctags -I __THROW -I __THROWNL -I __nonnull -R --c-kinds=+p --field
 alias vi='vim'
 alias em='emacs'
 alias g='git'
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
 alias tmux="TERM=screen-256color-bce tmux"
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias e='extract'
+alias fg='findgrep'
+
+# Customized for differnt OS
+if [ $sysOS == 'Darwin' ]; then
+	# For macOS bash settings.
+	# Pos 1,dir; 2,symbolic link; 3,socket; 4,pipe; 5,exe; 6,block special; 7, character; 8,exe with
+	# setuid; 9,exe with setgid bit set; 10,dir write to others, with sticky bit; 11,dir w to others,
+	# without sticky bit
+	# a,黑色; b,红色; c,绿色; d,棕色; e,蓝色; f,洋红色; g,青色; h,浅灰色; A,黑粗; B,红粗; C,绿粗;
+	# D,棕粗; E,蓝粗; F,洋红粗; G,黄粗; H,浅灰粗; x,default.
+	export LS_OPTIONS='--color=auto'         # 如果没有指定，则自动选择颜色
+	export CLICOLOR='Yes'                    # 是否输出颜色
+	export LSCOLORS='ExGxFxdaCxDaDahbadacec' # 指定颜色
+	# Use coreutils to promote color display when type different commands
+	# Also this command would let option at the end of every command.
+	# Usage : gdircolors --print-database > ~/.dir_colors
+	if brew list | grep coreutils >/dev/null; then
+		PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+		alias ls='ls -G --color=auto'
+		alias grep='grep --color=auto'
+		alias fgrep='fgrep --color=auto'
+		alias egrep='egrep --color=auto'
+		eval $(gdircolors -b $HOME/.dir_colors)
+	fi
+	export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+fi
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
 if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+	. ~/.bash_aliases
 fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-    . /etc/bash_completion
+	. /etc/bash_completion
+fi
+
+# Loading fzf to find file quickly
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+if [ -e /bin/zsh ]; then
+	zsh
 fi
 
 ulimit -c unlimited
-
-# For macOS bash settings.
-# Pos 1,dir; 2,symbolic link; 3,socket; 4,pipe; 5,exe; 6,block special; 7, character; 8,exe with
-# setuid; 9,exe with setgid bit set; 10,dir write to others, with sticky bit; 11,dir w to others,
-# without sticky bit
-# a,黑色; b,红色; c,绿色; d,棕色; e,蓝色; f,洋红色; g,青色; h,浅灰色; A,黑粗; B,红粗; C,绿粗;
-# D,棕粗; E,蓝粗; F,洋红粗; G,黄粗; H,浅灰粗; x,default.
-export LS_OPTIONS='--color=auto'  # 如果没有指定，则自动选择颜色
-export CLICOLOR='Yes'             # 是否输出颜色
-export LSCOLORS='ExGxFxdaCxDaDahbadacec'  # 指定颜色
-
-# Use coreutils to promote color display when type different commands
-# Also this command would let option at the end of every command.
-# Usage : gdircolors --print-database > ~/.dir_colors
-if brew list | grep coreutils > /dev/null ; then
-    PATH="$(brew --prefix coreutils)/libexec/gnubin:$HOME/tool_chain/bin:$PATH"
-    alias ls='ls -G --color=auto'
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-    eval `gdircolors -b $HOME/.dir_colors`
-fi
-
-##
-# Your previous /Users/johnbro/.bash_profile file was backed up as /Users/johnbro/.bash_profile.macports-saved_2019-02-17_at_15:23:33
-##
-
-# MacPorts Installer addition on 2019-02-17_at_15:23:33: adding an appropriate PATH variable for use with MacPorts.
-export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
-# Finished adapting your PATH environment variable for use with MacPorts.
-
