@@ -55,6 +55,11 @@ for (( i = 0; i < ${#TBL_NAT[@]}; i++ )); do
   ln -sf ${TBL_NAT[$i]} ${TBL_COF[$i]}
 done
 
+# Install aria2 config to .config directory
+mkdir -p $HOME/.config/aria2
+printf "ln %s -> %s\n" $TOP/aria2/aria2.config $HOME/.config/aria2/aria2.config
+ln -sf $TOP/aria2/aria2.config $HOME/.config/aria2/aria2.config
+
 #################### Install zsh/oh-my-zsh #####################
 export ZSH="$HOME/.config/oh-my-zsh"
 
