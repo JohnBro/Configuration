@@ -36,6 +36,7 @@ $TOP/$TMU_NAT
 $TOP/$BAS_NAT
 #$TOP/$SPACEMACS_NAT
 $TOP/$ZSH_NAT
+$TOP/bash/bash_aliases
 )
 
 ###################### Config file table ########################
@@ -46,6 +47,7 @@ $HOME/$TMU_COF
 $HOME/$BAS_COF
 #$HOME/$SPACEMACS_COF
 $HOME/$ZSH_COF
+$HOME/.bash_aliases
 )
 
 echo $TOP/$GIT_NAT

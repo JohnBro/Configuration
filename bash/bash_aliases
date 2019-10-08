@@ -1,0 +1,1 @@
+alias if="pacman -Ss"
