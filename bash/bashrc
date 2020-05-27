@@ -219,7 +219,8 @@ ulimit -c unlimited
 [ -f ~/.bash_aliases ] && source ~/.bash_aliases
 
 # Specified my local soft Envroment
-export PATH=$HOME/tool_chain/bin:/opt/android-sdk/platform-tools:${PATH}
+export ANDROID_SDK=$HOME/Android/Sdk
+export PATH=$HOME/tool_chain/bin:$ANDROID_SDK/platform-tools:${PATH}
 export LD_LIBRARY_PATH=$HOME/tool_chain/lib:${LD_LIBRARY_PATH}
 
 # [ -x /bin/zsh ] && zsh
