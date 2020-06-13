@@ -1,8 +1,4 @@
 #
 # .bash_profile, exculate in each login
 #
-[ -f ~/.bashrc ] && source ~/.bashrc
-
-export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles
-
-ulimit -c unlimited
+[[ -f "~/.bashrc" ]] && source ~/.bashrc

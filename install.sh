@@ -18,7 +18,6 @@ TBL_NAT=(
 "$TOP/bash/bash_profile"
 "$TOP/bash/bash_aliases"
 "$TOP/zsh/zshrc"
-#$TOP/$SPACEMACS_NAT
 )
 
 ###################### Config file table ########################
@@ -30,7 +29,6 @@ TBL_COF=(
 "$HOME/.bash_profile"
 "$HOME/.bash_aliases"
 "$HOME/.zshrc"
-#$HOME/$SPACEMACS_COF
 )
 
 #################### Install zsh/oh-my-zsh #####################
@@ -41,15 +39,14 @@ fi
 
 # Install aria2 config to .config directory
 mkdir -p $HOME/.config/aria2
-printf "ln %s -> %s\n" $TOP/aria2/aria2.config $HOME/.config/aria2/aria2.config
-ln -sf $TOP/aria2/aria2.config $HOME/.config/aria2/aria2.config
+printf "cp %s -> %s\n" $TOP/aria2/aria2.config $HOME/.config/aria2/aria2.config
+cp -rf $TOP/aria2/aria2.config $HOME/.config/aria2/aria2.config
 
 #
 # Install all configure table file
 #
 for (( i = 0; i < ${#TBL_NAT[@]}; i++ )); do
-  printf "ln %s -> %s\n" ${TBL_NAT[$i]} ${TBL_COF[$i]}
+  printf "cp -rf %s -> %s\n" ${TBL_NAT[$i]} ${TBL_COF[$i]}
   ln -sf ${TBL_NAT[$i]} ${TBL_COF[$i]}
 done
-
 

@@ -47,8 +47,8 @@ colors() {
 }
 
 #
-# # cl - cd and list
-# # usage: cl <directory>
+# cl - cd and list
+# usage: cl <directory>
 cl() {
   if [ -d $1 ]; then
     cd $1
@@ -84,27 +84,27 @@ extract ()
 }
 
 findgrep() { # find | grep
-if [ $# -eq 0 ]; then
-  echo "findgrep: No arguments entered."
+  if [ $# -eq 0 ]; then
+    echo "findgrep: No arguments entered."
     return 1
-else
-  # "{.[a-zA-Z],}*" instead of "." makes the output cleaner
-  find {.[a-zA-Z],}* -type f | xargs grep -n $* /dev/null \
-  2>/dev/null
-fi
+  else
+    # "{.[a-zA-Z],}*" instead of "." makes the output cleaner
+    find {.[a-zA-Z],}* -type f | xargs grep -n $* /dev/null \
+      2>/dev/null
+  fi
 }
 ###############################################################################
 
-[ -r /usr/share/bash-completion/bash_completion ] && . /usr/share/bash-completion/bash_completion
+[[ -r "/usr/share/bash-completion/bash_completion" ]] && . /usr/share/bash-completion/bash_completion
 
 # Change the window title of X terminals
 case ${TERM} in
-	xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|interix|konsole*)
-		PS1='\[\e[0;31m\]\u@\h [\A]\[\e[m\] \[\e[1;34m\]\w\[\e[m\] \[\e[0;31m\]^_^\[\e[m\]\[\e[0;32m\]\n-> '
-		;;
-	screen*)
-		PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
-		;;
+  xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|interix|konsole*)
+    PS1='\[\e[0;31m\]\u@\h [\A]\[\e[m\] \[\e[1;34m\]\w\[\e[m\] \[\e[0;31m\]^_^\[\e[m\]\[\e[0;32m\]\n-> '
+    ;;
+  screen*)
+    PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
+    ;;
 esac
 
 use_color=true
@@ -114,42 +114,42 @@ use_color=true
 # instead of using /etc/DIR_COLORS.  Try to use the external file
 # first to take advantage of user additions.  Use internal bash
 # globbing instead of external grep binary.
-safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
-match_lhs=""
-[[ -f ~/.dir_colors   ]] && match_lhs="${match_lhs}$(<~/.dir_colors)"
-[[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
+# safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
+# match_lhs=""
+[[ -f "~/.dir_colors"   ]] && match_lhs="${match_lhs}$(<~/.dir_colors)"
+[[ -f "/etc/DIR_COLORS" ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
 [[ -z ${match_lhs}    ]] \
-	&& type -P dircolors >/dev/null \
-	&& match_lhs=$(dircolors --print-database)
+  && type -P dircolors >/dev/null \
+  && match_lhs=$(dircolors --print-database)
 [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
 
-if ${use_color} ; then
-	# Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
-	if type -P dircolors >/dev/null ; then
-		if [[ -f ~/.dir_colors ]] ; then
-			eval $(dircolors -b ~/.dir_colors)
-		elif [[ -f /etc/DIR_COLORS ]] ; then
-			eval $(dircolors -b /etc/DIR_COLORS)
-		fi
-	fi
+if [[ ${use_color} == "true" ]]; then
+  # Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
+  if type -P dircolors >/dev/null ; then
+    if [[ -f ~/.dir_colors ]] ; then
+      eval $(dircolors -b ~/.dir_colors)
+    elif [[ -f /etc/DIR_COLORS ]] ; then
+      eval $(dircolors -b /etc/DIR_COLORS)
+    fi
+  fi
 
-	alias ls='ls --color=auto'
-	alias grep='grep --colour=auto'
-	alias egrep='egrep --colour=auto'
-	alias fgrep='fgrep --colour=auto'
+  alias ls='ls --color=auto'
+  alias grep='grep --colour=auto'
+  alias egrep='egrep --colour=auto'
+  alias fgrep='fgrep --colour=auto'
 else
-	if [[ ${EUID} == 0 ]] ; then
-		# show root@ when we don't have colors
-		PS1='\u@\h \W \$ '
-	else
-		PS1='\u@\h \w \$ '
-	fi
+  if [[ ${EUID} == 0 ]] ; then
+    # show root@ when we don't have colors
+    PS1='\u@\h \W \$ '
+  else
+    PS1='\u@\h \w \$ '
+  fi
 fi
 
 unset use_color safe_term match_lhs sh
 
 # Customized for differnt OS
-if [ $sysOS == 'Darwin' ]; then
+if [[ $sysOS == 'Darwin' ]]; then
   # For macOS bash settings.
   # Pos 1,dir; 2,symbolic link; 3,socket; 4,pipe; 5,exe; 6,block special; 7, character; 8,exe with
   # setuid; 9,exe with setgid bit set; 10,dir write to others, with sticky bit; 11,dir w to others,
@@ -167,7 +167,7 @@ if [ $sysOS == 'Darwin' ]; then
     alias ls='ls -G --color=auto'
     eval $(gdircolors -b $HOME/.dir_colors)
   fi
-  export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+  export PATH=/opt/local/bin:/opt/local/sbin:$PATH
 fi
 
 alias cp="cp -i"                          # confirm before overwriting something
@@ -206,21 +206,15 @@ shopt -s expand_aliases
 # Enable history appending instead of overwriting.  #139609
 shopt -s histappend
 
-ulimit -c unlimited
-
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-# if [ -f ~/.bash_aliases ]; then
-#   source ~/.bash_aliases
-# fi
-
-[ -f ~/.bash_aliases ] && source ~/.bash_aliases
+[[ -f "~/.bash_aliases" ]] && source ~/.bash_aliases
+[[ -f "~/.fzf.bash" ]] && source ~/.fzf.bash
 
 # Specified my local soft Envroment
-export ANDROID_SDK=$HOME/Android/Sdk
-export PATH=$HOME/tool_chain/bin:$ANDROID_SDK/platform-tools:${PATH}
-export LD_LIBRARY_PATH=$HOME/tool_chain/lib:${LD_LIBRARY_PATH}
+[[ -d "~/Android/sdk" ]] && export AN_SDK=$HOME/Android/Sdk
+[[ -d "$AN_SDK/platform-tools" ]] && export PATH=$HOME/tool_chain/bin:$ANDROID_SDK/platform-tools:${PATH}
+# export USE_CCACHE=1 && ccache -M 50G, set once on your PC
+[[ -x "/usr/bin/ccache" ]]
+[[ -d "~/.cache" ]] && export CCACHE_DIR=$HOME/.cache/.ccache
 
 # [ -x /bin/zsh ] && zsh
+ulimit -c unlimited
