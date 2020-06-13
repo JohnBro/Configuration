@@ -47,6 +47,6 @@ cp -rf $TOP/aria2/aria2.config $HOME/.config/aria2/aria2.config
 #
 for (( i = 0; i < ${#TBL_NAT[@]}; i++ )); do
   printf "cp -rf %s -> %s\n" ${TBL_NAT[$i]} ${TBL_COF[$i]}
-  ln -sf ${TBL_NAT[$i]} ${TBL_COF[$i]}
+  cp -rf ${TBL_NAT[$i]} ${TBL_COF[$i]}
 done
 
