@@ -1,4 +1,4 @@
 #
 # .bash_profile, exculate in each login
 #
-[[ -f "~/.bashrc" ]] && source ~/.bashrc
+[[ -f "$HOME/.bashrc" ]] && source $HOME/.bashrc
